@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-GisVN AI Chat Backend — Claude-powered tư vấn viên GIS
+GIS Quy Hoạch AI Chat Backend — Claude-powered tư vấn viên GIS
 Chạy: python chat_backend.py
 API: POST http://localhost:8000/chat
 
@@ -32,12 +32,12 @@ MODEL = "claude-haiku-4-5"   # Nhanh + rẻ nhất, đủ cho chatbot tư vấn
 _origins_raw = os.getenv("ALLOWED_ORIGINS", "http://localhost:5500,http://127.0.0.1:5500,http://localhost:8000")
 ALLOWED_ORIGINS = [o.strip() for o in _origins_raw.split(",") if o.strip()]
 
-SYSTEM_PROMPT = """Bạn là trợ lý tư vấn AI của Công ty TNHH Công nghệ Bản đồ GisVN.
+SYSTEM_PROMPT = """Bạn là trợ lý tư vấn AI của Công ty TNHH Công nghệ Bản đồ GIS Quy Hoạch.
 Tên bạn là "Gissy" — một chuyên gia GIS thân thiện, am hiểu sâu về Thông tư 16 và quy hoạch Việt Nam.
 
 THÔNG TIN CÔNG TY:
-- Tên: Công ty TNHH Công nghệ Bản đồ GisVN
-- Hotline/Zalo: 0905 131 205
+- Tên: Công ty TNHH Công nghệ Bản đồ GIS Quy Hoạch
+- Hotline/Zalo: 0332 945 089
 - Dịch vụ chính: Lập hồ sơ quy hoạch trên GIS, chuyển đổi CAD → GIS chuẩn Thông tư 16
 - Tiêu chuẩn: EPSG:5897, VN2000, GeoPackage, TT16/BXD, TT01/2021
 - Thời gian: Hoàn thành 1-3 ngày làm việc
@@ -58,17 +58,17 @@ GIÁ: Báo giá sau khi xem hồ sơ. Cạnh tranh, minh bạch. Làm trước t
 QUY TẮC TRẢ LỜI:
 - Trả lời bằng tiếng Việt, thân thiện, chuyên nghiệp
 - Ngắn gọn, đúng trọng tâm (tối đa 3-4 câu mỗi lần, trừ khi cần giải thích kỹ)
-- Luôn hướng khách hàng liên hệ Zalo 0905 131 205 khi cần tư vấn chi tiết hoặc báo giá
+- Luôn hướng khách hàng liên hệ Zalo 0332 945 089 khi cần tư vấn chi tiết hoặc báo giá
 - KHÔNG bịa số liệu không có trong thông tin trên
-- Khi khách hỏi giá cụ thể → nói "cần xem hồ sơ để báo giá chính xác, liên hệ Zalo 0905 131 205"
-- Khi được hỏi về vấn đề ngoài phạm vi GIS/quy hoạch → lịch sự từ chối và hướng về dịch vụ GisVN
+- Khi khách hỏi giá cụ thể → nói "cần xem hồ sơ để báo giá chính xác, liên hệ Zalo 0332 945 089"
+- Khi được hỏi về vấn đề ngoài phạm vi GIS/quy hoạch → lịch sự từ chối và hướng về dịch vụ GIS Quy Hoạch
 - Mở đầu cuộc trò chuyện: giới thiệu bản thân là Gissy, hỏi khách cần hỗ trợ gì"""
 
 # ── Rate Limiter ───────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address, default_limits=["100/hour"])
 
 # ── FastAPI app ────────────────────────────────────────────────────
-app = FastAPI(title="GisVN Chat API", docs_url=None, redoc_url=None)  # Tắt Swagger docs production
+app = FastAPI(title="GIS Quy Hoạch Chat API", docs_url=None, redoc_url=None)  # Tắt Swagger docs production
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -131,5 +131,5 @@ if __name__ == "__main__":
     if not CLAUDE_API_KEY:
         print("⚠️  CẢNH BÁO: ANTHROPIC_API_KEY chưa được đặt trong .env — chat sẽ không hoạt động!")
     print(f"🔐 CORS cho phép: {ALLOWED_ORIGINS}")
-    print("🤖 GisVN AI Chat đang chạy tại http://localhost:8000")
+    print("🤖 GIS Quy Hoạch AI Chat đang chạy tại http://localhost:8000")
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=False)  # ✅ Bind localhost, không phải 0.0.0.0
