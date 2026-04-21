@@ -11,6 +11,8 @@ API: POST http://localhost:8000/chat
   - API key không hardcode — load từ .env
 """
 import os
+import csv
+from datetime import datetime
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -98,6 +100,18 @@ class ChatResponse(BaseModel):
     reply: str
     error: str = ""
 
+class ContactRequest(BaseModel):
+    name: str = Field(..., max_length=100)
+    phone: str = Field(..., max_length=20)
+    email: str = Field("", max_length=100)
+    project_type: str = Field("", max_length=100)
+    message: str = Field("", max_length=2000)
+
+class ContactResponse(BaseModel):
+    status: str
+    msg: str = ""
+    error: str = ""
+
 # ── Endpoints ─────────────────────────────────────────────────────
 @app.post("/chat", response_model=ChatResponse)
 @limiter.limit("15/minute")             # ✅ Rate limit: 15 tin/phút mỗi IP
@@ -121,6 +135,20 @@ async def chat(request: Request, req: ChatRequest):
         return ChatResponse(reply="", error="API key không hợp lệ")
     except Exception as e:
         return ChatResponse(reply="", error=str(e))
+
+@app.post("/contact", response_model=ContactResponse)
+@limiter.limit("5/minute")
+async def submit_contact(request: Request, req: ContactRequest):
+    try:
+        file_exists = os.path.isfile("contacts.csv")
+        with open("contacts.csv", "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            if not file_exists:
+                writer.writerow(["Time", "Name", "Phone", "Email", "Project Type", "Message"])
+            writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req.name, req.phone, req.email, req.project_type, req.message])
+        return ContactResponse(status="ok", msg="Đã lưu liên hệ")
+    except Exception as e:
+        return ContactResponse(status="error", error=str(e))
 
 @app.get("/health")
 def health():

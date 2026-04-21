@@ -1317,15 +1317,36 @@ document.addEventListener('click', e=>{
 function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
 
 // ── Contact form ──
-function handleContact(e){
+async function handleContact(e){
   e.preventDefault();
   const btn=e.target.querySelector('button[type=submit]');
   const name = document.getElementById('ctName').value;
   const phone = document.getElementById('ctPhone').value;
+  const email = document.getElementById('ctEmail').value;
+  const project_type = document.getElementById('ctType').value;
+  const message = document.getElementById('ctMsg').value;
+  
   if(!name || !phone){ alert('Vui lòng điền Họ tên và Số điện thoại!'); return; }
-  btn.innerHTML='✅ Đã gửi! Chúng tôi sẽ liên hệ trong 30 phút';
-  btn.style.background='linear-gradient(135deg,#10b981,#059669)';
+  
+  btn.innerHTML='⏳ Đang gửi...';
   btn.disabled=true;
+  
+  try {
+    var BACKEND = (typeof window.GISVN_CHAT_URL !== 'undefined') ? window.GISVN_CHAT_URL.replace('/chat', '/contact') : (window.location.protocol === 'file:' ? 'http://localhost:8000/contact' : '/contact');
+    const res = await fetch(BACKEND, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, email, project_type, message })
+    });
+    if (!res.ok) throw new Error("Network response error");
+    
+    btn.innerHTML='✅ Đã gửi! Chúng tôi sẽ liên hệ trong 30 phút';
+    btn.style.background='linear-gradient(135deg,#10b981,#059669)';
+  } catch (err) {
+    btn.innerHTML='❌ Có lỗi xảy ra, thử lại hoặc nhắn Zalo!';
+    btn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';
+  }
+  
   setTimeout(()=>{
     btn.innerHTML='📞 Gửi yêu cầu tư vấn miễn phí';
     btn.style.background='';
@@ -1445,7 +1466,10 @@ document.addEventListener("DOMContentLoaded", function(){
   function addBubble(role, text){
     var d = document.createElement('div');
     d.className = 'chat-msg '+role;
-    var h = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    function escapeHTML(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+    var h = escapeHTML(text).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
     var align = role==='user' ? 'right' : 'left';
     d.innerHTML = '<div class="msg-bubble">'+h+'</div><div class="msg-time" style="text-align:'+align+'">'+timeStr()+'</div>';
     msgs.appendChild(d);

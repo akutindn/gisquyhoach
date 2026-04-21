@@ -228,7 +228,10 @@ CHAT_JS = """
     div.className = 'chat-msg ' + role;
     const now = new Date().toLocaleTimeString('vi-VN', {hour:'2-digit',minute:'2-digit'});
     // Convert **bold** and newlines
-    const html = text
+    function escapeHTML(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+    const html = escapeHTML(text)
       .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
       .replace(/\\n/g, '<br>');
     div.innerHTML = `<div class="msg-bubble">${html}</div><div class="msg-time">${now}</div>`;
