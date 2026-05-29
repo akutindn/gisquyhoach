@@ -892,76 +892,41 @@ body { background: var(--bg); color: var(--text); }
 </div>
 
 <!-- ══ WEBGIS MAP SECTION ════════════════════════════════════ -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <section class="section" id="webgis" style="padding:80px 40px;">
   <div class="container">
     <div class="sec-tag">Xem trực tiếp</div>
-    <h2 class="sec-title">Bản đồ Quy hoạch <span style="color:var(--pl)">Trực tuyến</span></h2>
-    <p class="sec-desc" style="margin-bottom:32px;">Tra cứu quy hoạch sử dụng đất, phân vùng chức năng và các lớp GIS trực tiếp trên nền bản đồ số — đầy đủ toàn quốc.</p>
+    <h2 class="sec-title">Bản đồ Địa phận <span style="color:var(--pl)">Toàn Quốc 2026</span></h2>
+    <p class="sec-desc" style="margin-bottom:28px;">Tra cứu 63 tỉnh thành và 3.321 xã/phường/thị trấn — dữ liệu địa phận hành chính chuẩn 2026.</p>
 
-    <!-- Tab chọn bản đồ -->
-    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-      <button onclick="switchMap('local')" id="tab-local"
-        style="padding:10px 22px;border-radius:10px;border:2px solid var(--primary);background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;">
-        🗺️ Bản đồ GIS Quy Hoạch
-      </button>
-      <button onclick="switchMap('danang')" id="tab-danang"
-        style="padding:10px 22px;border-radius:10px;border:2px solid var(--border);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;">
-        🏙️ Quy hoạch Đà Nẵng
-      </button>
-      <button onclick="switchMap('quocgia')" id="tab-quocgia"
-        style="padding:10px 22px;border-radius:10px;border:2px solid var(--border);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;">
-        🌏 Quy hoạch Toàn Quốc
-      </button>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+      <button onclick="wgFilter('all')" id="wg-all" style="padding:8px 18px;border-radius:8px;border:2px solid #2563eb;background:#2563eb;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🗺️ Tất cả</button>
+      <button onclick="wgFilter('tinh')" id="wg-tinh" style="padding:8px 18px;border-radius:8px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🏛️ Tỉnh/TP</button>
+      <button onclick="wgFilter('xa')" id="wg-xa" style="padding:8px 18px;border-radius:8px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🏘️ Xã/Phường</button>
+      <input id="wg-search" type="text" placeholder="🔍 Tìm kiếm tỉnh, xã, phường..." oninput="wgSearch(this.value)"
+        style="flex:1;min-width:180px;padding:8px 14px;border-radius:8px;border:2px solid #e2e8f0;background:#f8fafc;color:#0f172a;font-size:13px;font-family:inherit;outline:none;"/>
+      <span id="wg-count" style="font-size:12px;color:#64748b;white-space:nowrap;">Đang tải...</span>
     </div>
 
-    <!-- Khung bản đồ -->
-    <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.1);background:#f1f5f9;">
-      <!-- Thanh tiêu đề giả lập GIS viewer -->
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;background:#fff;border-bottom:1px solid var(--border);">
-        <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
-        <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
-        <span style="width:12px;height:12px;border-radius:50%;background:#28c840;display:inline-block;"></span>
-        <span style="margin-left:12px;font-size:13px;font-weight:700;color:#64748b;" id="map-title">🗺 WebGIS Viewer — GIS Quy Hoạch</span>
-        <span style="margin-left:auto;font-size:11px;color:#10b981;font-weight:700;">● Đang kết nối...</span>
+    <div style="border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+      <div style="display:flex;align-items:center;gap:7px;padding:10px 16px;background:#fff;border-bottom:1px solid #e2e8f0;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#28c840;display:inline-block;"></span>
+        <span style="margin-left:8px;font-size:12px;font-weight:700;color:#64748b;">🗺 GIS Viewer — Địa phận hành chính Việt Nam 2026</span>
+        <span id="wg-status" style="margin-left:auto;font-size:11px;color:#f59e0b;font-weight:700;">⏳ Đang tải...</span>
       </div>
-
-      <!-- Iframe bản đồ -->
-      <iframe
-        id="map-iframe"
-        src="/map/map.html"
-        width="100%"
-        height="600"
-        frameborder="0"
-        allowfullscreen
-        loading="lazy"
-        style="display:block;"
-        title="Bản đồ GIS Quy Hoạch Trực tuyến"
-      ></iframe>
-
-      <!-- Overlay khi không kết nối được -->
-      <div id="map-fallback" style="display:none;position:absolute;inset:0;top:48px;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-        <div style="font-size:48px;">🗺️</div>
-        <div style="font-size:18px;font-weight:800;color:#334155;">Đang tải bản đồ...</div>
-        <div style="font-size:14px;color:#64748b;text-align:center;max-width:400px;">Bản đồ WebGIS đang được khởi động. Vui lòng thử lại sau giây lát hoặc liên hệ hotline để được tư vấn trực tiếp.</div>
-        <a href="https://zalo.me/0332945089" target="_blank" style="padding:12px 28px;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">📞 Liên hệ tư vấn</a>
-      </div>
+      <div id="wg-map" style="height:560px;width:100%;"></div>
     </div>
 
-    <!-- Chú thích -->
-    <div style="display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
-        <span style="width:14px;height:14px;background:#0ea5e9;border-radius:3px;display:inline-block;"></span> Đất ở đô thị (ODT)
+    <div style="display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;align-items:center;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;">
+        <span style="width:12px;height:12px;background:#2563eb;border-radius:3px;opacity:.7;display:inline-block;"></span>Tỉnh/Thành phố
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
-        <span style="width:14px;height:14px;background:#10b981;border-radius:3px;display:inline-block;"></span> Công trình XD (CXD)
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;">
+        <span style="width:12px;height:12px;background:#16a34a;border-radius:3px;opacity:.7;display:inline-block;"></span>Xã/Phường/Thị trấn
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
-        <span style="width:14px;height:14px;background:#f59e0b;border-radius:3px;display:inline-block;"></span> Giao thông (GT)
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
-        <span style="width:14px;height:14px;background:#8b5cf6;border-radius:3px;display:inline-block;"></span> Cây xanh (CX)
-      </div>
-      <div style="margin-left:auto;font-size:12px;color:var(--dim);">📌 Dữ liệu chuẩn VN2000 · Cập nhật theo TT16</div>
+      <div style="margin-left:auto;font-size:11px;color:#94a3b8;">📌 Nguồn: DiaPhan_2026 · Chuẩn VN2000</div>
     </div>
   </div>
 </section>
@@ -1846,79 +1811,6 @@ document.addEventListener("DOMContentLoaded", function(){
   </a>
 </div>
 
-<script>
-// ── WebGIS Map Switcher ──────────────────────────────────────
-const MAP_URLS = {
-  local:    '/map/map.html',
-  danang:   'https://gisportal.danang.gov.vn/portal/apps/webappviewer/index.html?id=a8f49c14dbc84fcc8f2d20e67b9fc8bc',
-  quocgia:  'https://qhvn2021.com/ban-do/'
-};
 
-const TAB_LABELS = {
-  local:   '🗺 WebGIS Viewer — GIS Quy Hoạch',
-  danang:  '🏙️ WebGIS Viewer — Quy hoạch Đà Nẵng',
-  quocgia: '🌏 WebGIS Viewer — Quy hoạch Toàn Quốc'
-};
-
-let currentTab = 'local';
-
-function switchMap(key) {
-  const iframe = document.getElementById('map-iframe');
-  const title  = document.getElementById('map-title');
-  const tabs   = ['local','danang','quocgia'];
-
-  currentTab = key;
-  iframe.src = MAP_URLS[key];
-  title.textContent = TAB_LABELS[key];
-
-  tabs.forEach(t => {
-    const btn = document.getElementById('tab-' + t);
-    if (!btn) return;
-    if (t === key) {
-      btn.style.background    = 'var(--primary)';
-      btn.style.borderColor   = 'var(--primary)';
-      btn.style.color         = '#fff';
-    } else {
-      btn.style.background    = 'transparent';
-      btn.style.borderColor   = 'var(--border)';
-      btn.style.color         = 'var(--muted)';
-    }
-  });
-}
-
-// Kiểm tra iframe load — nếu lỗi hiện fallback
-document.addEventListener('DOMContentLoaded', function() {
-  const iframe   = document.getElementById('map-iframe');
-  const fallback = document.getElementById('map-fallback');
-  if (!iframe) return;
-
-  // Timeout 8 giây — nếu iframe không load xong thì hiện fallback
-  const timer = setTimeout(function() {
-    try {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      if (!doc || doc.URL === 'about:blank') showFallback();
-    } catch(e) {
-      // Cross-origin: nghĩa là iframe đã load nhưng bị chặn đọc → vẫn hiển thị được
-    }
-  }, 8000);
-
-  iframe.addEventListener('load', function() {
-    clearTimeout(timer);
-    try {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      if (doc && (doc.body.innerHTML === '' || doc.URL === 'about:blank')) showFallback();
-    } catch(e) { /* cross-origin OK */ }
-  });
-
-  iframe.addEventListener('error', showFallback);
-
-  function showFallback() {
-    if (fallback) {
-      fallback.style.display = 'flex';
-      iframe.style.opacity   = '0.2';
-    }
-  }
-});
-</script>
 
 
