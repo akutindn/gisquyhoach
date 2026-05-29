@@ -1814,3 +1814,129 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── INLINE WEBGIS MAP ────────────────────────────────────────
+(function(){
+  var wgMap=null, wgLayer=null, wgAllFeatures=[], wgFilter_='all', wgLayerVisible=true;
+  var CDN='https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/';
+
+  function typeOf(p){ return (p.tenTinh&&!p.tenXa)?'tinh':'xa'; }
+  function nameOf(p){ return p.tenXa||p.tenTinh||''; }
+  function colorOf(t){ return t==='tinh'?{fill:'#2563eb',border:'#1d4ed8',op:.45}:{fill:'#16a34a',border:'#14532d',op:.35}; }
+
+  function styleF(f){
+    var t=typeOf(f.properties), c=colorOf(t);
+    var show=(wgFilter_==='all'||wgFilter_===t);
+    return {fillColor:c.fill,fillOpacity:show?c.op:0,color:show?c.border:'transparent',weight:show?1:0,opacity:show?.8:0};
+  }
+
+  function initWgMap(){
+    if(wgMap||!document.getElementById('wg-map')) return;
+    wgMap=L.map('wg-map',{center:[16.5,106.0],zoom:6,zoomControl:true,attributionControl:false});
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:18,subdomains:'abcd'}).addTo(wgMap);
+    loadData();
+  }
+
+  function loadData(){
+    document.getElementById('wg-status').textContent='⏳ Đang tải dữ liệu...';
+    document.getElementById('wg-count').textContent='Đang tải...';
+    Promise.all([
+      fetch(CDN+'tinh_2026.geojson').then(r=>r.json()),
+      fetch(CDN+'xa_2026.geojson').then(r=>r.json())
+    ]).then(function(results){
+      var gj={type:'FeatureCollection',features:[].concat(results[0].features,results[1].features)};
+      wgAllFeatures=gj.features;
+      renderLayer(gj);
+      document.getElementById('wg-status').textContent='✅ Sẵn sàng — '+wgAllFeatures.length+' đơn vị';
+      document.getElementById('wg-count').textContent=wgAllFeatures.length+' đơn vị';
+    }).catch(function(e){
+      document.getElementById('wg-status').textContent='❌ Lỗi: '+e.message;
+      document.getElementById('wg-count').textContent='Lỗi tải dữ liệu';
+    });
+  }
+
+  function renderLayer(gj){
+    if(wgLayer){ wgMap.removeLayer(wgLayer); }
+    wgLayer=L.geoJSON(gj,{
+      style:styleF,
+      onEachFeature:function(f,layer){
+        var p=f.properties;
+        var t=typeOf(p), name=nameOf(p);
+        var area=p.dienTich?Number(p.dienTich).toLocaleString('vi-VN',{maximumFractionDigits:0})+' ha':'';
+        var pop=p.danSo?Number(p.danSo).toLocaleString('vi-VN')+' người':'';
+        var typeLbl=t==='tinh'?'Tỉnh/TP':'Xã/Phường/TT';
+        layer.bindPopup(
+          '<div style="font-family:system-ui,sans-serif;min-width:180px;">'
+          +'<div style="background:'+(t==='tinh'?'#2563eb':'#16a34a')+';color:#fff;padding:10px 14px;margin:-1px -1px 0;border-radius:4px 4px 0 0;">'
+          +'<div style="font-weight:800;font-size:14px;">'+name+'</div>'
+          +'<div style="font-size:11px;opacity:.8;">'+typeLbl+(p.tenTinh&&p.tenXa?' · '+p.tenTinh:'')+'</div>'
+          +'</div>'
+          +'<div style="padding:10px 14px;">'
+          +(area?'<div style="font-size:12px;color:#475569;margin-bottom:4px;">📐 Diện tích: <b>'+area+'</b></div>':'')
+          +(pop?'<div style="font-size:12px;color:#475569;">👥 Dân số: <b>'+pop+'</b></div>':'')
+          +'</div></div>',
+          {maxWidth:240}
+        );
+        layer.on({
+          mouseover:function(e){e.target.setStyle({weight:2.5,fillOpacity:Math.min((t==='tinh'?.45:.35)+.2,1)});},
+          mouseout:function(e){wgLayer&&wgLayer.resetStyle(e.target);}
+        });
+      }
+    }).addTo(wgMap);
+  }
+
+  window.wgFilter=function(f){
+    wgFilter_=f;
+    ['all','tinh','xa'].forEach(function(k){
+      var btn=document.getElementById('wg-'+k);
+      if(!btn) return;
+      if(k===f){btn.style.background='#2563eb';btn.style.borderColor='#2563eb';btn.style.color='#fff';}
+      else{btn.style.background='transparent';btn.style.borderColor='#e2e8f0';btn.style.color='#64748b';}
+    });
+    if(wgLayer) wgLayer.eachLayer(function(l){if(l.feature)l.setStyle(styleF(l.feature));});
+    var cnt=f==='all'?wgAllFeatures.length:wgAllFeatures.filter(function(feat){return typeOf(feat.properties)===f;}).length;
+    document.getElementById('wg-count').textContent=cnt+' đơn vị';
+  };
+
+  window.wgSearch=function(q){
+    if(!q||!q.trim()){
+      document.getElementById('wg-count').textContent=wgAllFeatures.length+' đơn vị';
+      if(wgLayer) wgLayer.eachLayer(function(l){if(l.feature)l.setStyle(styleF(l.feature));});
+      return;
+    }
+    var lq=q.toLowerCase().trim();
+    var cnt=0;
+    if(wgLayer) wgLayer.eachLayer(function(l){
+      if(!l.feature) return;
+      var p=l.feature.properties;
+      var match=(nameOf(p)||'').toLowerCase().includes(lq)||(p.tenTinh||'').toLowerCase().includes(lq);
+      var t=typeOf(p),c=colorOf(t);
+      if(match&&(wgFilter_==='all'||wgFilter_===t)){
+        l.setStyle({fillColor:c.fill,fillOpacity:.6,color:c.border,weight:2,opacity:1});cnt++;
+      } else {
+        l.setStyle({fillOpacity:0,color:'transparent',weight:0,opacity:0});
+      }
+    });
+    document.getElementById('wg-count').textContent=cnt+' kết quả';
+  };
+
+  // Khởi động khi section vào viewport
+  var wgInited=false;
+  function checkInit(){
+    if(wgInited) return;
+    var el=document.getElementById('wg-map');
+    if(!el) return;
+    var rect=el.getBoundingClientRect();
+    if(rect.top<window.innerHeight+300){ wgInited=true; initWgMap(); }
+  }
+  window.addEventListener('scroll',checkInit,{passive:true});
+  window.addEventListener('load',checkInit);
+  setTimeout(checkInit,1000);
+})();
+</script>
+
+</body>
+</html>
