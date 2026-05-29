@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Hồ Sơ Năng Lực - GIS Quy Hoach</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#fff;color:#0f172a}
+:root{--blue:#1e40af;--sky:#0ea5e9;--orange:#f97316;--grad:linear-gradient(135deg,#1e40af,#0ea5e9)}
+.cover{min-height:100vh;background:var(--grad);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.logo-box{width:80px;height:80px;background:rgba(255,255,255,.2);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 24px;border:2px solid rgba(255,255,255,.3)}
+.cover-tag{background:var(--orange);color:#fff;font-size:13px;font-weight:800;padding:6px 18px;border-radius:100px;display:inline-block;margin-bottom:20px;letter-spacing:.05em}
+.cover h1{font-size:64px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px}
+.cover h1 span{color:#fed7aa}
+.cover-sub{font-size:20px;color:rgba(255,255,255,.85);margin-bottom:40px;line-height:1.6}
+.cover-divider{width:80px;height:4px;background:var(--orange);border-radius:4px;margin:0 auto 40px}
+.cover-info{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.ci{text-align:center;color:#fff}
+.ci-label{font-size:12px;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.ci-val{font-size:15px;font-weight:800}
+.page{max-width:960px;margin:0 auto;padding:80px 40px}
+.section-tag{display:inline-block;background:#eff6ff;color:var(--blue);font-size:12px;font-weight:800;padding:5px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
+h2{font-size:36px;font-weight:900;margin-bottom:12px;color:#0f172a}
+.lead{font-size:17px;color:#475569;line-height:1.8;margin-bottom:48px}
+.divider{width:60px;height:4px;background:var(--grad);border-radius:4px;margin-bottom:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:64px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:64px}
+.card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:28px;transition:all .2s}
+.card:hover{border-color:var(--sky);box-shadow:0 8px 24px rgba(14,165,233,.1)}
+.card-icon{font-size:32px;margin-bottom:14px}
+.card h3{font-size:17px;font-weight:800;margin-bottom:8px;color:#1e293b}
+.card p{font-size:14px;color:#64748b;line-height:1.7}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;background:var(--grad);border-radius:20px;padding:40px;margin-bottom:64px}
+.stat{text-align:center;color:#fff}
+.stat-num{font-size:40px;font-weight:900;line-height:1}
+.stat-num span{font-size:20px}
+.stat-label{font-size:13px;color:rgba(255,255,255,.75);margin-top:8px;font-weight:600}
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:64px;position:relative}
+.process::before{content:'';position:absolute;top:36px;left:12%;right:12%;height:2px;background:linear-gradient(90deg,#1e40af,#0ea5e9);z-index:0}
+.step{text-align:center;padding:0 12px;z-index:1}
+.step-num{width:72px;height:72px;border-radius:50%;background:#fff;border:3px solid var(--sky);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:var(--blue)}
+.step h4{font-size:15px;font-weight:800;margin-bottom:6px}
+.step p{font-size:13px;color:#64748b;line-height:1.5}
+.commit-list{display:flex;flex-direction:column;gap:16px;margin-bottom:64px}
+.commit{display:flex;gap:16px;align-items:flex-start;background:#f0f9ff;border:1px solid #bae6fd;border-radius:14px;padding:20px}
+.commit-icon{font-size:28px;flex-shrink:0}
+.commit h4{font-size:15px;font-weight:800;margin-bottom:4px;color:#0c4a6e}
+.commit p{font-size:14px;color:#0369a1;line-height:1.6}
+.price-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:64px}
+.price-card{border:2px solid #e2e8f0;border-radius:16px;padding:28px;text-align:center}
+.price-card.featured{border-color:var(--sky);background:#f0f9ff}
+.price-tier{font-size:13px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.price-val{font-size:28px;font-weight:900;color:#0f172a;margin-bottom:4px}
+.price-sub{font-size:13px;color:#94a3b8;margin-bottom:20px}
+.price-list{list-style:none;text-align:left;display:flex;flex-direction:column;gap:8px}
+.price-list li{font-size:13px;color:#475569}
+.contact-box{background:var(--grad);border-radius:20px;padding:48px;text-align:center;color:#fff;margin-bottom:64px}
+.contact-box h2{color:#fff;font-size:32px;margin-bottom:12px}
+.contact-box p{color:rgba(255,255,255,.8);margin-bottom:32px}
+.contact-items{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.ci2{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);padding:12px 24px;border-radius:12px;font-weight:800;font-size:15px}
+.footer{background:#0f172a;color:#94a3b8;padding:32px 40px;text-align:center;font-size:13px}
+.footer strong{color:#fff}
+@media(max-width:768px){
+.cover h1{font-size:36px}
+.grid2,.grid3,.price-grid,.process,.stat-grid{grid-template-columns:1fr}
+.process::before{display:none}
+}
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="logo-box">🗺</div>
+<div class="cover-tag">Hồ Sơ Năng Lực 2025</div>
+<h1>GIS<span>Quy Hoach</span></h1>
+<p class="cover-sub">Chuyển đổi dữ liệu GIS • Thẩm định quy hoạch<br/>Tuân thủ Thông tư 16/2025 BXD</p>
+<div class="cover-divider"></div>
+<div class="cover-info">
+<div class="ci"><div class="ci-label">Hotline</div><div class="ci-val">0332 945 089</div></div>
+<div class="ci"><div class="ci-label">Zalo</div><div class="ci-val">zalo.me/0332945089</div></div>
+<div class="ci"><div class="ci-label">Facebook</div><div class="ci-val">fb.com/Gisquyhoach</div></div>
+</div>
+</div>
+
+<div class="page" id="gioi-thieu">
+<div class="section-tag">Giới thiệu</div>
+<div class="divider"></div>
+<h2>Chúng tôi là ai?</h2>
+<p class="lead">GIS Quy Hoạch là đơn vị chuyên cung cấp dịch vụ chuyển đổi dữ liệu GIS và thẩm định quy hoạch hàng đầu Việt Nam. Với đội ngũ kỹ sư giàu kinh nghiệm từ các công ty GIS lâu đời, chúng tôi đã hỗ trợ hàng trăm đơn vị tư vấn quy hoạch trên cả nước hoàn thành hồ sơ GIS chuẩn Thông tư 16/2025 BXD.</p>
+
+<div class="stat-grid">
+<div class="stat"><div class="stat-num">100<span>%</span></div><div class="stat-label">Tuân thủ TT16</div></div>
+<div class="stat"><div class="stat-num">1-3<span>ngay</span></div><div class="stat-label">Hoàn thành</div></div>
+<div class="stat"><div class="stat-num">0<span>d</span></div><div class="stat-label">Trả trước</div></div>
+<div class="stat"><div class="stat-num">50<span>+</span></div><div class="stat-label">Dự án hoàn thành</div></div>
+</div>
+
+<div class="section-tag">Dịch vụ</div>
+<div class="divider"></div>
+<h2>Giải pháp toàn diện cho hạng mục GIS</h2>
+<p class="lead">Đội ngũ kỹ sư giàu kinh nghiệm, công nghệ xây dựng riêng cho quy hoạch Việt Nam.</p>
+<div class="grid3">
+<div class="card"><div class="card-icon">🔄</div><h3>Chuyển đổi CAD sang GIS</h3><p>Chuyển đổi toàn bộ hồ sơ từ định dạng CAD (.dwg, .dxf) sang cơ sở dữ liệu GIS chuẩn GeoPackage theo Thông tư 16.</p></div>
+<div class="card"><div class="card-icon">🔬</div><h3>Quét lỗi tự động</h3><p>Công cụ quét lỗi topology, sai hệ toạ độ, thiếu trường thuộc tính hoàn toàn tự động — đảm bảo sản phẩm đồng nhất.</p></div>
+<div class="card"><div class="card-icon">📦</div><h3>Đóng gói hồ sơ chuẩn</h3><p>Cấu trúc thư mục, đặt tên lớp, trường thuộc tính đúng chuẩn theo quy định — thuận lợi cho thẩm định và nghiệm thu.</p></div>
+<div class="card"><div class="card-icon">🌐</div><h3>Nền tảng WebGIS</h3><p>Hỗ trợ công cụ WebGIS để xem và tra cứu sản phẩm trực tiếp trên web — thuận lợi cho hội đồng thẩm định xem song song.</p></div>
+<div class="card"><div class="card-icon">📄</div><h3>Hỗ trợ hồ sơ thầu</h3><p>Sẵn sàng đồng hành hỗ trợ năng lực, hồ sơ dự thầu, hồ sơ nghiệm thu liên quan đến hạng mục GIS.</p></div>
+<div class="card"><div class="card-icon">🤝</div><h3>Đồng hành toàn gói thầu</h3><p>Từ buổi gặp đầu tiên với chủ đầu tư đến cái bắt tay sau nghiệm thu thành công — chúng tôi ở đây suốt hành trình.</p></div>
+</div>
+
+<div class="section-tag">Quy trình</div>
+<div class="divider"></div>
+<h2>Hoàn thành trong 1-3 ngày</h2>
+<p class="lead">4 bước đơn giản, minh bạch, hiệu quả.</p>
+<div class="process">
+<div class="step"><div class="step-num">1</div><h4>Tiếp nhận hồ sơ</h4><p>Gửi hồ sơ CAD + tài liệu quy hoạch. Báo giá trong 2 giờ.</p></div>
+<div class="step"><div class="step-num">2</div><h4>Chuyển đổi &amp; xử lý</h4><p>Kỹ sư GIS triển khai chuyển đổi, phân lớp, hệ toạ độ VN2000.</p></div>
+<div class="step"><div class="step-num">3</div><h4>Quét lỗi &amp; kiểm tra</h4><p>Quét toàn bộ lỗi topology, thuộc tính, khớp 100% hồ sơ gốc.</p></div>
+<div class="step"><div class="step-num">4</div><h4>Bàn giao &amp; hỗ trợ</h4><p>Giao GeoPackage + WebGIS. Thanh toán sau nghiệm thu.</p></div>
+</div>
+
+<div class="section-tag">Cam kết</div>
+<div class="divider"></div>
+<h2>Chúng tôi cam kết với bạn</h2>
+<br/>
+<div class="commit-list">
+<div class="commit"><div class="commit-icon">🤝</div><div><h4>Trách nhiệm cao · Ụy tín · Tận tình</h4><p>Đồng hành cùng đối tác với tinh thần trách nhiệm cao nhất. Không bỏ lại đối tác giữa chừng.</p></div></div>
+<div class="commit"><div class="commit-icon">🔒</div><div><h4>Bảo mật dữ liệu tuyệt đối</h4><p>Toàn bộ hồ sơ được xử lý trong môi trường kín. Ký hợp đồng bảo mật nếu cần.</p></div></div>
+<div class="commit"><div class="commit-icon">⚡</div><div><h4>Tốc độ &amp; chất lượng</h4><p>Hoàn thành trong 1-3 ngày lam viec. Không để đối tác phải chờ quá deadline.</p></div></div>
+<div class="commit"><div class="commit-icon">💰</div><div><h4>Làm trước — Trả sau</h4><p>Không yêu cầu đặt cọc. Thanh toán sau khi kiểm tra và hài lòng với sản phẩm.</p></div></div>
+</div>
+
+<div class="section-tag">Bảng giá</div>
+<div class="divider"></div>
+<h2>Chi phí minh bạch, hợp lý</h2>
+<br/>
+<div class="price-grid">
+<div class="price-card"><div class="price-tier">Cơ bản</div><div class="price-val">2-5 triệu</div><div class="price-sub">Hồ sơ quy mô nhỏ</div><ul class="price-list"><li>✓ Chuyển đổi CAD sang GIS</li><li>✓ Quét lỗi cơ bản</li><li>✓ GeoPackage chuẩn TT16</li><li>✓ Hỗ trợ thẩm định</li></ul></div>
+<div class="price-card featured"><div class="price-tier">Tiêu chuẩn</div><div class="price-val">5-15 triệu</div><div class="price-sub">Hồ sơ quy mô vừa</div><ul class="price-list"><li>✓ Tất cả tính năng Cơ bản</li><li>✓ WebGIS viewer</li><li>✓ Quét lỗi nâng cao</li><li>✓ Đồng hành thẩm định</li><li>✓ Báo cáo kiểm tra chất lượng</li></ul></div>
+<div class="price-card"><div class="price-tier">Toàn diện</div><div class="price-val">Theo thỏa thuận</div><div class="price-sub">Hồ sơ lớn / phức tạp</div><ul class="price-list"><li>✓ Tất cả tính năng Tiêu chuẩn</li><li>✓ Hồ sơ dự thầu GIS</li><li>✓ Hỗ trợ nghiệm thu</li><li>✓ Đồng hành toàn gói thầu</li></ul></div>
+</div>
+
+<div class="contact-box">
+<h2>Liên hệ tư vấn miễn phí</h2>
+<p>Gửi hồ sơ — nhận báo giá trong 2 giờ — làm trước trả sau</p>
+<div class="contact-items">
+<div class="ci2">📞 0332 945 089</div>
+<div class="ci2">💬 Zalo: 0332 945 089</div>
+<div class="ci2">📘 fb.com/Gisquyhoach</div>
+</div>
+</div>
+</div>
+
+<div class="footer">
+<strong>GIS Quy Hoach</strong> — Chuyển đổi dữ liệu GIS chuan Thông tư 16/2025 BXD<br/>
+Hotline: 0332 945 089 | Zalo: zalo.me/0332945089 | Facebook: fb.com/Gisquyhoach
+</div>
+</body>
+</html>

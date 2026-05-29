@@ -11,6 +11,7 @@ API: POST http://localhost:8000/chat
   - API key không hardcode — load từ .env
 """
 import os
+import re
 import csv
 from datetime import datetime
 from fastapi import FastAPI, Request
@@ -101,11 +102,26 @@ class ChatResponse(BaseModel):
     error: str = ""
 
 class ContactRequest(BaseModel):
-    name: str = Field(..., max_length=100)
+    name: str = Field(..., min_length=2, max_length=100)
     phone: str = Field(..., max_length=20)
     email: str = Field("", max_length=100)
     project_type: str = Field("", max_length=100)
     message: str = Field("", max_length=2000)
+    website: str = Field("", max_length=0)   # Honeypot: phải rỗng
+
+    @validator("phone")
+    def validate_phone(cls, v):
+        cleaned = re.sub(r'[\s\-\.]', '', v)
+        pattern = r'^(0|\+84)(3[2-9]|5[25689]|7[06-9]|8[0-9]|9[0-9])\d{7}$'
+        if not re.match(pattern, cleaned):
+            raise ValueError("Số điện thoại không hợp lệ")
+        return cleaned
+
+    @validator("website")
+    def validate_honeypot(cls, v):
+        if v and v.strip():
+            raise ValueError("Bot detected")
+        return v
 
 class ContactResponse(BaseModel):
     status: str
