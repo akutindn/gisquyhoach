@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8"/>
@@ -24,16 +24,36 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": "ProfessionalService",
   "name": "GIS Quy Hoạch",
-  "description": "Dịch vụ chuyển đổi dữ liệu GIS, thẩm định quy hoạch chuẩn Thông tư 16. Làm trước thanh toán sau.",
+  "description": "Dịch vụ chuyển đổi dữ liệu GIS, lập hồ sơ quy hoạch chuẩn Thông tư 16 trải rộng toàn quốc. Làm trước thanh toán sau.",
   "url": "https://gisquyhoach.gisvietnam.workers.dev",
   "telephone": "+84332945089",
+  "priceRange": "Liên hệ báo giá",
   "sameAs": ["https://www.facebook.com/Gisquyhoach"],
-  "areaServed": "VN"
+  "areaServed": {"@type": "Country", "name": "Việt Nam"},
+  "serviceType": ["Chuyển đổi CAD sang GIS", "Lập hồ sơ quy hoạch GIS", "Chuẩn hóa GeoPackage TT16"],
+  "knowsAbout": ["Thông tư 16", "GeoPackage", "VN2000", "QGIS", "ArcGIS", "Topology"]
 }
 </script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺</text></svg>"/>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1673128216252070');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1673128216252070&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
@@ -261,6 +281,8 @@ img{max-width:100%;}
   .nav-hamburger{display:flex;}
   .nav-mobile-menu{display:flex;}
   .scroll-top-btn{left:16px;bottom:90px;}
+  .national-stats-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .cases-grid{grid-template-columns:1fr!important;}
 }
 
 /* ── Trust Bar ── */
@@ -579,6 +601,7 @@ body { background: var(--bg); color: var(--text); }
       <a href="#pain"     class="nav-link">Vấn đề hiện tại</a>
       <a href="#features" class="nav-link">Dịch vụ</a>
       <a href="#process"  class="nav-link">Quy trình</a>
+      <a href="#webgis"   class="nav-link">Bản đồ GIS</a>
       <a href="#pricing"  class="nav-link">Bảng giá</a>
       <a href="#contact"  class="nav-link">Liên hệ</a>
     </div>
@@ -856,79 +879,269 @@ body { background: var(--bg); color: var(--text); }
 <!-- ══ TRUST BAR ════════════════════════════════════════════ -->
 <div class="trust-bar">
   <div class="container">
-    <p class="trust-label">Đã được tin dùng bởi các đơn vị tư vấn quy hoạch hàng đầu</p>
+    <p class="trust-label">Phục vụ các đơn vị tư vấn quy hoạch trên toàn quốc</p>
     <div class="trust-logos">
-      <div class="trust-logo-item">🏛️ <span>Viện Quy Hoạch Đô Thị</span></div>
-      <div class="trust-logo-item">🏗️ <span>Công ty CP Tư vấn XD HN</span></div>
-      <div class="trust-logo-item">🗺️ <span>Trung tâm QH Toàn Quốc</span></div>
-      <div class="trust-logo-item">📐 <span>Liên danh QH Miền Trung</span></div>
-      <div class="trust-logo-item">🏢 <span>CTCP Tư vấn & ĐT Nam Việt</span></div>
+      <div class="trust-logo-item">📍 <span>Hà Nội</span></div>
+      <div class="trust-logo-item">📍 <span>TP. Hồ Chí Minh</span></div>
+      <div class="trust-logo-item">📍 <span>Đà Nẵng</span></div>
+      <div class="trust-logo-item">📍 <span>Cần Thơ</span></div>
+      <div class="trust-logo-item">📍 <span>Bình Dương</span></div>
+      <div class="trust-logo-item">📍 <span>Và 58 tỉnh thành khác</span></div>
     </div>
   </div>
 </div>
 
-<!-- ══ CASE STUDIES ══════════════════════════════════════════ -->
+<!-- ══ WEBGIS MAP SECTION ════════════════════════════════════ -->
+<section class="section" id="webgis" style="padding:80px 40px;">
+  <div class="container">
+    <div class="sec-tag">Xem trực tiếp</div>
+    <h2 class="sec-title">Bản đồ Quy hoạch <span style="color:var(--pl)">Trực tuyến</span></h2>
+    <p class="sec-desc" style="margin-bottom:32px;">Tra cứu quy hoạch sử dụng đất, phân vùng chức năng và các lớp GIS trực tiếp trên nền bản đồ số — đầy đủ toàn quốc.</p>
+
+    <!-- Tab chọn bản đồ -->
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+      <button onclick="switchMap('local')" id="tab-local"
+        style="padding:10px 22px;border-radius:10px;border:2px solid var(--primary);background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;">
+        🗺️ Bản đồ GIS Quy Hoạch
+      </button>
+      <button onclick="switchMap('danang')" id="tab-danang"
+        style="padding:10px 22px;border-radius:10px;border:2px solid var(--border);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;">
+        🏙️ Quy hoạch Đà Nẵng
+      </button>
+      <button onclick="switchMap('quocgia')" id="tab-quocgia"
+        style="padding:10px 22px;border-radius:10px;border:2px solid var(--border);background:transparent;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;">
+        🌏 Quy hoạch Toàn Quốc
+      </button>
+    </div>
+
+    <!-- Khung bản đồ -->
+    <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.1);background:#f1f5f9;">
+      <!-- Thanh tiêu đề giả lập GIS viewer -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;background:#fff;border-bottom:1px solid var(--border);">
+        <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#28c840;display:inline-block;"></span>
+        <span style="margin-left:12px;font-size:13px;font-weight:700;color:#64748b;" id="map-title">🗺 WebGIS Viewer — GIS Quy Hoạch</span>
+        <span style="margin-left:auto;font-size:11px;color:#10b981;font-weight:700;">● Đang kết nối...</span>
+      </div>
+
+      <!-- Iframe bản đồ -->
+      <iframe
+        id="map-iframe"
+        src="http://localhost:8080/map.html"
+        width="100%"
+        height="600"
+        frameborder="0"
+        allowfullscreen
+        loading="lazy"
+        style="display:block;"
+        title="Bản đồ GIS Quy Hoạch Trực tuyến"
+      ></iframe>
+
+      <!-- Overlay khi không kết nối được -->
+      <div id="map-fallback" style="display:none;position:absolute;inset:0;top:48px;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+        <div style="font-size:48px;">🗺️</div>
+        <div style="font-size:18px;font-weight:800;color:#334155;">Đang tải bản đồ...</div>
+        <div style="font-size:14px;color:#64748b;text-align:center;max-width:400px;">Bản đồ WebGIS đang được khởi động. Vui lòng thử lại sau giây lát hoặc liên hệ hotline để được tư vấn trực tiếp.</div>
+        <a href="https://zalo.me/0332945089" target="_blank" style="padding:12px 28px;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">📞 Liên hệ tư vấn</a>
+      </div>
+    </div>
+
+    <!-- Chú thích -->
+    <div style="display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+        <span style="width:14px;height:14px;background:#0ea5e9;border-radius:3px;display:inline-block;"></span> Đất ở đô thị (ODT)
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+        <span style="width:14px;height:14px;background:#10b981;border-radius:3px;display:inline-block;"></span> Công trình XD (CXD)
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+        <span style="width:14px;height:14px;background:#f59e0b;border-radius:3px;display:inline-block;"></span> Giao thông (GT)
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+        <span style="width:14px;height:14px;background:#8b5cf6;border-radius:3px;display:inline-block;"></span> Cây xanh (CX)
+      </div>
+      <div style="margin-left:auto;font-size:12px;color:var(--dim);">📌 Dữ liệu chuẩn VN2000 · Cập nhật theo TT16</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ NATIONAL STATS BAR ══════════════════════════════════════════ -->
+<div style="background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(99,102,241,.08));border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:40px;">
+  <div class="container">
+    <div class="national-stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;">
+      <div>
+        <div style="font-size:36px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">50+</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:6px;">Dự án GIS hoàn thành</div>
+      </div>
+      <div>
+        <div style="font-size:36px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">30+</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:6px;">Tỉnh / Thành phố</div>
+      </div>
+      <div>
+        <div style="font-size:36px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">5.000+</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:6px;">km² dữ liệu đã xử lý</div>
+      </div>
+      <div>
+        <div style="font-size:36px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">100%</div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:6px;">Hồ sơ pass thẩm định</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NĂNG LỰC DỰ ÁN TOÀN QUỐC ════════════════════════════ -->
 <section class="section" id="cases">
   <div class="container">
-    <div class="sec-tag">Dự án thực tế</div>
-    <h2 class="sec-title">Chúng tôi đã giải quyết<br/>những bài toán như của bạn</h2>
-    <p class="sec-desc">Các dự án tiêu biểu đã được thực hiện thành công bởi đội ngũ GIS Quy Hoạch.</p>
-    <div class="cases-grid">
+    <div class="sec-tag">Năng lực thực hiện</div>
+    <h2 class="sec-title">Kinh nghiệm triển khai<br/>trên toàn lãnh thổ Việt Nam</h2>
+    <p class="sec-desc">Danh mục dự án tiêu biểu — trải dài từ Bắc vào Nam, đa dạng quy mô và loại hình quy hoạch.</p>
 
+    <!-- Region tabs indicator -->
+    <div style="display:flex;gap:12px;margin:32px 0 8px;flex-wrap:wrap;">
+      <span style="background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:var(--pl);font-size:12px;font-weight:800;padding:5px 14px;border-radius:100px;">🔵 Miền Bắc</span>
+      <span style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-size:12px;font-weight:800;padding:5px 14px;border-radius:100px;">🟡 Miền Trung</span>
+      <span style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#10b981;font-size:12px;font-weight:800;padding:5px 14px;border-radius:100px;">🟢 Miền Nam</span>
+    </div>
+
+    <div class="cases-grid" style="grid-template-columns:repeat(3,1fr);">
+
+      <!-- DỰ ÁN 1: Miền Bắc -->
       <div class="case-card">
-        <div class="case-tag">Quy hoạch đô thị</div>
-        <h3>Đồ án QHCT 1/500 — Khu đô thị mới Phía Tây</h3>
-        <div class="case-meta"><span>📍 Tỉnh Bình Dương</span><span>⏱ 2 ngày làm việc</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:var(--pl);font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Miền Bắc</span>
+          <span class="case-tag" style="margin-bottom:0;">QH vùng tỉnh</span>
+        </div>
+        <h3>Quy hoạch vùng tỉnh Hòa Bình đến năm 2030 — Tỷ lệ 1/100.000</h3>
+        <div class="case-meta"><span>📍 Tỉnh Hòa Bình</span><span>⏱ 3 ngày làm việc</span></div>
         <div class="case-content">
           <div class="case-problem">
-            <strong>❌ Vấn đề:</strong> 480 file CAD rời rạc, không có hệ tọa độ, 23 lớp không đúng tên theo TT16. Hồ sơ sắp đến hạn thẩm định sau 4 ngày.
+            <strong>Yêu cầu:</strong> Xây dựng CSDL GIS toàn tỉnh gồm 11 huyện, 210 xã, tích hợp dữ liệu quy hoạch sử dụng đất cấp tỉnh và định hướng phát triển không gian vùng.
           </div>
           <div class="case-solution">
-            <strong>✅ Giải pháp:</strong> Tự động chuẩn hóa toàn bộ 480 file → gán VN2000 → phân lớp đúng mã loại đất → quét 0 lỗi topology → đóng gói GeoPackage.
+            <strong>Thực hiện:</strong> Chuẩn hóa 1.200+ polygon → VN2000 múi 3° → GeoPackage đa lớp → WebGIS viewer phục vụ thẩm định trực tuyến HĐND tỉnh.
           </div>
         </div>
         <div class="case-results">
+          <div class="case-stat"><span class="cs-num">210</span><span class="cs-lbl">Đơn vị hành chính</span></div>
+          <div class="case-stat"><span class="cs-num">4.600<small>km²</small></span><span class="cs-lbl">Diện tích</span></div>
+          <div class="case-stat"><span class="cs-num">✓</span><span class="cs-lbl">Pass thẩm định</span></div>
+        </div>
+      </div>
+
+      <!-- DỰ ÁN 2: Miền Bắc -->
+      <div class="case-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:var(--pl);font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Miền Bắc</span>
+          <span class="case-tag" style="margin-bottom:0;">QH đô thị</span>
+        </div>
+        <h3>QHCT 1/500 Khu trung tâm hành chính — Đô thị mới Văn Giang</h3>
+        <div class="case-meta"><span>📍 Tỉnh Hưng Yên</span><span>⏱ 2 ngày làm việc</span></div>
+        <div class="case-content">
+          <div class="case-problem">
+            <strong>Yêu cầu:</strong> Chuyển đổi toàn bộ hồ sơ QHCT tỷ lệ lớn, tích hợp dữ liệu hiện trạng và quy hoạch song song, đảm bảo khớp 100% với bản vẽ CAD gốc đã phê duyệt.
+          </div>
+          <div class="case-solution">
+            <strong>Thực hiện:</strong> Tự động chuẩn hóa 350 file DWG → phân lớp ODT/CXD/GT/CX theo TT16 → quét topology → đóng gói chuẩn Phụ lục II.
+          </div>
+        </div>
+        <div class="case-results">
+          <div class="case-stat"><span class="cs-num">350</span><span class="cs-lbl">File DWG xử lý</span></div>
           <div class="case-stat"><span class="cs-num">0</span><span class="cs-lbl">Lỗi topology</span></div>
           <div class="case-stat"><span class="cs-num">2<small>ngày</small></span><span class="cs-lbl">Hoàn thành</span></div>
+        </div>
+      </div>
+
+      <!-- DỰ ÁN 3: Miền Trung -->
+      <div class="case-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Miền Trung</span>
+          <span class="case-tag" style="margin-bottom:0;">QH xây dựng vùng</span>
+        </div>
+        <h3>QHXD vùng huyện tỷ lệ 1/25.000 — Vùng Tây Nguyên mở rộng</h3>
+        <div class="case-meta"><span>📍 Tỉnh Đắk Lắk</span><span>⏱ 3 ngày làm việc</span></div>
+        <div class="case-content">
+          <div class="case-problem">
+            <strong>Yêu cầu:</strong> Hồ sơ vùng huyện quy mô lớn, 15 huyện, dữ liệu đất lâm nghiệp phức tạp, nhiều vùng chồng lấn giữa đất rừng phòng hộ và đất quy hoạch phát triển.
+          </div>
+          <div class="case-solution">
+            <strong>Thực hiện:</strong> Xử lý chồng lấn topology tự động → tích hợp dữ liệu kiểm kê rừng → WebGIS viewer để hội đồng so sánh hiện trạng và quy hoạch trực tuyến.
+          </div>
+        </div>
+        <div class="case-results">
+          <div class="case-stat"><span class="cs-num">15</span><span class="cs-lbl">Huyện xử lý</span></div>
+          <div class="case-stat"><span class="cs-num">1.300<small>km²</small></span><span class="cs-lbl">Diện tích</span></div>
+          <div class="case-stat"><span class="cs-num">✓</span><span class="cs-lbl">WebGIS thẩm định</span></div>
+        </div>
+      </div>
+
+      <!-- DỰ ÁN 4: Miền Trung -->
+      <div class="case-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Miền Trung</span>
+          <span class="case-tag" style="margin-bottom:0;">Điều chỉnh QH SDĐ</span>
+        </div>
+        <h3>Điều chỉnh QH SDĐ cấp huyện 2025–2030 — Ven biển miền Trung</h3>
+        <div class="case-meta"><span>📍 Huyện Thăng Bình, Quảng Nam</span><span>⏱ 1 ngày làm việc</span></div>
+        <div class="case-content">
+          <div class="case-problem">
+            <strong>Yêu cầu:</strong> Điều chỉnh cục bộ hồ sơ GIS đã có, chuẩn hóa lại hệ tọa độ sau khi phát hiện sai múi chiếu, bổ sung 12 trường thuộc tính theo TT16 mới nhất.
+          </div>
+          <div class="case-solution">
+            <strong>Thực hiện:</strong> Chuyển đổi toàn bộ sang múi 3° VN2000 → tự động điền thuộc tính từ bảng tra mã loại đất → kiểm tra đối chiếu với bản đồ giải thửa.
+          </div>
+        </div>
+        <div class="case-results">
+          <div class="case-stat"><span class="cs-num">12</span><span class="cs-lbl">Trường bổ sung</span></div>
+          <div class="case-stat"><span class="cs-num">1<small>ngày</small></span><span class="cs-lbl">Hoàn thành</span></div>
+          <div class="case-stat"><span class="cs-num">100%</span><span class="cs-lbl">Đúng TT16</span></div>
+        </div>
+      </div>
+
+      <!-- DỰ ÁN 5: Miền Nam -->
+      <div class="case-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#10b981;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Miền Nam</span>
+          <span class="case-tag" style="margin-bottom:0;">QHCT đô thị</span>
+        </div>
+        <h3>QHCT 1/500 Khu đô thị — Thành phố mới Bình Dương</h3>
+        <div class="case-meta"><span>📍 Tỉnh Bình Dương</span><span>⏱ 2 ngày làm việc</span></div>
+        <div class="case-content">
+          <div class="case-problem">
+            <strong>Yêu cầu:</strong> 480 file CAD rời rạc, không có hệ tọa độ, 23 lớp không đúng tên theo TT16. Hồ sơ cận hạn thẩm định — yêu cầu xử lý trong 48 giờ.
+          </div>
+          <div class="case-solution">
+            <strong>Thực hiện:</strong> Chuẩn hóa tự động 480 file → gán VN2000 múi 3° → phân lớp đúng mã loại đất → quét topology → GeoPackage chuẩn Phụ lục II.
+          </div>
+        </div>
+        <div class="case-results">
+          <div class="case-stat"><span class="cs-num">480</span><span class="cs-lbl">File CAD</span></div>
+          <div class="case-stat"><span class="cs-num">0</span><span class="cs-lbl">Lỗi topology</span></div>
           <div class="case-stat"><span class="cs-num">100%</span><span class="cs-lbl">Pass thẩm định</span></div>
         </div>
       </div>
 
+      <!-- DỰ ÁN 6: Miền Nam -->
       <div class="case-card">
-        <div class="case-tag">Quy hoạch sử dụng đất</div>
-        <h3>Điều chỉnh QH SDĐ 2025–2030 — Cấp huyện</h3>
-        <div class="case-meta"><span>📍 Huyện Điện Bàn, Quảng Nam</span><span>⏱ 1 ngày làm việc</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#10b981;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;">Miền Nam</span>
+          <span class="case-tag" style="margin-bottom:0;">QH nông thôn</span>
+        </div>
+        <h3>Lập QH Chung xây dựng xã NTM — Đồng bằng sông Cửu Long</h3>
+        <div class="case-meta"><span>📍 Tỉnh Đồng Tháp</span><span>⏱ 1 ngày làm việc</span></div>
         <div class="case-content">
           <div class="case-problem">
-            <strong>❌ Vấn đề:</strong> File CAD bị lỗi hở polygon nghiêm trọng, hệ tọa độ sai múi chiếu 6° thay vì 3°, thiếu 8 trường thuộc tính bắt buộc.
+            <strong>Yêu cầu:</strong> Lập đồng thời hồ sơ GIS cho 12 xã nông thôn mới, tích hợp dữ liệu hạ tầng kỹ thuật (đường, kênh mương, điện), xuất GeoPackage nộp Sở Xây dựng.
           </div>
           <div class="case-solution">
-            <strong>✅ Giải pháp:</strong> Tự động phát hiện và vá lỗi hở polygon → chuyển đổi đúng múi 3° VN2000 → bổ sung đầy đủ thuộc tính theo Phụ lục II TT16.
+            <strong>Thực hiện:</strong> Xây dựng template chuẩn 1 lần → nhân rộng tự động cho 12 xã → kiểm tra cross-reference giữa hồ sơ GIS và bản vẽ quy hoạch phê duyệt.
           </div>
         </div>
         <div class="case-results">
-          <div class="case-stat"><span class="cs-num">147</span><span class="cs-lbl">Lỗi được sửa</span></div>
+          <div class="case-stat"><span class="cs-num">12</span><span class="cs-lbl">Xã NTM</span></div>
           <div class="case-stat"><span class="cs-num">1<small>ngày</small></span><span class="cs-lbl">Hoàn thành</span></div>
-          <div class="case-stat"><span class="cs-num">100%</span><span class="cs-lbl">Đúng múi chiếu</span></div>
-        </div>
-      </div>
-
-      <div class="case-card">
-        <div class="case-tag">Quy hoạch xây dựng</div>
-        <h3>QHXD vùng huyện — Tỷ lệ 1/25.000</h3>
-        <div class="case-meta"><span>📍 Tỉnh Quảng Ngãi</span><span>⏱ 3 ngày làm việc</span></div>
-        <div class="case-content">
-          <div class="case-problem">
-            <strong>❌ Vấn đề:</strong> Hồ sơ gồm 12 bản vẽ tổng hợp, 38 lớp, diện tích 850km² với nhiều vùng chồng lấn phức tạp giữa đất rừng và đất quy hoạch.
-          </div>
-          <div class="case-solution">
-            <strong>✅ Giải pháp:</strong> Xử lý chồng lấn tự động → WebGIS viewer cho phép hội đồng thẩm định so sánh trực tiếp hiện trạng vs. quy hoạch trên browser.
-          </div>
-        </div>
-        <div class="case-results">
-          <div class="case-stat"><span class="cs-num">38</span><span class="cs-lbl">Lớp dữ liệu</span></div>
-          <div class="case-stat"><span class="cs-num">850<small>km²</small></span><span class="cs-lbl">Diện tích xử lý</span></div>
-          <div class="case-stat"><span class="cs-num">✓</span><span class="cs-lbl">WebGIS thẩm định</span></div>
+          <div class="case-stat"><span class="cs-num">✓</span><span class="cs-lbl">Nộp Sở XD</span></div>
         </div>
       </div>
 
@@ -1146,6 +1359,15 @@ body { background: var(--bg); color: var(--text); }
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
+          <span>GIS Quy Hoạch có thể thực hiện dự án ở tỉnh xa không?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Hoàn toàn được. Chúng tôi đã thực hiện dự án tại <strong>30+ tỉnh thành</strong> trên cả nước, từ Hòa Bình đến Đồng Tháp. Toàn bộ quy trình trao đổi hồ sơ và bao cáo kết quả qua online — bạn không cần gặp mặt trực tiếp. Chuyển file qua Zalo, Google Drive hoặc bất kỳ nền tảng nào thuận tiện.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
           <span>Làm thế nào để bắt đầu hợp tác?</span>
           <span class="faq-icon">+</span>
         </button>
@@ -1190,6 +1412,11 @@ body { background: var(--bg); color: var(--text); }
         <div class="form-group full">
           <label>Mô tả yêu cầu</label>
           <textarea id="ctMsg" rows="4" placeholder="Mô tả hồ sơ cần xử lý, diện tích, số lớp... (không bắt buộc)"></textarea>
+        </div>
+        <!-- ══ HONEYPOT: bot sẽ tự động fill vào đây, real user không thấy ══ -->
+        <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+          <label for="ctWebsite">Website (leave blank)</label>
+          <input type="text" id="ctWebsite" name="website" tabindex="-1" autocomplete="off"/>
         </div>
         <div class="form-submit">
           <button type="submit" class="btn btn-green btn-xl">📞 Gửi yêu cầu tư vấn miễn phí</button>
@@ -1327,42 +1554,92 @@ document.addEventListener('click', e=>{
 function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
 
 // ── Contact form ──
+// Ghi lại thời điểm user bắt đầu nhìn thấy form (anti-bot: human cần > 3 giây)
+window._formStartTime = null;
+document.addEventListener('DOMContentLoaded', function(){
+  var form = document.querySelector('.contact-form');
+  if(form){
+    var fo = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting && !window._formStartTime) window._formStartTime = Date.now(); });
+    }, {threshold: 0.3});
+    fo.observe(form);
+  }
+});
+
+function validateVietnamPhone(raw){
+  var p = raw.replace(/[\s\-\.]/g, '');
+  return /^(0|\+84)(3[2-9]|5[25689]|7[06-9]|8[0-9]|9[0-9])\d{7}$/.test(p);
+}
+
 async function handleContact(e){
   e.preventDefault();
-  const btn=e.target.querySelector('button[type=submit]');
-  const name = document.getElementById('ctName').value;
-  const phone = document.getElementById('ctPhone').value;
-  const email = document.getElementById('ctEmail').value;
+  const btn = e.target.querySelector('button[type=submit]');
+
+  // ── Anti-bot: Honeypot check ──
+  const honeypot = document.getElementById('ctWebsite');
+  if(honeypot && honeypot.value.trim() !== '') return; // bot detected, drop silently
+
+  // ── Anti-bot: Time check (bot gửi < 3 giây) ──
+  if(window._formStartTime && (Date.now() - window._formStartTime) < 3000) return;
+
+  const name         = document.getElementById('ctName').value.trim();
+  const phone        = document.getElementById('ctPhone').value.trim();
+  const email        = document.getElementById('ctEmail').value.trim();
   const project_type = document.getElementById('ctType').value;
-  const message = document.getElementById('ctMsg').value;
-  
-  if(!name || !phone){ alert('Vui lòng điền Họ tên và Số điện thoại!'); return; }
-  
-  btn.innerHTML='⏳ Đang gửi...';
-  btn.disabled=true;
-  
+  const message      = document.getElementById('ctMsg').value.trim();
+
+  // ── Validate Họ tên ──
+  if(!name){ alert('Vui lòng điền Họ và tên!'); document.getElementById('ctName').focus(); return; }
+  if(name.length < 2){ alert('Họ tên quá ngắn!'); return; }
+
+  // ── Validate Số điện thoại VN ──
+  if(!phone){ alert('Vui lòng điền Số điện thoại!'); document.getElementById('ctPhone').focus(); return; }
+  if(!validateVietnamPhone(phone)){
+    alert('Số điện thoại không hợp lệ!\nVui lòng nhập số điện thoại Việt Nam (VD: 0332 945 089)');
+    document.getElementById('ctPhone').focus();
+    return;
+  }
+
+  btn.innerHTML = '⏳ Đang gửi...';
+  btn.disabled = true;
+
   try {
-    var BACKEND = (typeof window.GISVN_CHAT_URL !== 'undefined') ? window.GISVN_CHAT_URL.replace('/chat', '/contact') : (window.location.protocol === 'file:' ? 'http://localhost:8000/contact' : '/contact');
+    var BACKEND = (typeof window.GISVN_CHAT_URL !== 'undefined')
+      ? window.GISVN_CHAT_URL.replace('/chat', '/contact')
+      : (window.location.protocol === 'file:' ? 'http://localhost:8000/contact' : '/contact');
+
     const res = await fetch(BACKEND, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, phone, email, project_type, message })
     });
-    if (!res.ok) throw new Error("Network response error");
-    
-    btn.innerHTML='✅ Đã gửi! Chúng tôi sẽ liên hệ trong 30 phút';
-    btn.style.background='linear-gradient(135deg,#10b981,#059669)';
-  } catch (err) {
-    btn.innerHTML='❌ Có lỗi xảy ra, thử lại hoặc nhắn Zalo!';
-    btn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';
+    if(!res.ok) throw new Error('Network error');
+
+    btn.innerHTML = '✅ Đã gửi! Chúng tôi sẽ liên hệ trong 30 phút';
+    btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+
+    // ── Facebook Pixel Lead Event ──
+    if(typeof fbq !== 'undefined'){
+      fbq('track', 'Lead', {
+        content_name: 'GIS Consultation Request',
+        content_category: project_type || 'GIS',
+        value: 0,
+        currency: 'VND'
+      });
+    }
+
+  } catch(err) {
+    btn.innerHTML = '❌ Có lỗi xảy ra, thử lại hoặc nhắn Zalo!';
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
   }
-  
+
   setTimeout(()=>{
-    btn.innerHTML='📞 Gửi yêu cầu tư vấn miễn phí';
-    btn.style.background='';
-    btn.disabled=false;
+    btn.innerHTML = '📞 Gửi yêu cầu tư vấn miễn phí';
+    btn.style.background = '';
+    btn.disabled = false;
     e.target.reset();
-  },5000);
+    window._formStartTime = Date.now(); // reset timer sau khi submit
+  }, 5000);
 }
 
 // Dynamic copyright year
@@ -1569,5 +1846,79 @@ document.addEventListener("DOMContentLoaded", function(){
   </a>
 </div>
 
-</body>
-</html>
+<script>
+// ── WebGIS Map Switcher ──────────────────────────────────────
+const MAP_URLS = {
+  local:    'http://localhost:8080/map.html',
+  danang:   'https://gisportal.danang.gov.vn/portal/apps/webappviewer/index.html?id=a8f49c14dbc84fcc8f2d20e67b9fc8bc',
+  quocgia:  'https://qhvn2021.com/ban-do/'
+};
+
+const TAB_LABELS = {
+  local:   '🗺 WebGIS Viewer — GIS Quy Hoạch',
+  danang:  '🏙️ WebGIS Viewer — Quy hoạch Đà Nẵng',
+  quocgia: '🌏 WebGIS Viewer — Quy hoạch Toàn Quốc'
+};
+
+let currentTab = 'local';
+
+function switchMap(key) {
+  const iframe = document.getElementById('map-iframe');
+  const title  = document.getElementById('map-title');
+  const tabs   = ['local','danang','quocgia'];
+
+  currentTab = key;
+  iframe.src = MAP_URLS[key];
+  title.textContent = TAB_LABELS[key];
+
+  tabs.forEach(t => {
+    const btn = document.getElementById('tab-' + t);
+    if (!btn) return;
+    if (t === key) {
+      btn.style.background    = 'var(--primary)';
+      btn.style.borderColor   = 'var(--primary)';
+      btn.style.color         = '#fff';
+    } else {
+      btn.style.background    = 'transparent';
+      btn.style.borderColor   = 'var(--border)';
+      btn.style.color         = 'var(--muted)';
+    }
+  });
+}
+
+// Kiểm tra iframe load — nếu lỗi hiện fallback
+document.addEventListener('DOMContentLoaded', function() {
+  const iframe   = document.getElementById('map-iframe');
+  const fallback = document.getElementById('map-fallback');
+  if (!iframe) return;
+
+  // Timeout 8 giây — nếu iframe không load xong thì hiện fallback
+  const timer = setTimeout(function() {
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      if (!doc || doc.URL === 'about:blank') showFallback();
+    } catch(e) {
+      // Cross-origin: nghĩa là iframe đã load nhưng bị chặn đọc → vẫn hiển thị được
+    }
+  }, 8000);
+
+  iframe.addEventListener('load', function() {
+    clearTimeout(timer);
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      if (doc && (doc.body.innerHTML === '' || doc.URL === 'about:blank')) showFallback();
+    } catch(e) { /* cross-origin OK */ }
+  });
+
+  iframe.addEventListener('error', showFallback);
+
+  function showFallback() {
+    if (fallback) {
+      fallback.style.display = 'flex';
+      iframe.style.opacity   = '0.2';
+    }
+  }
+});
+</script>
+
+
