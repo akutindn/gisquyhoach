@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>GIS Quy Hoach Da Nang - Tim kiem vung quy hoach</title>
-<meta name="description" content="He thong ban do quy hoach chung TP. Da Nang. Tim kiem, tra cuu thong tin cac phuong xa theo quy hoach 2030."/>
+<title>GIS Quy Hoach Toan Quoc 2026 - Tim kiem dia phan tinh, xa</title>
+<meta name="description" content="Ban do dia phan hanh chinh Viet Nam 2026. Tim kiem, tra cuu thong tin 63 tinh thanh va 3321 xa phuong toan quoc."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text y='22' x='4' font-size='15' font-weight='900' fill='white' font-family='Arial'>QH</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -355,7 +355,7 @@ a{text-decoration:none;color:inherit}
 <div id="ld">
   <div class="ld-logo">
     <div class="ld-ico">QH</div>
-    <div class="ld-name">GIS<span>DaNang</span></div>
+    <div class="ld-name">GIS<span>Toan Quoc</span></div>
   </div>
   <div class="ld-dots">
     <div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div>
@@ -368,15 +368,15 @@ a{text-decoration:none;color:inherit}
   <a class="top-logo" href="#">
     <div class="top-logo-ico">QH</div>
     <div class="top-logo-txt">
-      <div class="n1">GIS<span>DaNang</span></div>
-      <div class="n2">He thong quy hoach chung 2030</div>
+      <div class="n1">GIS<span>Quy Hoach</span></div>
+      <div class="n2">Dia phan hanh chinh Viet Nam 2026</div>
     </div>
   </a>
 
   <div class="top-search-wrap">
     <div class="top-search">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input id="top-inp" type="text" placeholder="Tim kiem phuong, xa, khu vuc..." autocomplete="off"/>
+      <input id="top-inp" type="text" placeholder="Tim kiem tinh, xa, phuong toan quoc..." autocomplete="off"/>
       <button id="top-inp-clear"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div id="top-dd"></div>
@@ -411,12 +411,12 @@ a{text-decoration:none;color:inherit}
           <i class="fa-solid fa-layer-group"></i>Tat ca
           <span class="c-cnt" id="cc-all">0</span>
         </div>
-        <div class="chip" data-f="phuong" id="cf-ph">
-          <i class="fa-solid fa-city"></i>Phuong
+        <div class="chip" data-f="tinh" id="cf-ph">
+          <i class="fa-solid fa-map"></i>Tinh/TP
           <span class="c-cnt" id="cc-ph">0</span>
         </div>
         <div class="chip" data-f="xa" id="cf-xa">
-          <i class="fa-solid fa-tree"></i>Xa
+          <i class="fa-solid fa-city"></i>Xa/Phuong
           <span class="c-cnt" id="cc-xa">0</span>
         </div>
       </div>
@@ -455,9 +455,9 @@ a{text-decoration:none;color:inherit}
     <!-- Legend -->
     <div id="map-legend">
       <div class="ml-title">Chu giai</div>
-      <div class="ml-item"><div class="ml-dot" style="background:#2563eb"></div><span class="ml-name">Phuong</span></div>
-      <div class="ml-item"><div class="ml-dot" style="background:#16a34a"></div><span class="ml-name">Xa</span></div>
-      <div class="ml-item"><div class="ml-dot" style="background:#94a3b8"></div><span class="ml-name">Don vi khac</span></div>
+      <div class="ml-item"><div class="ml-dot" style="background:#2563eb"></div><span class="ml-name">Tinh/Thanh pho</span></div>
+      <div class="ml-item"><div class="ml-dot" style="background:#16a34a"></div><span class="ml-name">Xa/Phuong/TT</span></div>
+      <div class="ml-item"><div class="ml-dot" style="background:#f59e0b"></div><span class="ml-name">Khac</span></div>
     </div>
 
     <!-- Coords -->
@@ -481,11 +481,15 @@ a{text-decoration:none;color:inherit}
 // ============================================================
 // CONFIG
 // ============================================================
-const CFG = { center:[16.054,108.202], zoom:10, data:'https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/danang_simplified.geojson' };
+const CFG = {
+  center:[16.5,106.0], zoom:6,
+  data:'https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/tinh_2026.geojson',
+  dataXa:'https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/xa_2026.geojson'
+};
 const COLORS = {
-  phuong: { fill:'#2563eb', border:'#1e40af', light:'rgba(37,99,235,.08)', badge:'rgba(37,99,235,.1)', badgeText:'#1e40af' },
-  xa:     { fill:'#16a34a', border:'#14532d', light:'rgba(22,163,74,.08)',  badge:'rgba(22,163,74,.1)',  badgeText:'#14532d' },
-  other:  { fill:'#94a3b8', border:'#64748b', light:'rgba(148,163,184,.08)',badge:'rgba(148,163,184,.1)',badgeText:'#475569' },
+  tinh:  { fill:'#2563eb', border:'#1e40af', light:'rgba(37,99,235,.08)', badge:'rgba(37,99,235,.1)', badgeText:'#1e40af' },
+  xa:    { fill:'#16a34a', border:'#14532d', light:'rgba(22,163,74,.08)',  badge:'rgba(22,163,74,.1)',  badgeText:'#14532d' },
+  other: { fill:'#f59e0b', border:'#b45309', light:'rgba(245,158,11,.08)', badge:'rgba(245,158,11,.1)', badgeText:'#92400e' },
 };
 
 // ============================================================
@@ -508,11 +512,16 @@ const fmtN=(v,d=0)=>{ const n=parseFloat(v); return isNaN(n)||n<=0?'':n.toLocale
 const fmtArea=v=>{ const s=fmtN(v); return s?s+' ha':''; };
 const fmtPop=v=>{ const s=fmtN(v); return s?s+' ng':''; };
 const typeOf=p=>{
-  const n=san(p.tenDoiTuon);
-  if(n.startsWith('Ph')) return 'phuong';
+  // Uu tien tenTinh (cap tinh), tenXa (cap xa)
+  if(p.tenTinh && !p.tenXa) return 'tinh';
+  if(p.tenXa) return 'xa';
+  // fallback theo tenDoiTuon cu (Da Nang data)
+  const n=san(p.tenDoiTuon||'');
+  if(n.startsWith('Ph')) return 'xa';
   if(n.startsWith('X'))  return 'xa';
   return 'other';
 };
+const nameOf=p=>san(p.tenXa||p.tenTinh||p.tenDoiTuon||'');
 const colorOf=p=>COLORS[typeOf(p)];
 
 // ============================================================
@@ -588,12 +597,12 @@ function selectFeature(f,leafLayer,fromMap){
 
   // Show popup on map
   const p=f.properties;
-  const name=san(p.tenDoiTuon);
+  const name=nameOf(p);
   const c=colorOf(p);
   const t=typeOf(p);
-  const typeLbl=t==='phuong'?'Phuong':t==='xa'?'Xa':'Don vi';
-  const area=fmtArea(p.dienTichQH||(p.Shape_Area/10000));
-  const pop=fmtPop(p.danSoHienT);
+  const typeLbl=t==='tinh'?'Tinh/TP':t==='xa'?'Xa/Phuong':'Don vi';
+  const area=fmtArea(p.dienTich||(p.SHAPE_Area/10000)||p.dienTichQH);
+  const pop=fmtPop(p.danSo||p.danSoHienT);
   const id=parseInt(p.OBJECTID)||'?';
 
   if(leafLayer){
@@ -656,13 +665,13 @@ function buildCards(features){
 
   list.innerHTML=features.map(f=>{
     const p=f.properties;
-    const name=san(p.tenDoiTuon)||'Don vi #'+p.OBJECTID;
+    const name=nameOf(p)||'Don vi #'+p.OBJECTID;
     const t=typeOf(p);
     const c=COLORS[t];
-    const typeLbl=t==='phuong'?'Phuong':t==='xa'?'Xa':'Don vi';
-    const area=fmtArea(p.dienTichQH||(p.Shape_Area/10000));
-    const pop=fmtPop(p.danSoHienT);
-    const note=san(p.ghiChu);
+    const typeLbl=t==='tinh'?'Tinh/TP':t==='xa'?'Xa/Phuong':'Don vi';
+    const area=fmtArea(p.dienTich||(p.SHAPE_Area/10000)||p.dienTichQH);
+    const pop=fmtPop(p.danSo||p.danSoHienT);
+    const note=san(p.ghiChu||p.nghiQuyet||'');
     const id=parseInt(p.OBJECTID)||0;
 
     return '<div class="zone-card" id="card-'+id+'" data-id="'+id+'" onclick="onCardClick('+id+')">'
@@ -678,7 +687,7 @@ function buildCards(features){
       +'<div class="zc-stat"><div class="zc-stat-v" style="color:var(--TX3);font-size:11px">#'+id+'</div><div class="zc-stat-k">Ma so</div></div>'
       +'</div>'
       +'<div class="zc-foot">'
-      +'<span class="zc-id"><i class="fa-solid fa-location-dot" style="color:'+c.fill+';margin-right:4px"></i>TP. Da Nang</span>'
+      +'<span class="zc-id"><i class="fa-solid fa-location-dot" style="color:'+c.fill+';margin-right:4px"></i>'+(p.tenTinh||'Viet Nam')+'</span>'
       +'<div class="zc-btns">'
       +'<button class="zc-btn" onclick="event.stopPropagation();zoomToId('+id+')"><i class="fa-solid fa-maximize"></i>Zoom</button>'
       +'</div></div>'
@@ -707,10 +716,10 @@ function zoomToId(id){
 // ============================================================
 function getFiltered(q){
   let list=allFeatures;
-  if(activeFilter!=='all') list=list.filter(f=>typeOf(f.properties)===activeFilter);
+  if(activeFilter!=='all') list=list.filter(f=>typeOf(f.properties)===activeFilter||typeOf(f.properties)===(activeFilter==='tinh'?'tinh':activeFilter));
   if(q){
     const lq=q.toLowerCase();
-    list=list.filter(f=>san(f.properties.tenDoiTuon).toLowerCase().includes(lq));
+    list=list.filter(f=>nameOf(f.properties).toLowerCase().includes(lq)||(f.properties.tenTinh||'').toLowerCase().includes(lq));
   }
   // sort
   list=[...list];
@@ -733,7 +742,7 @@ function setupFilters(){
     $(id).addEventListener('click',()=>{
       ['cf-all','cf-ph','cf-xa'].forEach(x=>$(x).classList.remove('on'));
       $(id).classList.add('on');
-      activeFilter={['cf-all']:'all',['cf-ph']:'phuong',['cf-xa']:'xa'}[id]||'all';
+      activeFilter={['cf-all']:'all',['cf-ph']:'tinh',['cf-xa']:'xa'}[id]||'all';
       applyFilter($('top-inp').value);
     });
   });
@@ -816,11 +825,11 @@ function setupSearch(){
     applyFilter(q);
     let list;
     if(!q){
-      list=allFeatures.map(f=>({name:san(f.properties.tenDoiTuon),feature:f})).sort((a,b)=>a.name.localeCompare(b.name,'vi'));
+      list=allFeatures.map(f=>({name:nameOf(f.properties),feature:f})).sort((a,b)=>a.name.localeCompare(b.name,'vi'));
     } else {
       const lq=q.toLowerCase();
-      list=allFeatures.map(f=>({name:san(f.properties.tenDoiTuon),feature:f}))
-        .filter(it=>it.name.toLowerCase().includes(lq))
+      list=allFeatures.map(f=>({name:nameOf(f.properties),feature:f}))
+        .filter(it=>it.name.toLowerCase().includes(lq)||(it.feature.properties.tenTinh||'').toLowerCase().includes(lq))
         .sort((a,b)=>{
           const as=a.name.toLowerCase().startsWith(lq), bs=b.name.toLowerCase().startsWith(lq);
           return as===bs?a.name.localeCompare(b.name,'vi'):as?-1:1;
@@ -871,10 +880,10 @@ function setupTools(){
 // COUNTS
 // ============================================================
 function updateCounts(){
-  let cPh=0,cXa=0;
-  allFeatures.forEach(f=>{ const t=typeOf(f.properties); if(t==='phuong')cPh++;else if(t==='xa')cXa++; });
+  let cTinh=0,cXa=0;
+  allFeatures.forEach(f=>{ const t=typeOf(f.properties); if(t==='tinh')cTinh++;else if(t==='xa')cXa++; });
   $('cc-all').textContent=allFeatures.length;
-  $('cc-ph').textContent=cPh;
+  $('cc-ph').textContent=cTinh;
   $('cc-xa').textContent=cXa;
   $('visible-cnt').textContent=allFeatures.length;
 }
@@ -887,11 +896,19 @@ async function boot(){
     $('ld-msg').textContent='Khoi tao ban do...';
     initMap(); setupFilters(); setupSearch(); setupTools();
 
-    $('ld-msg').textContent='Dang tai du lieu quy hoach...';
-    const res=await fetch(CFG.data);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const gj=await res.json();
+    // Load ca 2 lop: Tinh va Xa song song
+    $('ld-msg').textContent='Dang tai du lieu toan quoc...';
+    const [resTinh, resXa] = await Promise.all([
+      fetch(CFG.data),
+      fetch(CFG.dataXa)
+    ]);
+    if(!resTinh.ok) throw new Error('HTTP Tinh: '+resTinh.status);
+    if(!resXa.ok)   throw new Error('HTTP Xa: '+resXa.status);
 
+    const [gjTinh, gjXa] = await Promise.all([resTinh.json(), resXa.json()]);
+
+    // Gop 2 lop lai
+    const gj = { type:'FeatureCollection', features: [...gjTinh.features, ...gjXa.features] };
     $('ld-msg').textContent='Dang hien thi '+gj.features.length+' don vi...';
     allFeatures=gj.features;
 
