@@ -232,6 +232,33 @@ img{max-width:100%;}
 .sv-str{color:#f59e0b;}
 .sv-num{color:#c084fc;}
 
+/* ── Web Design Service ── */
+.wd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;}
+.wd-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radiuslg);padding:32px 28px;display:flex;flex-direction:column;gap:0;position:relative;transition:all .3s;overflow:hidden;}
+.wd-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.wd-card:hover{transform:translateY(-6px);border-color:rgba(14,165,233,.3);box-shadow:0 20px 48px rgba(0,0,0,.35);}
+.wd-card:hover::after{transform:scaleX(1);}
+.wd-card-hot{border-color:rgba(245,158,11,.35);background:linear-gradient(160deg,rgba(245,158,11,.06),var(--surface));}
+.wd-card-hot::after{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.wd-hot-label{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#0a0a0a;font-size:11px;font-weight:900;text-align:center;padding:5px;letter-spacing:.06em;text-transform:uppercase;}
+.wd-badge{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;margin-top:28px;margin-bottom:14px;width:fit-content;}
+.wd-card-hot .wd-badge{margin-top:40px;}
+.wd-icon{font-size:38px;margin-bottom:12px;}
+.wd-title{font-size:20px;font-weight:900;margin-bottom:8px;}
+.wd-price{font-size:15px;color:var(--muted);margin-bottom:14px;font-weight:600;}
+.wd-price span{font-size:22px;font-weight:900;color:var(--pl);}
+.wd-desc{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
+.wd-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:28px;flex:1;}
+.wd-list li{font-size:13px;color:var(--muted);line-height:1.5;}
+.wd-btn{display:block;text-align:center;padding:12px 20px;border-radius:10px;font-weight:800;font-size:14px;text-decoration:none;border:1.5px solid var(--border);color:var(--text);transition:all .2s;background:rgba(255,255,255,.04);}
+.wd-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(14,165,233,.06);}
+.wd-btn-hot{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0a0a0a;border-color:transparent;box-shadow:0 8px 24px rgba(245,158,11,.3);}
+.wd-btn-hot:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(245,158,11,.4);color:#0a0a0a;background:linear-gradient(135deg,#f59e0b,#fbbf24);}
+.wd-tech{display:inline-block;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;}
+.wd-tech:hover{border-color:rgba(14,165,233,.3);color:var(--pl);background:rgba(14,165,233,.06);}
+@media(max-width:900px){.wd-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.wd-grid{grid-template-columns:1fr;}}
+
 /* ── CTA / Contact ── */
 .cta-section{padding:100px 40px;position:relative;overflow:hidden;}
 .cta-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(99,102,241,.08));z-index:0;}
@@ -600,10 +627,11 @@ body { background: var(--bg); color: var(--text); }
     <div class="nav-links">
       <a href="#pain"     class="nav-link">Vấn đề hiện tại</a>
       <a href="#features" class="nav-link">Dịch vụ</a>
-      <a href="#process"  class="nav-link">Quy trình</a>
-      <a href="#webgis"   class="nav-link">Bản đồ GIS</a>
-      <a href="#pricing"  class="nav-link">Bảng giá</a>
-      <a href="#contact"  class="nav-link">Liên hệ</a>
+      <a href="#process"   class="nav-link">Quy trình</a>
+      <a href="#webdesign" class="nav-link" style="color:#fbbf24;font-weight:800;">✦ Thiết kế Web</a>
+      <a href="#webgis"    class="nav-link">Bản đồ GIS</a>
+      <a href="#pricing"   class="nav-link">Bảng giá</a>
+      <a href="#contact"   class="nav-link">Liên hệ</a>
     </div>
     <a href="https://zalo.me/0332945089" target="_blank" rel="noopener" class="btn btn-primary nav-cta">Liên hệ ngay</a>
     <!-- Hamburger mobile -->
@@ -616,7 +644,8 @@ body { background: var(--bg); color: var(--text); }
 <!-- ══ MOBILE MENU ══════════════════════════════════════════ -->
 <div class="nav-mobile-menu" id="navMobileMenu">
   <a href="#pain"      onclick="closeMobileMenu()">📌 Vấn đề hiện tại</a>
-  <a href="#features"  onclick="closeMobileMenu()">⚙️ Dịch vụ</a>
+  <a href="#features"  onclick="closeMobileMenu()">⚙️ Dịch vụ GIS</a>
+  <a href="#webdesign" onclick="closeMobileMenu()" style="color:#fbbf24;font-weight:800;">✦ Thiết kế Web</a>
   <a href="#process"   onclick="closeMobileMenu()">🔄 Quy trình</a>
   <a href="#standards" onclick="closeMobileMenu()">📋 Tiêu chuẩn</a>
   <a href="#pricing"   onclick="closeMobileMenu()">💰 Bảng giá</a>
@@ -760,7 +789,98 @@ body { background: var(--bg); color: var(--text); }
   </div>
 </section>
 
-<!-- ══ PROCESS ══════════════════════════════════════════════ -->
+<!-- ══ WEB DESIGN SERVICE SECTION ══════════════════════════ -->
+<section class="section" id="webdesign">
+  <div class="container">
+    <div class="sec-tag">Dịch vụ mới</div>
+    <h2 class="sec-title">Thiết kế <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Website</span> chuyên nghiệp</h2>
+    <p class="sec-desc">Từ landing page đến portal GIS tích hợp — chúng tôi thiết kế website hiện đại, chuẩn SEO, tốc độ cao và tối ưu cho ngành quy hoạch, xây dựng & hạ tầng.</p>
+
+    <!-- Package cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;" class="wd-grid">
+
+      <!-- Gói 1 -->
+      <div class="wd-card">
+        <div class="wd-badge" style="background:rgba(14,165,233,.12);color:#38bdf8;">Phổ biến</div>
+        <div class="wd-icon">🚀</div>
+        <h3 class="wd-title">Landing Page</h3>
+        <div class="wd-price">Từ <span>3.990.000</span>₫</div>
+        <p class="wd-desc">Trang giới thiệu dịch vụ 1 trang, chuẩn SEO, tốc độ cao, responsive mọi thiết bị. Phù hợp doanh nghiệp muốn hiện diện online nhanh.</p>
+        <ul class="wd-list">
+          <li>✅ Thiết kế theo yêu cầu thương hiệu</li>
+          <li>✅ Responsive mobile / tablet / desktop</li>
+          <li>✅ Tối ưu tốc độ &amp; SEO cơ bản</li>
+          <li>✅ Tích hợp form liên hệ &amp; Zalo</li>
+          <li>✅ Bàn giao trong 3–5 ngày làm việc</li>
+        </ul>
+        <a href="#contact" class="wd-btn">Đặt ngay →</a>
+      </div>
+
+      <!-- Gói 2 - Nổi bật -->
+      <div class="wd-card wd-card-hot">
+        <div class="wd-hot-label">⭐ Được chọn nhiều nhất</div>
+        <div class="wd-badge" style="background:rgba(245,158,11,.15);color:#fbbf24;">GIS Tích hợp</div>
+        <div class="wd-icon">🌐</div>
+        <h3 class="wd-title">Website GIS Portal</h3>
+        <div class="wd-price">Từ <span>12.000.000</span>₫</div>
+        <p class="wd-desc">Website chuyên nghiệp tích hợp bản đồ GIS trực tuyến, tra cứu quy hoạch theo địa chỉ, phù hợp đơn vị tư vấn &amp; cơ quan nhà nước.</p>
+        <ul class="wd-list">
+          <li>✅ Toàn bộ tính năng gói Landing Page</li>
+          <li>✅ Nhúng bản đồ Leaflet / WebGIS tương tác</li>
+          <li>✅ Tra cứu thửa đất / vùng quy hoạch</li>
+          <li>✅ Quản trị nội dung (CMS) cơ bản</li>
+          <li>✅ Hosting &amp; domain 1 năm miễn phí</li>
+          <li>✅ Bảo trì 3 tháng sau bàn giao</li>
+        </ul>
+        <a href="#contact" class="wd-btn wd-btn-hot">Tư vấn miễn phí →</a>
+      </div>
+
+      <!-- Gói 3 -->
+      <div class="wd-card">
+        <div class="wd-badge" style="background:rgba(99,102,241,.12);color:#818cf8;">Doanh nghiệp</div>
+        <div class="wd-icon">🏢</div>
+        <h3 class="wd-title">Hệ thống tùy chỉnh</h3>
+        <div class="wd-price"><span>Báo giá</span> theo dự án</div>
+        <p class="wd-desc">Phát triển hệ thống web đầy đủ, đăng nhập phân quyền, API GIS, dashboard thống kê, tích hợp với phần mềm nội bộ của tổ chức.</p>
+        <ul class="wd-list">
+          <li>✅ Phân tích yêu cầu chuyên sâu</li>
+          <li>✅ API GIS &amp; cơ sở dữ liệu riêng</li>
+          <li>✅ Dashboard thống kê &amp; báo cáo</li>
+          <li>✅ Phân quyền người dùng đa cấp</li>
+          <li>✅ Hỗ trợ kỹ thuật dài hạn (SLA)</li>
+        </ul>
+        <a href="#contact" class="wd-btn">Liên hệ khảo sát →</a>
+      </div>
+    </div>
+
+    <!-- Tech stack -->
+    <div style="margin-top:56px;text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;">Công nghệ sử dụng</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">
+        <span class="wd-tech">HTML5 / CSS3</span>
+        <span class="wd-tech">JavaScript / React</span>
+        <span class="wd-tech">Leaflet / MapLibre GL</span>
+        <span class="wd-tech">Node.js / Python</span>
+        <span class="wd-tech">PostgreSQL / PostGIS</span>
+        <span class="wd-tech">Cloudflare / GitHub Pages</span>
+        <span class="wd-tech">Google Fonts / Font Awesome</span>
+        <span class="wd-tech">Responsive Design</span>
+      </div>
+    </div>
+
+    <!-- Mini CTA -->
+    <div style="margin-top:48px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(99,102,241,.08));border:1px solid rgba(14,165,233,.15);border-radius:20px;padding:40px;text-align:center;">
+      <div style="font-size:28px;font-weight:900;margin-bottom:10px;">Cần website cho dự án quy hoạch?</div>
+      <p style="color:var(--muted);font-size:15px;margin-bottom:28px;max-width:520px;margin-left:auto;margin-right:auto;">Chúng tôi hiểu nghiệp vụ GIS &amp; quy hoạch — website do chúng tôi làm không chỉ đẹp mà còn <strong style="color:var(--pl)">đúng chuyên môn</strong>.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <a href="https://zalo.me/0332945089" target="_blank" style="padding:14px 32px;background:var(--grad);color:#fff;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 8px 24px rgba(14,165,233,.25);transition:transform .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">💬 Chat Zalo ngay</a>
+        <a href="tel:0332945089" style="padding:14px 32px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);color:var(--text);border-radius:12px;font-weight:800;font-size:15px;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='rgba(14,165,233,.4)'" onmouseout="this.style.borderColor='var(--border)'">📞 0332 945 089</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <section class="section sec-dark" id="process">
   <div class="container">
     <div class="sec-tag">Quy trình làm việc</div>
