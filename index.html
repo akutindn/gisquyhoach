@@ -259,6 +259,30 @@ img{max-width:100%;}
 @media(max-width:900px){.wd-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:600px){.wd-grid{grid-template-columns:1fr;}}
 
+/* ── Marketing & Page Fan ── */
+.mkt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.mkt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radiuslg);padding:28px;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:all .3s;}
+.mkt-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f59e0b,#ef4444);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.mkt-card:hover{transform:translateY(-6px);border-color:rgba(245,158,11,.3);box-shadow:0 20px 48px rgba(0,0,0,.35);}
+.mkt-card:hover::after{transform:scaleX(1);}
+.mkt-card-hot{border-color:rgba(239,68,68,.35);background:linear-gradient(160deg,rgba(239,68,68,.06),var(--surface));}
+.mkt-hot-label{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,#ef4444,#f97316);color:#fff;font-size:11px;font-weight:900;text-align:center;padding:5px;letter-spacing:.05em;text-transform:uppercase;}
+.mkt-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px;}
+.mkt-badge{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;margin-bottom:12px;width:fit-content;}
+.mkt-name{font-size:19px;font-weight:900;margin-bottom:8px;}
+.mkt-price{font-size:14px;color:var(--muted);margin-bottom:12px;font-weight:600;}
+.mkt-price span{font-size:22px;font-weight:900;color:var(--warn);}
+.mkt-price small{font-size:12px;}
+.mkt-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.mkt-list{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:24px;flex:1;}
+.mkt-list li{font-size:13px;color:var(--muted);line-height:1.5;}
+.mkt-btn{display:block;text-align:center;padding:11px 20px;border-radius:10px;font-weight:800;font-size:13px;text-decoration:none;border:1.5px solid var(--border);color:var(--text);transition:all .2s;background:rgba(255,255,255,.03);}
+.mkt-btn:hover{border-color:var(--warn);color:var(--warn);background:rgba(245,158,11,.06);}
+.mkt-btn-hot{background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;border-color:transparent;box-shadow:0 8px 24px rgba(239,68,68,.3);}
+.mkt-btn-hot:hover{opacity:.9;transform:translateY(-1px);color:#fff;}
+@media(max-width:900px){.mkt-grid{grid-template-columns:1fr 1fr;}.mkt-showcase{grid-template-columns:1fr;}}
+@media(max-width:600px){.mkt-grid{grid-template-columns:1fr;}}
+
 /* ── CTA / Contact ── */
 .cta-section{padding:100px 40px;position:relative;overflow:hidden;}
 .cta-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(99,102,241,.08));z-index:0;}
@@ -628,7 +652,7 @@ body { background: var(--bg); color: var(--text); }
       <a href="#pain"     class="nav-link">Vấn đề hiện tại</a>
       <a href="#features" class="nav-link">Dịch vụ</a>
       <a href="#process"   class="nav-link">Quy trình</a>
-      <a href="#webdesign" class="nav-link" style="color:#fbbf24;font-weight:800;">✦ Thiết kế Web</a>
+      <a href="#marketing" class="nav-link" style="color:#f87171;font-weight:800;">?? Marketing</a>      <a href="#webdesign" class="nav-link" style="color:#fbbf24;font-weight:800;">✦ Thiết kế Web</a>
       <a href="#webgis"    class="nav-link">Bản đồ GIS</a>
       <a href="#pricing"   class="nav-link">Bảng giá</a>
       <a href="#contact"   class="nav-link">Liên hệ</a>
@@ -880,8 +904,151 @@ body { background: var(--bg); color: var(--text); }
   </div>
 </section>
 
+<!-- ══ MARKETING & PAGE FAN SECTION ════════════════════════════════ -->
+<section class="section sec-dark" id="marketing">
+  <div class="container">
+    <div class="sec-tag">Dịch vụ Digital</div>
+    <h2 class="sec-title">Marketing & <span style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Chăm sóc Page Fan</span></h2>
+    <p class="sec-desc">Xây dựng thương hiệu, tăng tương tác và chuyển đổi khách hàng trên Facebook / Zalo — chuyên nghiệp, đo lường được, đúng ngành bất động sản & quy hoạch.</p>
 
-<section class="section sec-dark" id="process">
+    <!-- Gói dịch vụ -->
+    <div class="mkt-grid" style="margin-top:52px;">
+
+      <!-- Gói Cơ bản -->
+      <div class="mkt-card">
+        <div class="mkt-icon" style="background:rgba(245,158,11,.12);">📱</div>
+        <div class="mkt-badge" style="background:rgba(245,158,11,.12);color:#fbbf24;">Cơ bản</div>
+        <h3 class="mkt-name">Chăm sóc Page Cơ bản</h3>
+        <div class="mkt-price">Từ <span>3.500.000</span>₫<small>/tháng</small></div>
+        <p class="mkt-desc">Phù hợp doanh nghiệp mới, cần xây dựng hiện diện ban đầu trên Facebook và Zalo OA.</p>
+        <ul class="mkt-list">
+          <li>📝 12–15 bài viết/tháng (thiết kế + nội dung)</li>
+          <li>💬 Trả lời comment & inbox trong ngày</li>
+          <li>🎨 Banner, ảnh bìa theo thương hiệu</li>
+          <li>📊 Báo cáo tương tác hàng tháng</li>
+          <li>📅 Lên lịch đăng bài chiến lược</li>
+        </ul>
+        <a href="#contact" class="mkt-btn">Đăng ký ngay →</a>
+      </div>
+
+      <!-- Gói Chuyên nghiệp - HOT -->
+      <div class="mkt-card mkt-card-hot">
+        <div class="mkt-hot-label">🔥 Bán chạy nhất</div>
+        <div class="mkt-icon" style="background:rgba(239,68,68,.12);margin-top:28px;">🚀</div>
+        <div class="mkt-badge" style="background:rgba(239,68,68,.15);color:#f87171;">Chuyên nghiệp</div>
+        <h3 class="mkt-name">Marketing Tổng thể</h3>
+        <div class="mkt-price">Từ <span>8.500.000</span>₫<small>/tháng</small></div>
+        <p class="mkt-desc">Chiến dịch toàn diện: content, quảng cáo, lead generation — tối ưu cho ngành BĐS & quy hoạch.</p>
+        <ul class="mkt-list">
+          <li>📝 20–25 bài viết/tháng đa nền tảng</li>
+          <li>🎯 Chạy quảng cáo Facebook Ads (ngân sách riêng)</li>
+          <li>🎬 2 video Reels/TikTok ngắn mỗi tháng</li>
+          <li>💼 Xây dựng phễu khách hàng tiềm năng</li>
+          <li>📊 Dashboard live theo dõi hiệu quả 24/7</li>
+          <li>🤝 Hỗ trợ xử lý khủng hoảng truyền thông</li>
+        </ul>
+        <a href="#contact" class="mkt-btn mkt-btn-hot">Tư vấn miễn phí →</a>
+      </div>
+
+      <!-- Gói Quảng cáo Ads -->
+      <div class="mkt-card">
+        <div class="mkt-icon" style="background:rgba(99,102,241,.12);">🎯</div>
+        <div class="mkt-badge" style="background:rgba(99,102,241,.12);color:#a78bfa;">Quảng cáo</div>
+        <h3 class="mkt-name">Facebook & Google Ads</h3>
+        <div class="mkt-price">Từ <span>5.000.000</span>₫<small>/tháng</small></div>
+        <p class="mkt-desc">Setup và tối ưu chiến dịch quảng cáo trả phí, tập trung vào leads chất lượng cao cho BĐS.</p>
+        <ul class="mkt-list">
+          <li>🔧 Setup tài khoản quảng cáo chuẩn</li>
+          <li>🎯 Target đúng tệp khách hàng mục tiêu</li>
+          <li>🔄 A/B test mẫu quảng cáo liên tục</li>
+          <li>📉 Tối ưu chi phí/lead theo tuần</li>
+          <li>📊 Báo cáo hiệu quả theo thời gian thực</li>
+        </ul>
+        <a href="#contact" class="mkt-btn">Liên hệ báo giá →</a>
+      </div>
+    </div>
+
+    <!-- What we do - Process minh họa -->
+    <div style="margin-top:60px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;" class="mkt-showcase">
+      <!-- Trái: nội dung -->
+      <div>
+        <h3 style="font-size:24px;font-weight:900;margin-bottom:16px;line-height:1.4;">Chúng tôi hiểu <span style="color:var(--warn);">ngôn ngữ</span><br/>của ngành quy hoạch</h3>
+        <p style="color:var(--muted);font-size:15px;line-height:1.8;margin-bottom:24px;">Không phải agency marketing thông thường — team chúng tôi am hiểu chuyên sâu về quy hoạch, BĐS, GIS nên nội dung luôn <strong>chính xác, chuyên nghiệp và đáng tin</strong> với khách hàng.</p>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(245,158,11,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">✍️</div>
+            <div><div style="font-weight:800;font-size:14px;margin-bottom:4px;">Content chuyên ngành</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Bài viết đúng thuật ngữ quy hoạch, GIS, pháp lý BĐS — không cần duyệt lại nhiều lần.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📈</div>
+            <div><div style="font-weight:800;font-size:14px;margin-bottom:4px;">Tăng trưởng thực chất</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Tập trung vào leads chất lượng và tương tác thật — không mua like ảo, không dùng bot.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(14,165,233,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📊</div>
+            <div><div style="font-weight:800;font-size:14px;margin-bottom:4px;">Báo cáo minh bạch</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Dashboard số liệu thật theo thời gian thực — reach, engagement, leads, chi phí/lead.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phải: Mockup Facebook Page -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 48px rgba(0,0,0,.3);">
+        <!-- Header FB page mock -->
+        <div style="background:linear-gradient(135deg,#1877f2,#3b5bdb);padding:20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06);"></div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0;">QH</div>
+            <div>
+              <div style="font-weight:800;font-size:14px;color:#fff;">GIS Quy Hoạch Việt Nam</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.7);">📍 Đà Nẵng · 4.2K người theo dõi</div>
+            </div>
+            <div style="margin-left:auto;background:#fff;color:#1877f2;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:800;flex-shrink:0;">Theo dõi</div>
+          </div>
+        </div>
+        <!-- Post mock -->
+        <div style="padding:16px;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">📅 Hôm nay, 9:00 SA</div>
+          <div style="font-size:14px;line-height:1.7;color:var(--text);margin-bottom:12px;">🏙️ <strong>QUY HOẠCH ĐÀ NẴNG 2030</strong> — Phân khu chức năng mới tại Quận Ngũ Hành Sơn vừa được phê duyệt! Cập nhật chi tiết ngay trên bản đồ số... <span style="color:var(--pl);">Xem thêm</span></div>
+          <div style="background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(99,102,241,.08));border:1px solid rgba(14,165,233,.2);border-radius:10px;padding:12px;margin-bottom:12px;font-size:12px;color:var(--muted);">
+            🗺️ gisquyhoach.vn — Tra cứu quy hoạch chi tiết đến từng lô đất
+          </div>
+          <div style="display:flex;gap:20px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">
+            <span style="cursor:pointer;">👍 245 Thích</span>
+            <span style="cursor:pointer;">💬 38 Bình luận</span>
+            <span style="cursor:pointer;">↗️ 82 Chia sẻ</span>
+          </div>
+        </div>
+        <!-- Stats row -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--border);">
+          <div style="padding:12px;text-align:center;border-right:1px solid var(--border);">
+            <div style="font-size:18px;font-weight:900;color:var(--pl);">+2.8K</div>
+            <div style="font-size:10px;color:var(--muted);">Reach/tuần</div>
+          </div>
+          <div style="padding:12px;text-align:center;border-right:1px solid var(--border);">
+            <div style="font-size:18px;font-weight:900;color:#f59e0b;">8.4%</div>
+            <div style="font-size:10px;color:var(--muted);">Engagement</div>
+          </div>
+          <div style="padding:12px;text-align:center;">
+            <div style="font-size:18px;font-weight:900;color:#22c55e;">42</div>
+            <div style="font-size:10px;color:var(--muted);">Leads/tháng</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA mini -->
+    <div style="margin-top:52px;background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(239,68,68,.06));border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:36px;text-align:center;">
+      <div style="font-size:26px;font-weight:900;margin-bottom:10px;">Muốn Page của bạn lên 10K followers thật?</div>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto;">Chúng tôi xây dựng cộng đồng <strong style="color:var(--warn);">chất lượng và bền vững</strong> — không mua like, không bot, không nguy cơ bị khóa tài khoản.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="https://zalo.me/0332945089" target="_blank" style="padding:13px 28px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border-radius:10px;font-weight:800;font-size:14px;text-decoration:none;box-shadow:0 8px 24px rgba(245,158,11,.3);transition:transform .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">💬 Nhận tư vấn miễn phí</a>
+        <a href="tel:0332945089" style="padding:13px 28px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);color:var(--text);border-radius:10px;font-weight:800;font-size:14px;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='rgba(245,158,11,.4)'" onmouseout="this.style.borderColor='var(--border)'">📞 0332 945 089</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
   <div class="container">
     <div class="sec-tag">Quy trình làm việc</div>
     <h2 class="sec-title">Hoàn thành trong 1–3 ngày<br/>với 4 bước đơn giản</h2>
@@ -1016,40 +1183,224 @@ body { background: var(--bg); color: var(--text); }
 <section class="section" id="webgis" style="padding:80px 40px;">
   <div class="container">
     <div class="sec-tag">Xem trực tiếp</div>
-    <h2 class="sec-title">Bản đồ Địa phận <span style="color:var(--pl)">Toàn Quốc 2026</span></h2>
-    <p class="sec-desc" style="margin-bottom:28px;">Tra cứu 63 tỉnh thành và 3.321 xã/phường/thị trấn — dữ liệu địa phận hành chính chuẩn 2026.</p>
+    <h2 class="sec-title">Bản đồ Quy hoạch <span style="color:var(--pl)">Trực tuyến</span></h2>
+    <p class="sec-desc" style="margin-bottom:40px;">Tra cứu quy hoạch sử dụng đất tại Đà Nẵng và địa phận hành chính toàn quốc — tương tác trực tiếp trên bản đồ số.</p>
 
-    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
-      <button onclick="wgFilter('all')" id="wg-all" style="padding:8px 18px;border-radius:8px;border:2px solid #2563eb;background:#2563eb;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🗺️ Tất cả</button>
-      <button onclick="wgFilter('tinh')" id="wg-tinh" style="padding:8px 18px;border-radius:8px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🏛️ Tỉnh/TP</button>
-      <button onclick="wgFilter('xa')" id="wg-xa" style="padding:8px 18px;border-radius:8px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🏘️ Xã/Phường</button>
-      <input id="wg-search" type="text" placeholder="🔍 Tìm kiếm tỉnh, xã, phường..." oninput="wgSearch(this.value)"
-        style="flex:1;min-width:180px;padding:8px 14px;border-radius:8px;border:2px solid #e2e8f0;background:#f8fafc;color:#0f172a;font-size:13px;font-family:inherit;outline:none;"/>
-      <span id="wg-count" style="font-size:12px;color:#64748b;white-space:nowrap;">Đang tải...</span>
-    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;">
 
-    <div style="border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
-      <div style="display:flex;align-items:center;gap:7px;padding:10px 16px;background:#fff;border-bottom:1px solid #e2e8f0;">
-        <span style="width:10px;height:10px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
-        <span style="width:10px;height:10px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
-        <span style="width:10px;height:10px;border-radius:50%;background:#28c840;display:inline-block;"></span>
-        <span style="margin-left:8px;font-size:12px;font-weight:700;color:#64748b;">🗺 GIS Viewer — Địa phận hành chính Việt Nam 2026</span>
-        <span id="wg-status" style="margin-left:auto;font-size:11px;color:#f59e0b;font-weight:700;">⏳ Đang tải...</span>
+      <!-- Card: Bản đồ Đà Nẵng -->
+      <div onclick="openMapDN()" style="background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(99,102,241,.08));border:1.5px solid rgba(37,99,235,.3);border-radius:20px;padding:36px 32px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(37,99,235,.2)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(37,99,235,.08);"></div>
+        <div style="font-size:42px;margin-bottom:14px;">🗺️</div>
+        <div style="font-size:11px;font-weight:800;color:var(--pl);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Tra cứu có phí</div>
+        <h3 style="font-size:22px;font-weight:900;margin-bottom:10px;line-height:1.3;">Quy hoạch Đà Nẵng<br/>chi tiết đến từng lô</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">Xem ranh giới thửa đất, loại đất quy hoạch, lộ giới, hành lang bảo vệ — chuẩn quy hoạch chung 2030.</p>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border-radius:10px;font-weight:800;font-size:14px;box-shadow:0 8px 24px rgba(37,99,235,.35);">
+          🔍 Mở bản đồ tra cứu →
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted);">300.000₫/lần · hoặc gói VIP không giới hạn</div>
       </div>
-      <div id="wg-map" style="height:560px;width:100%;"></div>
-    </div>
 
-    <div style="display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;align-items:center;">
-      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;">
-        <span style="width:12px;height:12px;background:#2563eb;border-radius:3px;opacity:.7;display:inline-block;"></span>Tỉnh/Thành phố
+      <!-- Card: Toàn quốc -->
+      <div style="background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(6,182,212,.06));border:1.5px solid rgba(16,185,129,.2);border-radius:20px;padding:28px;position:relative;overflow:hidden;">
+        <div style="font-size:11px;font-weight:800;color:#10b981;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Miễn phí</div>
+        <h3 style="font-size:18px;font-weight:900;margin-bottom:10px;">Địa phận toàn quốc 2026</h3>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+          <button onclick="wgFilter('all')" id="wg-all" style="padding:5px 12px;border-radius:6px;border:1.5px solid #2563eb;background:#2563eb;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">Tất cả</button>
+          <button onclick="wgFilter('tinh')" id="wg-tinh" style="padding:5px 12px;border-radius:6px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">Tỉnh/TP</button>
+          <button onclick="wgFilter('xa')" id="wg-xa" style="padding:5px 12px;border-radius:6px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">Xã/Phường</button>
+          <input id="wg-search" type="text" placeholder="🔍 Tìm..." oninput="wgSearch(this.value)" style="flex:1;min-width:100px;padding:5px 10px;border-radius:6px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:var(--text);font-size:12px;font-family:inherit;outline:none;"/>
+          <span id="wg-count" style="font-size:11px;color:var(--muted);white-space:nowrap;">Đang tải...</span>
+        </div>
+        <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);">
+          <div style="padding:7px 12px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);">
+            <span id="wg-status" style="font-size:11px;color:#f59e0b;font-weight:700;">⏳ Đang tải...</span>
+          </div>
+          <div id="wg-map" style="height:280px;width:100%;"></div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);"><span style="width:10px;height:10px;background:#2563eb;border-radius:2px;display:inline-block;opacity:.7;"></span>Tỉnh/TP</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);"><span style="width:10px;height:10px;background:#16a34a;border-radius:2px;display:inline-block;opacity:.7;"></span>Xã/Phường</div>
+          <div style="margin-left:auto;font-size:10px;color:var(--dim);">DiaPhan_2026 · VN2000</div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;">
-        <span style="width:12px;height:12px;background:#16a34a;border-radius:3px;opacity:.7;display:inline-block;"></span>Xã/Phường/Thị trấn
-      </div>
-      <div style="margin-left:auto;font-size:11px;color:#94a3b8;">📌 Nguồn: DiaPhan_2026 · Chuẩn VN2000</div>
     </div>
   </div>
 </section>
+
+<!-- ══ MAP ĐÀ NẴNG FULL-SCREEN OVERLAY ══════════════════════════════ -->
+<div id="dn-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:#0d1117;flex-direction:column;font-family:'Be Vietnam Pro',system-ui,sans-serif;">
+
+  <!-- Topbar -->
+  <div style="display:flex;align-items:center;height:52px;flex-shrink:0;background:rgba(13,17,23,.97);border-bottom:1px solid #30363d;position:relative;z-index:9100;">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 16px;border-right:1px solid #30363d;height:100%;min-width:220px;flex-shrink:0;">
+      <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0ea5e9,#6366f1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;">QH</div>
+      <div>
+        <div style="font-size:12px;font-weight:800;color:#e6edf3;">GIS<span style="background:linear-gradient(135deg,#0ea5e9,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Quy Hoạch</span></div>
+        <div style="font-size:10px;color:#8b949e;">Tra cứu quy hoạch Đà Nẵng</div>
+      </div>
+    </div>
+    <div style="display:flex;height:100%;border-right:1px solid #30363d;">
+      <div id="dntab-map" onclick="dnSwitchTab('map')" style="display:flex;align-items:center;gap:6px;padding:0 16px;font-size:12px;font-weight:700;color:#3b82f6;border-bottom:2px solid #3b82f6;cursor:pointer;">🗺️ Bản đồ</div>
+      <div id="dntab-pkg" onclick="dnSwitchTab('pkg')" style="display:flex;align-items:center;gap:6px;padding:0 16px;font-size:12px;font-weight:700;color:#8b949e;border-bottom:2px solid transparent;cursor:pointer;">⭐ Gói cước</div>
+    </div>
+    <div style="flex:1;padding:0 14px;max-width:480px;">
+      <div style="display:flex;align-items:center;gap:8px;background:#21262d;border:1.5px solid #30363d;border-radius:8px;padding:0 12px;height:34px;" onfocusin="this.style.borderColor='#3b82f6'" onfocusout="this.style.borderColor='#30363d'">
+        <span style="color:#8b949e;">📍</span>
+        <input id="dn-search-inp" type="text" placeholder="Nhập tên phường, xã, tọa độ..." autocomplete="off" style="flex:1;background:none;border:none;outline:none;font-family:inherit;font-size:13px;color:#e6edf3;" oninput="dnSearch(this.value)" onfocus="dnSearch(this.value)"/>
+        <span id="dn-clr" onclick="dnClearSearch()" style="font-size:11px;color:#8b949e;cursor:pointer;display:none;">✕</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:0 14px;margin-left:auto;flex-shrink:0;">
+      <button onclick="dnShowPaywall()" style="padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;">✦ Đăng ký VIP</button>
+      <button onclick="closeMapDN()" title="Đóng" style="width:32px;height:32px;border-radius:8px;background:#21262d;border:1px solid #30363d;color:#8b949e;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div style="display:flex;flex:1;overflow:hidden;">
+
+    <!-- Sidebar -->
+    <div style="width:230px;flex-shrink:0;background:rgba(13,17,23,.98);border-right:1px solid #30363d;overflow-y:auto;display:flex;flex-direction:column;">
+      <div style="padding:14px;border-bottom:1px solid #30363d;">
+        <div style="font-size:10px;font-weight:800;color:#8b949e;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Tính năng</div>
+        <div style="font-size:12px;color:#8b949e;display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:8px;"><span style="color:#3b82f6;">👁</span><span>Xem thửa đất, số đỏ trên bản đồ</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:#3b82f6;">📐</span><span>Đo diện tích, kích thước, ranh giới</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:#3b82f6;">🔍</span><span>Tìm theo tọa độ, địa chỉ, phường xã</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:#3b82f6;">📋</span><span>Quy hoạch tỷ lệ 1/500 – 1/10000</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:#3b82f6;">🎧</span><span>Hỗ trợ chuyên viên 24/7</span></div>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #30363d;">
+        <div style="background:linear-gradient(135deg,rgba(37,99,235,.15),rgba(99,102,241,.1));border:1px solid rgba(37,99,235,.25);border-radius:10px;padding:14px;">
+          <div style="font-size:12px;font-weight:800;color:#e6edf3;margin-bottom:5px;">Tra cứu chuyên sâu</div>
+          <div style="font-size:11px;color:#8b949e;margin-bottom:10px;line-height:1.5;">Chuyên viên kiểm tra, tư vấn chi tiết từng lô đất tại Đà Nẵng</div>
+          <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#0ea5e9,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;">300.000₫<span style="font-size:12px;-webkit-text-fill-color:#8b949e;font-weight:600;">/lần</span></div>
+          <button onclick="dnShowPaywall()" style="display:block;width:100%;padding:9px;border-radius:8px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(14,165,233,.3);">🔍 Tra cứu ngay</button>
+          <button onclick="dnSwitchTab('pkg')" style="display:block;width:100%;padding:8px;margin-top:7px;border-radius:8px;font-size:12px;font-weight:700;background:transparent;color:#3b82f6;border:1.5px solid rgba(37,99,235,.4);cursor:pointer;font-family:inherit;">Xem gói VIP tiết kiệm</button>
+        </div>
+      </div>
+      <div style="padding:14px;flex:1;">
+        <div style="font-size:10px;font-weight:800;color:#8b949e;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Chú giải loại đất</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#8b949e;">
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#ef4444;flex-shrink:0;"></span>Đất ở đô thị (ODT)</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#f97316;flex-shrink:0;"></span>Đất TM – Dịch vụ</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#8b5cf6;flex-shrink:0;"></span>Đất công cộng (DCC)</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#22c55e;flex-shrink:0;"></span>Đất cây xanh (CX)</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#06b6d4;flex-shrink:0;"></span>Đất hỗn hợp (HH)</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#64748b;flex-shrink:0;"></span>Đất giao thông (GT)</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#fbbf24;flex-shrink:0;"></span>Đất giáo dục (GD)</div>
+          <div style="display:flex;align-items:center;gap:7px;"><span style="width:11px;height:11px;border-radius:3px;background:#84cc16;flex-shrink:0;"></span>Đất nông nghiệp</div>
+        </div>
+      </div>
+      <div style="padding:12px 14px;font-size:10px;color:#484f58;border-top:1px solid #30363d;">Hotline: <strong style="color:#8b949e;">0332 945 089</strong><br/><a href="https://zalo.me/0332945089" target="_blank" style="color:#3b82f6;">Zalo tư vấn miễn phí</a></div>
+    </div>
+
+    <!-- Map -->
+    <div style="flex:1;position:relative;">
+      <div id="dn-map" style="width:100%;height:100%;"></div>
+
+      <!-- Search dropdown -->
+      <div id="dn-dd" style="position:absolute;top:0;left:0;width:360px;background:#161b22;border:1px solid #30363d;border-radius:0 0 10px 10px;z-index:9200;display:none;max-height:300px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.5);"></div>
+
+      <!-- Tools -->
+      <div style="position:absolute;bottom:36px;right:14px;z-index:9100;display:flex;flex-direction:column;gap:5px;">
+        <div onclick="dnResetView()" style="width:34px;height:34px;border-radius:8px;background:rgba(13,17,23,.9);border:1px solid #30363d;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;">🏠</div>
+        <div onclick="dnLocateMe()" style="width:34px;height:34px;border-radius:8px;background:rgba(13,17,23,.9);border:1px solid #30363d;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;">📍</div>
+      </div>
+      <div style="position:absolute;bottom:36px;left:14px;z-index:9100;display:flex;gap:4px;">
+        <div id="dnbm-dark" onclick="dnSetBasemap('dark')" style="padding:5px 10px;border-radius:6px;background:rgba(13,17,23,.9);border:1px solid #3b82f6;color:#3b82f6;font-size:11px;font-weight:700;cursor:pointer;">Tối</div>
+        <div id="dnbm-sat"  onclick="dnSetBasemap('sat')"  style="padding:5px 10px;border-radius:6px;background:rgba(13,17,23,.9);border:1px solid #30363d;color:#8b949e;font-size:11px;font-weight:700;cursor:pointer;">Vệ tinh</div>
+      </div>
+      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:9100;background:rgba(13,17,23,.85);border:1px solid #30363d;border-radius:99px;padding:4px 12px;font-size:11px;color:#8b949e;pointer-events:none;">
+        <span id="dn-lat">16.05440</span>° B, <span id="dn-lng">108.20220</span>° Đ
+      </div>
+
+      <!-- Info panel -->
+      <div id="dn-info" style="position:absolute;top:0;right:0;width:260px;height:100%;background:rgba(13,17,23,.97);border-left:1px solid #30363d;display:none;flex-direction:column;overflow:hidden;z-index:9100;">
+        <div style="padding:14px 16px;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div id="dn-info-name" style="font-size:14px;font-weight:800;color:#e6edf3;margin-bottom:3px;">—</div><div id="dn-info-type" style="font-size:11px;color:#8b949e;"></div></div>
+          <span onclick="dnCloseInfo()" style="color:#8b949e;cursor:pointer;font-size:14px;">✕</span>
+        </div>
+        <div id="dn-info-body" style="flex:1;overflow-y:auto;padding:12px 16px;font-size:12px;"></div>
+      </div>
+
+      <!-- Package panel -->
+      <div id="dn-pkg" style="position:absolute;inset:0;background:rgba(13,17,23,.98);display:none;overflow-y:auto;z-index:9150;padding:28px 20px;">
+        <button onclick="dnSwitchTab('map')" style="background:transparent;border:none;color:#8b949e;font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:20px;">← Quay lại bản đồ</button>
+        <div style="text-align:center;margin-bottom:24px;"><h2 style="font-size:22px;font-weight:900;color:#e6edf3;margin-bottom:6px;">Chọn gói tra cứu</h2><p style="color:#8b949e;font-size:14px;">Tra cứu quy hoạch chính xác — hỗ trợ quyết định đầu tư</p></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:800px;margin:0 auto;">
+          <div style="background:#161b22;border:1.5px solid #30363d;border-radius:14px;padding:22px;display:flex;flex-direction:column;">
+            <div style="font-size:10px;font-weight:800;background:rgba(14,165,233,.12);color:#38bdf8;padding:2px 8px;border-radius:4px;width:fit-content;margin-bottom:10px;">Cơ bản</div>
+            <div style="font-size:16px;font-weight:900;color:#e6edf3;margin-bottom:3px;">Đơn lẻ</div>
+            <div style="font-size:24px;font-weight:900;color:#3b82f6;margin-bottom:3px;">300.000₫</div>
+            <div style="font-size:11px;color:#8b949e;margin-bottom:14px;">/ 1 thửa đất · 30 phút</div>
+            <div style="font-size:12px;color:#8b949e;flex:1;display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"><div>✅ Xem thông tin 1 thửa đất</div><div>✅ Loại đất, quy hoạch</div><div>✅ Tư vấn 1 lần qua Zalo</div></div>
+            <button onclick="dnContactZalo()" style="padding:9px;border-radius:8px;background:transparent;border:1.5px solid #30363d;color:#8b949e;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Đăng ký ngay</button>
+          </div>
+          <div style="background:linear-gradient(160deg,rgba(245,158,11,.08),#161b22);border:1.5px solid rgba(245,158,11,.4);border-radius:14px;padding:22px;display:flex;flex-direction:column;position:relative;">
+            <div style="position:absolute;top:-1px;left:0;right:0;background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#0a0a0a;font-size:10px;font-weight:900;text-align:center;padding:3px;border-radius:14px 14px 0 0;">⭐ ĐƯỢC CHỌN NHIỀU NHẤT</div>
+            <div style="font-size:10px;font-weight:800;background:rgba(245,158,11,.15);color:#fbbf24;padding:2px 8px;border-radius:4px;width:fit-content;margin-bottom:10px;margin-top:18px;">VIP</div>
+            <div style="font-size:16px;font-weight:900;color:#e6edf3;margin-bottom:3px;">Gói tháng</div>
+            <div style="font-size:24px;font-weight:900;color:#f59e0b;margin-bottom:3px;">990.000₫</div>
+            <div style="font-size:11px;color:#8b949e;margin-bottom:14px;">/ tháng · không giới hạn</div>
+            <div style="font-size:12px;color:#8b949e;flex:1;display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"><div>✅ Tra cứu không giới hạn</div><div>✅ Tất cả lớp quy hoạch</div><div>✅ Xuất báo cáo PDF</div><div>✅ Hỗ trợ 24/7 ưu tiên</div></div>
+            <button onclick="dnContactZalo()" style="padding:9px;border-radius:8px;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0a0a0a;font-size:12px;font-weight:800;cursor:pointer;border:none;font-family:inherit;">Dùng thử 7 ngày miễn phí</button>
+          </div>
+          <div style="background:#161b22;border:1.5px solid #30363d;border-radius:14px;padding:22px;display:flex;flex-direction:column;">
+            <div style="font-size:10px;font-weight:800;background:rgba(99,102,241,.12);color:#818cf8;padding:2px 8px;border-radius:4px;width:fit-content;margin-bottom:10px;">Doanh nghiệp</div>
+            <div style="font-size:16px;font-weight:900;color:#e6edf3;margin-bottom:3px;">Gói năm</div>
+            <div style="font-size:24px;font-weight:900;color:#818cf8;margin-bottom:3px;">7.900.000₫</div>
+            <div style="font-size:11px;color:#8b949e;margin-bottom:14px;">/ năm · tiết kiệm 33%</div>
+            <div style="font-size:12px;color:#8b949e;flex:1;display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"><div>✅ Tất cả tính năng tháng</div><div>✅ Đa tài khoản (5 user)</div><div>✅ API tích hợp</div><div>✅ SLA 99.9%</div></div>
+            <button onclick="dnContactZalo()" style="padding:9px;border-radius:8px;background:transparent;border:1.5px solid #30363d;color:#8b949e;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Liên hệ tư vấn</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Paywall modal -->
+<div id="dn-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;max-width:460px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.7);overflow:hidden;position:relative;animation:dnModal .3s ease;">
+    <style>@keyframes dnModal{from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:none;}}</style>
+    <div style="padding:28px;background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(99,102,241,.08));border-bottom:1px solid #30363d;text-align:center;">
+      <div style="font-size:40px;margin-bottom:10px;">🔐</div>
+      <h2 style="font-size:19px;font-weight:900;color:#e6edf3;margin-bottom:6px;">Tra cứu quy hoạch Đà Nẵng</h2>
+      <p style="font-size:13px;color:#8b949e;line-height:1.6;">Đăng ký để xem chi tiết loại đất, tọa độ thửa đất, lộ giới và thông tin pháp lý đầy đủ.</p>
+    </div>
+    <div style="padding:22px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div onclick="dnSelectPlan('single')" id="dn-plan-single" style="background:#21262d;border:1.5px solid #3b82f6;border-radius:10px;padding:12px;cursor:pointer;text-align:center;">
+          <div style="font-size:10px;font-weight:800;color:#38bdf8;margin-bottom:6px;">Đơn lẻ</div>
+          <div style="font-size:13px;font-weight:800;color:#e6edf3;margin-bottom:2px;">1 lần tra cứu</div>
+          <div style="font-size:20px;font-weight:900;color:#3b82f6;">300.000₫</div>
+          <div style="font-size:10px;color:#8b949e;">/ 1 thửa đất</div>
+        </div>
+        <div onclick="dnSelectPlan('month')" id="dn-plan-month" style="background:rgba(245,158,11,.06);border:1.5px solid rgba(245,158,11,.4);border-radius:10px;padding:12px;cursor:pointer;text-align:center;">
+          <div style="font-size:10px;font-weight:800;color:#fbbf24;margin-bottom:6px;">⭐ VIP Tiết kiệm</div>
+          <div style="font-size:13px;font-weight:800;color:#e6edf3;margin-bottom:2px;">Gói tháng</div>
+          <div style="font-size:20px;font-weight:900;color:#f59e0b;">990.000₫</div>
+          <div style="font-size:10px;color:#8b949e;">/ tháng · không giới hạn</div>
+        </div>
+      </div>
+      <div style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);border-radius:8px;padding:10px 12px;margin-bottom:14px;">
+        <div style="font-size:12px;color:#8b949e;margin-bottom:4px;">✅ Xem loại đất, chỉ tiêu quy hoạch chi tiết</div>
+        <div style="font-size:12px;color:#8b949e;margin-bottom:4px;">✅ Kiểm tra lộ giới, hành lang bảo vệ</div>
+        <div style="font-size:12px;color:#8b949e;">✅ Tư vấn chuyên viên GIS qua Zalo</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="dnContactZalo()" style="padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(14,165,233,.3);">💳 Đăng ký & Thanh toán ngay</button>
+        <button onclick="dnContactZalo()" style="padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(0,104,255,.1);color:#4dabf7;border:1.5px solid rgba(0,104,255,.2);cursor:pointer;font-family:inherit;">💬 Chat Zalo tư vấn miễn phí</button>
+      </div>
+      <p style="text-align:center;font-size:11px;color:#484f58;margin-top:10px;">🔒 Bảo mật · Hoàn tiền nếu không hài lòng</p>
+    </div>
+    <button onclick="dnHideModal()" style="position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:#21262d;border:1px solid #30363d;color:#8b949e;cursor:pointer;font-size:14px;">✕</button>
+  </div>
+</div>
+
 
 
 <!-- ══ NATIONAL STATS BAR ══════════════════════════════════════════ -->
@@ -2056,6 +2407,197 @@ document.addEventListener("DOMContentLoaded", function(){
   window.addEventListener('load',checkInit);
   setTimeout(checkInit,1000);
 })();
+</script>
+
+
+<script>
+// ── DN MAP OVERLAY ─────────────────────────────────────────────────
+var dnMap=null, dnLayer=null, dnFeatures=[], dnActiveLayer=null;
+var dnSearchIdx=[], dnDDItems=[], dnKbIdx=-1;
+var DN_GEOJSON='https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/danang_simplified.geojson';
+var dnInited=false;
+
+var ZONE_COLORS=[
+  {fill:'#ef4444',border:'#dc2626',label:'Đất ở đô thị (ODT)'},
+  {fill:'#f97316',border:'#ea580c',label:'Đất TM – Dịch vụ'},
+  {fill:'#8b5cf6',border:'#7c3aed',label:'Đất công cộng (DCC)'},
+  {fill:'#22c55e',border:'#16a34a',label:'Đất cây xanh (CX)'},
+  {fill:'#06b6d4',border:'#0891b2',label:'Đất hỗn hợp (HH)'},
+  {fill:'#64748b',border:'#475569',label:'Đất giao thông (GT)'},
+  {fill:'#fbbf24',border:'#f59e0b',label:'Đất giáo dục (GD)'},
+  {fill:'#84cc16',border:'#65a30d',label:'Đất nông nghiệp'},
+  {fill:'#f43f5e',border:'#e11d48',label:'Đất y tế'},
+];
+function dnZoneColor(p){ return ZONE_COLORS[(parseInt(p.OBJECTID)||0)%ZONE_COLORS.length]; }
+
+// Mở overlay
+window.openMapDN = function(){
+  var ov=document.getElementById('dn-overlay');
+  ov.style.display='flex';
+  document.body.style.overflow='hidden';
+  if(!dnInited){ dnInited=true; setTimeout(dnInitMap,80); }
+};
+window.closeMapDN = function(){
+  document.getElementById('dn-overlay').style.display='none';
+  document.body.style.overflow='';
+};
+
+// Phím ESC đóng overlay
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeMapDN(); dnHideModal(); } });
+
+function dnInitMap(){
+  if(dnMap) return;
+  dnMap=L.map('dn-map',{center:[16.054,108.202],zoom:12,zoomControl:false,attributionControl:false});
+  L.control.zoom({position:'topright'}).addTo(dnMap);
+  L.control.scale({position:'bottomright',metric:true,imperial:false}).addTo(dnMap);
+  dnSetBasemap('dark');
+  dnMap.on('mousemove',function(e){
+    var el=document.getElementById('dn-lat'); if(el) el.textContent=e.latlng.lat.toFixed(5);
+    el=document.getElementById('dn-lng'); if(el) el.textContent=e.latlng.lng.toFixed(5);
+  });
+  dnLoadData();
+}
+
+function dnLoadData(){
+  fetch(DN_GEOJSON).then(function(r){return r.json();}).then(function(gj){
+    dnFeatures=gj.features;
+    dnLayer=L.geoJSON(gj,{
+      style:function(f){
+        var c=dnZoneColor(f.properties);
+        return {fillColor:c.fill,fillOpacity:.55,color:c.border,weight:1.2,opacity:.9};
+      },
+      onEachFeature:function(f,layer){
+        layer.on({
+          mouseover:function(e){ if(dnActiveLayer!==e.target){e.target.setStyle({weight:2.5,fillOpacity:.75});e.target.bringToFront();} },
+          mouseout:function(e){ if(dnActiveLayer!==e.target) dnLayer.resetStyle(e.target); },
+          click:function(e){ dnZoneClick(f,e.target); }
+        });
+      }
+    }).addTo(dnMap);
+    dnMap.fitBounds(dnLayer.getBounds(),{padding:[20,20]});
+    dnBuildSearch();
+  }).catch(function(e){ console.error('DN map error:',e); });
+}
+
+function dnZoneClick(f,layer){
+  if(dnActiveLayer) dnLayer.resetStyle(dnActiveLayer);
+  dnActiveLayer=layer;
+  var c=dnZoneColor(f.properties);
+  layer.setStyle({weight:3,fillOpacity:.8,color:'#fff'}); layer.bringToFront();
+  var p=f.properties;
+  var name=(p.tenDoiTuon||'Không rõ').trim();
+  var area=p.dienTichQH?Number(p.dienTichQH).toLocaleString('vi-VN',{maximumFractionDigits:1})+' ha':(p.Shape_Area?(p.Shape_Area/10000).toFixed(1)+' ha':'—');
+  var pop=p.danSoHienT?Number(p.danSoHienT).toLocaleString('vi-VN')+' người':'—';
+
+  // Hiện info panel
+  var ip=document.getElementById('dn-info');
+  document.getElementById('dn-info-name').textContent=name;
+  document.getElementById('dn-info-type').textContent=c.label+' · TP. Đà Nẵng';
+  document.getElementById('dn-info-body').innerHTML=
+    '<div style="padding:8px 0;border-bottom:1px solid #30363d;"><div style="color:#8b949e;font-size:10px;margin-bottom:2px;">Loại đất</div><div style="font-weight:700;color:'+c.fill+';">'+c.label+'</div></div>'+
+    '<div style="padding:8px 0;border-bottom:1px solid #30363d;"><div style="color:#8b949e;font-size:10px;margin-bottom:2px;">Diện tích</div><div style="font-weight:700;color:#e6edf3;">'+area+'</div></div>'+
+    '<div style="padding:8px 0;border-bottom:1px solid #30363d;"><div style="color:#8b949e;font-size:10px;margin-bottom:2px;">Dân số</div><div style="font-weight:700;color:#e6edf3;">'+pop+'</div></div>'+
+    '<div style="padding:8px 0;border-bottom:1px solid #30363d;"><div style="color:#8b949e;font-size:10px;margin-bottom:2px;">Mã đơn vị</div><div style="font-weight:700;color:#e6edf3;">#'+(p.OBJECTID||'—')+'</div></div>'+
+    '<div style="margin-top:12px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:8px;padding:12px;text-align:center;">'+
+      '<div style="font-size:18px;margin-bottom:6px;">🔒</div>'+
+      '<div style="font-size:11px;color:#8b949e;line-height:1.5;margin-bottom:10px;">Tọa độ thửa đất, quy hoạch chi tiết, lộ giới, hành lang bảo vệ...</div>'+
+      '<button onclick="dnShowPaywall()" style="width:100%;padding:9px;border-radius:8px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;">Xem chi tiết — 300.000₫</button>'+
+    '</div>';
+  ip.style.display='flex';
+}
+
+window.dnCloseInfo=function(){
+  document.getElementById('dn-info').style.display='none';
+  if(dnActiveLayer){dnLayer.resetStyle(dnActiveLayer);dnActiveLayer=null;}
+};
+
+// Search
+function dnBuildSearch(){
+  dnSearchIdx=dnFeatures.map(function(f){
+    return {name:(f.properties.tenDoiTuon||'').trim(),feature:f,type:dnZoneColor(f.properties).label};
+  }).filter(function(it){return it.name;});
+}
+
+var dnSrcInp=document.getElementById('dn-search-inp');
+var dnSrcDd =document.getElementById('dn-dd');
+var dnSrcClr=document.getElementById('dn-clr');
+
+window.dnSearch=function(q){
+  q=(q||'').trim();
+  if(dnSrcClr) dnSrcClr.style.display=q?'block':'none';
+  if(!dnSearchIdx.length){dnSrcDd.style.display='none';return;}
+  var list=q?dnSearchIdx.filter(function(it){return it.name.toLowerCase().includes(q.toLowerCase());}).slice(0,15):dnSearchIdx.slice(0,12);
+  if(!list.length){dnSrcDd.innerHTML='<div style="padding:12px 14px;font-size:13px;color:#8b949e;">Không tìm thấy kết quả</div>';dnSrcDd.style.display='block';dnDDItems=[];return;}
+  var hl=function(t,q){if(!q)return t;var i=t.toLowerCase().indexOf(q.toLowerCase());if(i<0)return t;return t.slice(0,i)+'<mark style="background:rgba(14,165,233,.2);color:#3b82f6;border-radius:2px;padding:0 2px;font-weight:700;">'+t.slice(i,i+q.length)+'</mark>'+t.slice(i+q.length);};
+  var icos=['🏘️','🏢','🌳','🛣️','🏫','🏥','🏪','🌾','🏙️'];
+  dnSrcDd.innerHTML=list.map(function(it,i){
+    var ico=icos[(parseInt(it.feature.properties.OBJECTID)||0)%icos.length];
+    return '<div class="dn-dd-item" data-i="'+i+'" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #21262d;transition:background .15s;font-family:inherit;" onmouseover="this.style.background=\'rgba(255,255,255,.04)\'" onmouseout="this.style.background=\'\'"><div style="width:32px;height:32px;border-radius:7px;background:'+dnZoneColor(it.feature.properties).fill+'22;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">'+ico+'</div><div><div style="font-weight:600;font-size:13px;color:#e6edf3;">'+hl(it.name,q)+'</div><div style="font-size:11px;color:#8b949e;">'+it.type+' · TP. Đà Nẵng</div></div></div>';
+  }).join('');
+  dnSrcDd.style.display='block'; dnDDItems=list; dnKbIdx=-1;
+  dnSrcDd.querySelectorAll('.dn-dd-item').forEach(function(el,i){
+    el.addEventListener('click',function(){dnPickItem(i);});
+  });
+};
+
+function dnPickItem(i){
+  var it=dnDDItems[i]; if(!it) return;
+  if(dnSrcInp) dnSrcInp.value=it.name;
+  if(dnSrcClr) dnSrcClr.style.display='block';
+  dnSrcDd.style.display='none';
+  dnLayer.eachLayer(function(layer){
+    if(layer.feature&&layer.feature.properties.tenDoiTuon===it.name){
+      dnZoneClick(it.feature,layer);
+      dnMap.fitBounds(layer.getBounds(),{padding:[40,40]});
+    }
+  });
+}
+
+window.dnClearSearch=function(){
+  if(dnSrcInp) dnSrcInp.value=''; if(dnSrcClr) dnSrcClr.style.display='none'; dnSrcDd.style.display='none';
+};
+
+// Basemap
+var dnBaseLayers={};
+window.dnSetBasemap=function(bm){
+  if(!dnMap) return;
+  Object.values(dnBaseLayers).forEach(function(l){dnMap.removeLayer(l);});
+  if(!dnBaseLayers.dark) dnBaseLayers.dark=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd'});
+  if(!dnBaseLayers.sat)  dnBaseLayers.sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19});
+  dnBaseLayers[bm].addTo(dnMap);
+  document.getElementById('dnbm-dark').style.borderColor=bm==='dark'?'#3b82f6':'#30363d';
+  document.getElementById('dnbm-dark').style.color=bm==='dark'?'#3b82f6':'#8b949e';
+  document.getElementById('dnbm-sat').style.borderColor=bm==='sat'?'#3b82f6':'#30363d';
+  document.getElementById('dnbm-sat').style.color=bm==='sat'?'#3b82f6':'#8b949e';
+};
+
+// Tools
+window.dnResetView=function(){ if(dnMap) dnMap.setView([16.054,108.202],12); };
+window.dnLocateMe=function(){ if(!dnMap) return; dnMap.locate({setView:true,maxZoom:16}); };
+
+// Tabs
+window.dnSwitchTab=function(t){
+  document.getElementById('dntab-map').style.color=t==='map'?'#3b82f6':'#8b949e';
+  document.getElementById('dntab-map').style.borderBottomColor=t==='map'?'#3b82f6':'transparent';
+  document.getElementById('dntab-pkg').style.color=t==='pkg'?'#3b82f6':'#8b949e';
+  document.getElementById('dntab-pkg').style.borderBottomColor=t==='pkg'?'#3b82f6':'transparent';
+  document.getElementById('dn-pkg').style.display=t==='pkg'?'block':'none';
+};
+
+// Paywall
+window.dnShowPaywall=function(){ document.getElementById('dn-modal').style.display='flex'; };
+window.dnHideModal=function(){ document.getElementById('dn-modal').style.display='none'; };
+window.dnSelectPlan=function(p){
+  document.getElementById('dn-plan-single').style.borderColor=p==='single'?'#3b82f6':'rgba(245,158,11,.4)';
+  document.getElementById('dn-plan-month').style.borderColor=p==='month'?'#3b82f6':'rgba(245,158,11,.4)';
+};
+window.dnContactZalo=function(){ window.open('https://zalo.me/0332945089','_blank'); dnHideModal(); };
+
+// Đóng modal khi click ngoài
+document.getElementById('dn-modal').addEventListener('click',function(e){ if(e.target===this) dnHideModal(); });
+
+// Invalidate map size khi mở overlay (Leaflet cần)
+document.getElementById('dn-overlay').addEventListener('transitionend',function(){ if(dnMap) dnMap.invalidateSize(); });
 </script>
 
 </body>
