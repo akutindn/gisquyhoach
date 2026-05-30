@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Tra cứu Quy hoạch Đà Nẵng trực tuyến | GIS Quy Hoạch</title>
+<meta name="description" content="Tra cứu quy hoạch sử dụng đất tại Đà Nẵng trực tuyến. Xem ranh giới, loại đất, diện tích thửa đất theo quy hoạch chung 2030."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
+  --border:#30363d;--border2:#21262d;
+  --text:#e6edf3;--muted:#8b949e;--dim:#484f58;
+  --blue:#2563eb;--blue2:#3b82f6;--blue-bg:rgba(37,99,235,.1);
+  --green:#16a34a;--green2:#22c55e;
+  --red:#ef4444;--orange:#f59e0b;--purple:#8b5cf6;
+  --grad:linear-gradient(135deg,#0ea5e9,#6366f1);
+  --sh:0 8px 32px rgba(0,0,0,.4);
+  --r:8px;--r2:12px;
+}
+html,body{height:100%;font-family:'Be Vietnam Pro',system-ui,sans-serif;color:var(--text);background:var(--bg);overflow:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;}
+
+/* ── TOPBAR ─────────────────────────────────────── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:52px;
+  background:rgba(13,17,23,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0;z-index:1000;
+}
+.tb-logo{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;border-right:1px solid var(--border);
+  height:100%;min-width:240px;flex-shrink:0;
+  text-decoration:none;
+}
+.tb-logo-ico{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--grad);display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:900;color:#fff;
+}
+.tb-logo-txt .n1{font-size:13px;font-weight:800;}
+.tb-logo-txt .n1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tb-logo-txt .n2{font-size:10px;color:var(--muted);}
+
+/* Tabs */
+.tb-tabs{display:flex;height:100%;border-right:1px solid var(--border);}
+.tb-tab{
+  display:flex;align-items:center;gap:7px;
+  padding:0 18px;font-size:12px;font-weight:700;
+  color:var(--muted);border-bottom:2px solid transparent;
+  transition:all .2s;cursor:pointer;white-space:nowrap;
+}
+.tb-tab:hover{color:var(--text);background:rgba(255,255,255,.03);}
+.tb-tab.on{color:var(--blue2);border-bottom-color:var(--blue2);}
+.tb-tab i{font-size:12px;}
+
+/* Search */
+.tb-search{
+  flex:1;display:flex;align-items:center;gap:10px;
+  padding:0 14px;max-width:520px;
+}
+.tb-search-box{
+  flex:1;display:flex;align-items:center;gap:8px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:0 12px;height:34px;
+  transition:border-color .2s;
+}
+.tb-search-box:focus-within{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(37,99,235,.15);}
+.tb-search-box i{color:var(--muted);font-size:12px;}
+#search-inp{
+  flex:1;background:none;border:none;outline:none;
+  font-family:inherit;font-size:13px;color:var(--text);
+}
+#search-inp::placeholder{color:var(--dim);}
+#search-clear{color:var(--muted);font-size:11px;cursor:pointer;display:none;}
+#search-clear:hover{color:var(--text);}
+
+/* Auth */
+.tb-auth{display:flex;align-items:center;gap:8px;padding:0 14px;margin-left:auto;flex-shrink:0;}
+.btn-login{
+  padding:6px 16px;border-radius:var(--r);
+  font-size:12px;font-weight:700;
+  border:1.5px solid var(--border);color:var(--text);
+  background:transparent;transition:all .2s;
+}
+.btn-login:hover{border-color:var(--blue2);color:var(--blue2);}
+.btn-register{
+  padding:6px 16px;border-radius:var(--r);
+  font-size:12px;font-weight:700;
+  background:var(--grad);color:#fff;border:none;
+  box-shadow:0 4px 12px rgba(14,165,233,.3);
+  transition:all .2s;
+}
+.btn-register:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── LAYOUT ──────────────────────────────────────── */
+#shell{
+  position:fixed;top:52px;left:0;right:0;bottom:0;
+  display:flex;
+}
+
+/* ── LEFT SIDEBAR ────────────────────────────────── */
+#sidebar{
+  width:240px;flex-shrink:0;
+  background:rgba(13,17,23,.95);backdrop-filter:blur(8px);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:100;overflow-y:auto;
+}
+.sd-section{border-bottom:1px solid var(--border);padding:14px;}
+.sd-title{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
+.sd-feature{
+  display:flex;align-items:flex-start;gap:9px;
+  margin-bottom:9px;font-size:12px;color:var(--muted);line-height:1.5;
+}
+.sd-feature-ico{
+  width:22px;height:22px;border-radius:6px;
+  background:rgba(14,165,233,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--blue2);flex-shrink:0;margin-top:1px;
+}
+
+/* CTA box */
+.sd-cta{
+  background:linear-gradient(135deg,rgba(37,99,235,.15),rgba(99,102,241,.1));
+  border:1px solid rgba(37,99,235,.25);border-radius:var(--r2);
+  padding:14px;
+}
+.sd-cta-title{font-size:12px;font-weight:800;margin-bottom:6px;color:var(--text);}
+.sd-cta-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.sd-cta-price{
+  font-size:18px;font-weight:900;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:10px;
+}
+.sd-cta-price small{font-size:12px;font-weight:600;-webkit-text-fill-color:var(--muted);color:var(--muted);}
+.btn-cta{
+  display:block;width:100%;padding:9px;border-radius:var(--r);
+  font-size:12px;font-weight:800;text-align:center;
+  background:var(--grad);color:#fff;border:none;cursor:pointer;
+  box-shadow:0 4px 14px rgba(14,165,233,.3);transition:all .2s;
+}
+.btn-cta:hover{opacity:.9;transform:translateY(-1px);}
+.btn-cta-outline{
+  display:block;width:100%;padding:8px;border-radius:var(--r);
+  font-size:12px;font-weight:700;text-align:center;
+  background:transparent;color:var(--blue2);
+  border:1.5px solid rgba(37,99,235,.4);cursor:pointer;
+  margin-top:7px;transition:all .2s;
+}
+.btn-cta-outline:hover{background:var(--blue-bg);}
+
+/* Legend */
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:11px;color:var(--muted);}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+
+/* ── MAP ─────────────────────────────────────────── */
+#map-wrap{flex:1;position:relative;}
+#leafmap{width:100%;height:100%;}
+
+/* ── SEARCH DROPDOWN ──────────────────────────────── */
+#search-dd{
+  position:fixed;top:52px;left:240px;right:0;
+  max-width:540px;left:calc(240px + 14px);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:0 0 var(--r2) var(--r2);box-shadow:var(--sh);
+  z-index:1100;display:none;max-height:320px;overflow-y:auto;
+}
+.dd-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border2);
+  transition:background .15s;font-size:13px;
+}
+.dd-item:last-child{border-bottom:none;}
+.dd-item:hover,.dd-item.kbf{background:rgba(255,255,255,.04);}
+.dd-item-ico{
+  width:34px;height:34px;border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.dd-item-name{font-weight:600;}
+.dd-item-sub{font-size:11px;color:var(--muted);}
+mark{background:rgba(14,165,233,.2);color:var(--blue2);border-radius:2px;padding:0 2px;font-weight:700;}
+
+/* ── MAP TOOLS ────────────────────────────────────── */
+#map-tools{
+  position:absolute;bottom:32px;right:14px;z-index:500;
+  display:flex;flex-direction:column;gap:5px;
+}
+.map-btn{
+  width:34px;height:34px;border-radius:var(--r);
+  background:rgba(13,17,23,.9);backdrop-filter:blur(6px);
+  border:1px solid var(--border);box-shadow:var(--sh);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;
+}
+.map-btn:hover{color:var(--blue2);border-color:rgba(37,99,235,.4);}
+.map-btn.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* Coords bar */
+#coords-bar{
+  position:absolute;bottom:10px;left:14px;z-index:500;
+  background:rgba(13,17,23,.85);backdrop-filter:blur(6px);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:5px 12px;font-size:11px;color:var(--muted);
+  pointer-events:none;
+}
+#coords-bar span{font-weight:700;color:var(--text);}
+
+/* Leaflet overrides */
+.leaflet-popup-content-wrapper{
+  background:var(--surface)!important;border:1px solid var(--border)!important;
+  border-radius:var(--r2)!important;box-shadow:0 12px 40px rgba(0,0,0,.5)!important;
+  padding:0!important;overflow:hidden;color:var(--text)!important;
+}
+.leaflet-popup-content{margin:0!important;font-family:'Be Vietnam Pro',sans-serif!important;}
+.leaflet-popup-tip{background:var(--surface)!important;}
+.leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:var(--r)!important;overflow:hidden;}
+.leaflet-control-zoom a{background:rgba(13,17,23,.9)!important;color:var(--muted)!important;border-color:var(--border)!important;}
+.leaflet-control-zoom a:hover{background:var(--surface2)!important;color:var(--text)!important;}
+.leaflet-control-scale-line{font-family:'Be Vietnam Pro',sans-serif!important;font-size:10px!important;background:rgba(13,17,23,.7)!important;color:var(--muted)!important;border-color:var(--border)!important;}
+.zone-label{
+  background:transparent!important;border:none!important;box-shadow:none!important;
+  font-family:'Be Vietnam Pro',sans-serif;font-size:10px;font-weight:700;
+  color:#fff;text-shadow:1px 1px 2px #000,-1px 1px 2px #000,1px -1px 2px #000,-1px -1px 2px #000;
+  pointer-events:none;white-space:nowrap;
+}
+
+/* ── POPUP CONTENT ───────────────────────────────── */
+.pu-head{padding:12px 16px;color:#fff;}
+.pu-head h4{font-size:14px;font-weight:800;}
+.pu-head small{font-size:11px;opacity:.75;}
+.pu-body{padding:12px 16px;}
+.pu-row{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.pu-row:last-child{border-bottom:none;}
+.pu-k{color:var(--muted);font-weight:600;min-width:90px;flex-shrink:0;}
+.pu-v{font-weight:700;color:var(--text);}
+.pu-locked{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:14px 16px;background:rgba(37,99,235,.05);
+  border-top:1px solid var(--border);text-align:center;
+}
+.pu-lock-ico{font-size:22px;color:var(--blue2);}
+.pu-lock-text{font-size:12px;color:var(--muted);line-height:1.5;}
+.pu-lock-btn{
+  padding:8px 18px;background:var(--grad);color:#fff;
+  border-radius:var(--r);font-size:12px;font-weight:800;
+  cursor:pointer;border:none;font-family:inherit;
+  box-shadow:0 4px 12px rgba(14,165,233,.3);transition:all .2s;
+}
+.pu-lock-btn:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── PAYWALL MODAL ────────────────────────────────── */
+#modal-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;
+}
+#modal-overlay.show{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:0;max-width:520px;width:90%;
+  box-shadow:0 24px 64px rgba(0,0,0,.6);overflow:hidden;
+  animation:modalIn .3s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:none;}}
+.modal-head{
+  padding:24px 28px 20px;
+  background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(99,102,241,.08));
+  border-bottom:1px solid var(--border);text-align:center;
+}
+.modal-head .ico{font-size:40px;margin-bottom:10px;}
+.modal-head h2{font-size:20px;font-weight:900;margin-bottom:6px;}
+.modal-head p{font-size:13px;color:var(--muted);line-height:1.6;}
+.modal-body{padding:24px 28px;}
+.plan-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.plan-card{
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--r2);padding:16px;cursor:pointer;transition:all .2s;
+  text-align:center;
+}
+.plan-card:hover,.plan-card.sel{border-color:var(--blue2);background:rgba(37,99,235,.08);}
+.plan-card.hot{border-color:var(--orange);background:rgba(245,158,11,.06);}
+.plan-card.hot:hover,.plan-card.hot.sel{border-color:var(--orange);background:rgba(245,158,11,.12);}
+.plan-card .badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px;margin-bottom:8px;display:inline-block;}
+.plan-card .name{font-size:14px;font-weight:800;margin-bottom:4px;}
+.plan-card .price{font-size:20px;font-weight:900;color:var(--blue2);}
+.plan-card.hot .price{color:var(--orange);}
+.plan-card .per{font-size:11px;color:var(--muted);}
+.plan-card .desc{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.modal-perks{
+  background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);
+  border-radius:var(--r);padding:12px 16px;margin-bottom:20px;
+}
+.perk-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:6px;}
+.perk-row:last-child{margin-bottom:0;}
+.perk-row i{color:var(--green2);font-size:11px;}
+.modal-btns{display:flex;flex-direction:column;gap:9px;}
+.btn-pay{
+  padding:13px;border-radius:var(--r2);font-size:14px;font-weight:800;
+  background:var(--grad);color:#fff;border:none;cursor:pointer;
+  font-family:inherit;box-shadow:0 8px 24px rgba(14,165,233,.3);transition:all .2s;
+}
+.btn-pay:hover{opacity:.9;transform:translateY(-1px);}
+.btn-zalo{
+  padding:11px;border-radius:var(--r2);font-size:13px;font-weight:700;
+  background:rgba(0,104,255,.12);color:#4dabf7;
+  border:1.5px solid rgba(0,104,255,.25);cursor:pointer;
+  font-family:inherit;transition:all .2s;
+}
+.btn-zalo:hover{background:rgba(0,104,255,.18);}
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;
+}
+.modal-close:hover{color:var(--text);background:var(--border);}
+.modal-wrap{position:relative;}
+
+/* ── TABS PANEL ────────────────────────────────────── */
+#panel-wrap{
+  position:absolute;top:0;left:0;bottom:0;
+  pointer-events:none;z-index:200;
+}
+
+/* ── PACKAGE PANEL (gói cước) ──────────────────────── */
+#pkg-panel{
+  position:absolute;top:52px;left:0;right:0;bottom:0;
+  background:rgba(13,17,23,.97);backdrop-filter:blur(16px);
+  z-index:500;display:none;overflow-y:auto;
+  padding:40px 20px;
+}
+#pkg-panel.show{display:block;}
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto;}
+.pkg-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:16px;padding:28px;transition:all .3s;
+  display:flex;flex-direction:column;
+}
+.pkg-card:hover{transform:translateY(-4px);border-color:rgba(37,99,235,.3);}
+.pkg-card.hot{border-color:var(--orange);background:linear-gradient(160deg,rgba(245,158,11,.08),var(--surface));}
+.pkg-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:5px;margin-bottom:14px;display:inline-block;width:fit-content;}
+.pkg-name{font-size:18px;font-weight:900;margin-bottom:6px;}
+.pkg-price{font-size:28px;font-weight:900;color:var(--blue2);margin-bottom:4px;}
+.pkg-card.hot .pkg-price{color:var(--orange);}
+.pkg-per{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.pkg-list{list-style:none;display:flex;flex-direction:column;gap:8px;flex:1;margin-bottom:20px;}
+.pkg-list li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:7px;}
+.pkg-list li i{color:var(--green2);margin-top:2px;font-size:11px;flex-shrink:0;}
+.pkg-btn{
+  display:block;text-align:center;padding:11px;border-radius:var(--r);
+  font-size:13px;font-weight:800;cursor:pointer;
+  border:1.5px solid var(--border);color:var(--muted);
+  background:transparent;font-family:inherit;transition:all .2s;
+}
+.pkg-btn:hover{border-color:var(--blue2);color:var(--blue2);}
+.pkg-btn.hot{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 20px rgba(14,165,233,.25);}
+
+/* ── INFO PANEL ────────────────────────────────────── */
+#info-panel{
+  position:absolute;top:0;right:0;bottom:0;width:300px;
+  background:rgba(13,17,23,.95);backdrop-filter:blur(10px);
+  border-left:1px solid var(--border);z-index:400;
+  display:none;flex-direction:column;overflow:hidden;
+}
+#info-panel.show{display:flex;}
+.ip-head{padding:16px;border-bottom:1px solid var(--border);}
+.ip-head h3{font-size:14px;font-weight:800;margin-bottom:4px;}
+.ip-head p{font-size:11px;color:var(--muted);}
+.ip-body{flex:1;overflow-y:auto;padding:14px;}
+.ip-row{padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px;}
+.ip-row:last-child{border-bottom:none;}
+.ip-k{color:var(--muted);font-weight:600;margin-bottom:2px;}
+.ip-v{font-weight:700;}
+.ip-locked-row{
+  padding:12px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);
+  border-radius:var(--r);margin-top:10px;text-align:center;
+}
+.ip-close{
+  position:absolute;top:10px;right:10px;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--muted);cursor:pointer;
+}
+
+/* ── LOADER ─────────────────────────────────────────── */
+#loader{
+  position:fixed;inset:0;z-index:3000;
+  background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;
+  transition:opacity .4s;
+}
+.ld-logo{display:flex;align-items:center;gap:10px;}
+.ld-ico{width:44px;height:44px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;}
+.ld-name{font-size:22px;font-weight:900;}
+.ld-name span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ld-bar{width:200px;height:4px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.ld-fill{height:100%;background:var(--grad);border-radius:99px;animation:ldprog 2.5s ease-in-out infinite;}
+@keyframes ldprog{0%{width:10%;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:10%;margin-left:85%;}  }
+.ld-msg{font-size:13px;color:var(--muted);}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:768px){
+  #sidebar{display:none;}
+  .tb-logo{min-width:auto;}
+  .tb-logo-txt{display:none;}
+  .tb-tabs .tb-tab span{display:none;}
+  .pkg-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo">
+    <div class="ld-ico">QH</div>
+    <div class="ld-name">GIS<span>Quy Hoạch</span></div>
+  </div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+  <div class="ld-msg" id="ld-msg">Đang khởi tạo bản đồ...</div>
+</div>
+
+<!-- TOPBAR -->
+<header id="topbar">
+  <a class="tb-logo" href="/">
+    <div class="tb-logo-ico">QH</div>
+    <div class="tb-logo-txt">
+      <div class="n1">GIS<span>Quy Hoạch</span></div>
+      <div class="n2">Tra cứu quy hoạch trực tuyến</div>
+    </div>
+  </a>
+
+  <div class="tb-tabs">
+    <div class="tb-tab on" onclick="switchTab('map')" id="tab-map"><i class="fa-solid fa-map"></i><span>Bản đồ</span></div>
+    <div class="tb-tab" onclick="switchTab('search')" id="tab-search"><i class="fa-solid fa-magnifying-glass"></i><span>Tìm kiếm</span></div>
+    <div class="tb-tab" onclick="switchTab('legend')" id="tab-legend"><i class="fa-solid fa-palette"></i><span>Chú giải</span></div>
+    <div class="tb-tab" onclick="switchTab('pkg')" id="tab-pkg"><i class="fa-solid fa-star"></i><span>Gói cước</span></div>
+  </div>
+
+  <div class="tb-search">
+    <div class="tb-search-box">
+      <i class="fa-solid fa-location-dot"></i>
+      <input id="search-inp" type="text" placeholder="Nhập tọa độ hoặc địa chỉ/xã, phường..." autocomplete="off"/>
+      <i class="fa-solid fa-xmark" id="search-clear"></i>
+    </div>
+  </div>
+
+  <div class="tb-auth">
+    <button class="btn-login" onclick="showModal()"><i class="fa-solid fa-right-to-bracket" style="margin-right:5px;"></i>Đăng nhập</button>
+    <button class="btn-register" onclick="showModal()">✦ Đăng ký VIP</button>
+  </div>
+</header>
+
+<!-- SEARCH DROPDOWN -->
+<div id="search-dd"></div>
+
+<!-- SHELL -->
+<div id="shell">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <!-- Features -->
+    <div class="sd-section">
+      <div class="sd-title">Tính năng nổi bật</div>
+      <div class="sd-feature">
+        <div class="sd-feature-ico"><i class="fa-solid fa-eye"></i></div>
+        <span>Xem trực tiếp vị trí thửa đất, lô đất, số đỏ trên bản đồ.</span>
+      </div>
+      <div class="sd-feature">
+        <div class="sd-feature-ico"><i class="fa-solid fa-ruler"></i></div>
+        <span>Đo vẽ diện tích – kích thước – ranh giới chính xác đến từng mét.</span>
+      </div>
+      <div class="sd-feature">
+        <div class="sd-feature-ico"><i class="fa-solid fa-search-location"></i></div>
+        <span>Tìm kiếm nhanh theo tọa độ, từ thửa, địa chỉ, khu vực, dự án.</span>
+      </div>
+      <div class="sd-feature">
+        <div class="sd-feature-ico"><i class="fa-solid fa-layer-group"></i></div>
+        <span>Tiếp cận đa dạng các loại quy hoạch tỷ lệ 1/500, 1/2000, 1/5000, 1/10000.</span>
+      </div>
+      <div class="sd-feature">
+        <div class="sd-feature-ico"><i class="fa-solid fa-headset"></i></div>
+        <span>Chuyên viên hỗ trợ tư vấn & hướng dẫn sử dụng trực tiếp.</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="sd-section">
+      <div class="sd-cta">
+        <div class="sd-cta-title">Tra cứu chuyên sâu?</div>
+        <div class="sd-cta-desc">Hãy để chuyên viên Quyhoach24h.kiểm tra giúp bạn —</div>
+        <div class="sd-cta-price">300.000₫<small>/lần</small></div>
+        <button class="btn-cta" onclick="showModal()">🔍 Tra cứu ngay</button>
+        <button class="btn-cta-outline" onclick="showModal()">Đăng ký VIP tiết kiệm hơn</button>
+      </div>
+    </div>
+
+    <!-- Legend preview -->
+    <div class="sd-section" id="legend-section">
+      <div class="sd-title">Chú giải loại đất</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>Đất ở đô thị (ODT)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div>Đất thương mại dịch vụ (TMD)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6;"></div>Đất công trình công cộng (DCC)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>Đất cây xanh (CX)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#06b6d4;"></div>Đất hỗn hợp (HH)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div>Đất giao thông (GT)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>Đất giáo dục (GD)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#84cc16;"></div>Đất nông nghiệp (NNP)</div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:12px 14px;font-size:10px;color:var(--dim);line-height:1.7;margin-top:auto;">
+      <a href="/" style="color:var(--muted);">Trang chủ</a> · <a href="#" style="color:var(--muted);">Điều khoản</a> · <a href="#" style="color:var(--muted);">Chính sách</a><br/>
+      <strong style="color:var(--muted);">GIS QUY HOẠCH VIỆT NAM</strong><br/>
+      Hotline: <strong>0332 945 089</strong>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="map-wrap">
+    <div id="leafmap"></div>
+
+    <!-- Map tools -->
+    <div id="map-tools">
+      <div class="map-btn" title="Về trung tâm" onclick="resetView()"><i class="fa-solid fa-house"></i></div>
+      <div class="map-btn" title="Vị trí của tôi" onclick="locateMe()"><i class="fa-solid fa-location-crosshairs"></i></div>
+      <div class="map-btn" title="Toàn màn hình" onclick="toggleFS()"><i class="fa-solid fa-expand" id="fs-ico"></i></div>
+    </div>
+
+    <!-- Basemap selector -->
+    <div style="position:absolute;bottom:32px;left:14px;z-index:500;display:flex;gap:5px;">
+      <div class="map-btn on" id="bm-streets" onclick="setBasemap('streets')" title="Bản đồ đường phố" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;">Bản đồ</div>
+      <div class="map-btn" id="bm-satellite" onclick="setBasemap('satellite')" title="Ảnh vệ tinh" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;">Vệ tinh</div>
+    </div>
+
+    <!-- Coords -->
+    <div id="coords-bar"><span id="c-lat">16.05440</span>° B, <span id="c-lng">108.20220</span>° Đ</div>
+
+    <!-- Info panel (right) -->
+    <div id="info-panel">
+      <div class="ip-close" onclick="closeInfoPanel()"><i class="fa-solid fa-xmark"></i></div>
+      <div class="ip-head">
+        <h3 id="ip-name">—</h3>
+        <p id="ip-type">Chọn vùng trên bản đồ để xem thông tin</p>
+      </div>
+      <div class="ip-body" id="ip-body"></div>
+    </div>
+
+    <!-- Package panel overlay -->
+    <div id="pkg-panel">
+      <div style="max-width:900px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:32px;">
+          <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Gói cước tra cứu</div>
+          <h2 style="font-size:28px;font-weight:900;margin-bottom:8px;">Chọn gói phù hợp với bạn</h2>
+          <p style="color:var(--muted);font-size:15px;">Tra cứu quy hoạch chính xác, chi tiết — hỗ trợ quyết định đầu tư bất động sản</p>
+        </div>
+        <div class="pkg-grid">
+          <div class="pkg-card">
+            <div class="pkg-badge" style="background:rgba(14,165,233,.12);color:#38bdf8;">Cơ bản</div>
+            <div class="pkg-name">Tra cứu đơn lẻ</div>
+            <div class="pkg-price">300.000₫</div>
+            <div class="pkg-per">/ lần tra cứu</div>
+            <ul class="pkg-list">
+              <li><i class="fa-solid fa-check"></i>Xem thông tin 1 thửa đất</li>
+              <li><i class="fa-solid fa-check"></i>Loại đất, diện tích, quy hoạch</li>
+              <li><i class="fa-solid fa-check"></i>Hỗ trợ tư vấn 1 lần</li>
+              <li><i class="fa-solid fa-check"></i>Kết quả trong 30 phút</li>
+            </ul>
+            <button class="pkg-btn" onclick="showModal()">Đăng ký ngay</button>
+          </div>
+          <div class="pkg-card hot">
+            <div class="pkg-badge" style="background:rgba(245,158,11,.15);color:#fbbf24;">⭐ Phổ biến nhất</div>
+            <div class="pkg-name">Gói tháng</div>
+            <div class="pkg-price">990.000₫</div>
+            <div class="pkg-per">/ tháng · không giới hạn tra cứu</div>
+            <ul class="pkg-list">
+              <li><i class="fa-solid fa-check"></i>Tra cứu không giới hạn toàn ĐN</li>
+              <li><i class="fa-solid fa-check"></i>Xem tất cả lớp quy hoạch</li>
+              <li><i class="fa-solid fa-check"></i>Xuất báo cáo PDF</li>
+              <li><i class="fa-solid fa-check"></i>Hỗ trợ tư vấn ưu tiên 24/7</li>
+              <li><i class="fa-solid fa-check"></i>Lưu lịch sử tra cứu</li>
+            </ul>
+            <button class="pkg-btn hot" onclick="showModal()">Dùng thử miễn phí 7 ngày</button>
+          </div>
+          <div class="pkg-card">
+            <div class="pkg-badge" style="background:rgba(99,102,241,.12);color:#818cf8;">Doanh nghiệp</div>
+            <div class="pkg-name">Gói năm</div>
+            <div class="pkg-price">7.900.000₫</div>
+            <div class="pkg-per">/ năm · tiết kiệm 33%</div>
+            <ul class="pkg-list">
+              <li><i class="fa-solid fa-check"></i>Tất cả tính năng gói Tháng</li>
+              <li><i class="fa-solid fa-check"></i>Đa tài khoản (tối đa 5 user)</li>
+              <li><i class="fa-solid fa-check"></i>API tích hợp hệ thống</li>
+              <li><i class="fa-solid fa-check"></i>Báo cáo thống kê tổng hợp</li>
+              <li><i class="fa-solid fa-check"></i>SLA cam kết 99.9% uptime</li>
+            </ul>
+            <button class="pkg-btn" onclick="showModal()">Liên hệ tư vấn</button>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+          <button onclick="switchTab('map')" style="background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit;">← Quay lại bản đồ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYWALL MODAL -->
+<div id="modal-overlay" onclick="hideModal(event)">
+  <div class="modal-wrap">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="ico">🔐</div>
+        <h2>Tra cứu thông tin quy hoạch</h2>
+        <p>Đăng ký để xem chi tiết loại đất, quy hoạch sử dụng, tọa độ thửa đất và các thông tin pháp lý quan trọng.</p>
+      </div>
+      <div class="modal-body">
+        <div class="plan-cards">
+          <div class="plan-card sel" id="plan-single" onclick="selectPlan('single')">
+            <div class="badge" style="background:rgba(14,165,233,.12);color:#38bdf8;">Đơn lẻ</div>
+            <div class="name">Tra cứu 1 lần</div>
+            <div class="price">300.000₫</div>
+            <div class="per">/ 1 thửa đất</div>
+            <div class="desc">Kết quả trong 30 phút, hỗ trợ tư vấn</div>
+          </div>
+          <div class="plan-card hot" id="plan-month" onclick="selectPlan('month')">
+            <div class="badge" style="background:rgba(245,158,11,.15);color:#fbbf24;">⭐ Tiết kiệm</div>
+            <div class="name">Gói tháng VIP</div>
+            <div class="price">990.000₫</div>
+            <div class="per">/ tháng · không giới hạn</div>
+            <div class="desc">Tra cứu thoải mái, xuất PDF, ưu tiên 24/7</div>
+          </div>
+        </div>
+        <div class="modal-perks">
+          <div class="perk-row"><i class="fa-solid fa-check-circle"></i>Xem loại đất, chỉ tiêu quy hoạch chi tiết</div>
+          <div class="perk-row"><i class="fa-solid fa-check-circle"></i>Kiểm tra lộ giới, hành lang bảo vệ</div>
+          <div class="perk-row"><i class="fa-solid fa-check-circle"></i>Xem tất cả lớp quy hoạch tỷ lệ 1/2000</div>
+          <div class="perk-row"><i class="fa-solid fa-check-circle"></i>Tư vấn chuyên viên GIS trực tiếp qua Zalo</div>
+        </div>
+        <div class="modal-btns">
+          <button class="btn-pay" onclick="contactPay()">💳 Đăng ký &amp; Thanh toán ngay</button>
+          <button class="btn-zalo" onclick="contactZalo()">💬 Chat Zalo để được tư vấn miễn phí</button>
+        </div>
+        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:12px;">🔒 Bảo mật thông tin · Hoàn tiền nếu không hài lòng</p>
+      </div>
+    </div>
+    <div class="modal-close" onclick="hideModal()"><i class="fa-solid fa-xmark"></i></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+'use strict';
+
+// ── CONFIG ──────────────────────────────────────────────
+const CENTER = [16.054, 108.202];
+const ZOOM   = 12;
+const GEOJSON_URL = 'https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/danang_simplified.geojson';
+
+// ── PLANNING ZONE COLORS ─────────────────────────────────
+// Màu theo loại đất quy hoạch Đà Nẵng
+function getZoneStyle(props) {
+  const name = (props.tenDoiTuon || '').toLowerCase();
+  // Random-ish consistent color based on name hash for demo
+  const colors = [
+    {fill:'#ef4444',border:'#dc2626',label:'Đất ở đô thị'},
+    {fill:'#f97316',border:'#ea580c',label:'Đất TM-DV'},
+    {fill:'#8b5cf6',border:'#7c3aed',label:'Đất CC'},
+    {fill:'#22c55e',border:'#16a34a',label:'Đất cây xanh'},
+    {fill:'#06b6d4',border:'#0891b2',label:'Đất hỗn hợp'},
+    {fill:'#64748b',border:'#475569',label:'Đất giao thông'},
+    {fill:'#fbbf24',border:'#f59e0b',label:'Đất giáo dục'},
+    {fill:'#84cc16',border:'#65a30d',label:'Đất nông nghiệp'},
+    {fill:'#f43f5e',border:'#e11d48',label:'Đất y tế'},
+  ];
+  // Use OBJECTID to assign consistent color
+  const idx = (parseInt(props.OBJECTID) || 0) % colors.length;
+  return colors[idx];
+}
+
+// ── MAP ─────────────────────────────────────────────────
+let map, geoLayer, labelsLayer;
+let allFeatures = [];
+let activeLayer = null;
+let baseLayers = {};
+let currentBasemap = 'streets';
+
+function initMap() {
+  map = L.map('leafmap', {
+    center: CENTER, zoom: ZOOM,
+    zoomControl: false, attributionControl: false
+  });
+
+  baseLayers = {
+    streets: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {maxZoom:20, subdomains:'abcd'}),
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19}),
+  };
+  baseLayers.streets.addTo(map);
+
+  L.control.zoom({position:'topright'}).addTo(map);
+  L.control.scale({position:'bottomright', metric:true, imperial:false}).addTo(map);
+
+  map.on('mousemove', e => {
+    document.getElementById('c-lat').textContent = e.latlng.lat.toFixed(5);
+    document.getElementById('c-lng').textContent = e.latlng.lng.toFixed(5);
+  });
+
+  map.on('click', e => {
+    document.getElementById('search-dd').style.display='none';
+  });
+}
+
+function setBasemap(bm) {
+  Object.values(baseLayers).forEach(l => map.removeLayer(l));
+  baseLayers[bm].addTo(map);
+  currentBasemap = bm;
+  document.getElementById('bm-streets').classList.toggle('on', bm==='streets');
+  document.getElementById('bm-satellite').classList.toggle('on', bm==='satellite');
+}
+
+// ── LOAD GEOJSON ─────────────────────────────────────────
+async function loadGeoJSON() {
+  setMsg('Đang tải dữ liệu quy hoạch Đà Nẵng...');
+  const res = await fetch(GEOJSON_URL);
+  if (!res.ok) throw new Error('Không tải được dữ liệu: HTTP ' + res.status);
+  const gj = await res.json();
+  allFeatures = gj.features;
+  setMsg('Đang vẽ ' + allFeatures.length + ' vùng quy hoạch...');
+
+  geoLayer = L.geoJSON(gj, {
+    style: f => {
+      const c = getZoneStyle(f.properties);
+      return {fillColor:c.fill, fillOpacity:0.55, color:c.border, weight:1.2, opacity:0.9};
+    },
+    onEachFeature: (f, layer) => {
+      layer.on({
+        mouseover: e => {
+          if (activeLayer !== e.target) {
+            e.target.setStyle({weight:2.5, fillOpacity:0.75});
+            e.target.bringToFront();
+          }
+        },
+        mouseout: e => {
+          if (activeLayer !== e.target) geoLayer.resetStyle(e.target);
+        },
+        click: e => onZoneClick(f, e.target)
+      });
+    }
+  }).addTo(map);
+
+  renderLabels();
+  buildSearch();
+  map.fitBounds(geoLayer.getBounds(), {padding:[20,20]});
+}
+
+// ── LABELS ─────────────────────────────────────────────
+function renderLabels() {
+  if (labelsLayer) { map.removeLayer(labelsLayer); labelsLayer=null; }
+  if (map.getZoom() < 12) return;
+  const ms = [];
+  allFeatures.forEach(f => {
+    const name = (f.properties.tenDoiTuon || '').trim();
+    if (!name) return;
+    try {
+      const c = L.geoJSON(f).getBounds().getCenter();
+      ms.push(L.tooltip({permanent:true, direction:'center', className:'zone-label'}).setLatLng(c).setContent(name));
+    } catch(e) {}
+  });
+  labelsLayer = L.layerGroup(ms).addTo(map);
+}
+// Re-render labels on zoom
+// (defer to avoid slowing down)
+let labelTimer;
+// map.on('zoomend', () => { clearTimeout(labelTimer); labelTimer=setTimeout(renderLabels,300); });
+
+// ── ZONE CLICK ────────────────────────────────────────
+function onZoneClick(f, layer) {
+  // Reset prev
+  if (activeLayer) geoLayer.resetStyle(activeLayer);
+  activeLayer = layer;
+  const c = getZoneStyle(f.properties);
+  layer.setStyle({weight:3, fillOpacity:0.8, color:'#fff'});
+  layer.bringToFront();
+
+  const p = f.properties;
+  const name = (p.tenDoiTuon || 'Không rõ').trim();
+  const area = p.dienTichQH ? Number(p.dienTichQH).toLocaleString('vi-VN',{maximumFractionDigits:1})+' ha' : (p.Shape_Area ? (p.Shape_Area/10000).toFixed(1)+' ha' : '—');
+  const pop  = p.danSoHienT ? Number(p.danSoHienT).toLocaleString('vi-VN')+' người' : '—';
+  const zone = getZoneStyle(p);
+
+  const popup = L.popup({maxWidth:280, closeButton:false, offset:[0,-4]})
+    .setLatLng(layer.getBounds().getCenter())
+    .setContent(`
+      <div>
+        <div class="pu-head" style="background:linear-gradient(135deg,${zone.fill},${zone.border});">
+          <h4>${name}</h4>
+          <small>Mã: #${p.OBJECTID || '?'} · TP. Đà Nẵng</small>
+        </div>
+        <div class="pu-body">
+          <div class="pu-row"><span class="pu-k">Diện tích</span><span class="pu-v">${area}</span></div>
+          <div class="pu-row"><span class="pu-k">Dân số</span><span class="pu-v">${pop}</span></div>
+          <div class="pu-row"><span class="pu-k">Loại đất</span><span class="pu-v">${zone.label}</span></div>
+        </div>
+        <div class="pu-locked">
+          <div class="pu-lock-ico">🔒</div>
+          <div class="pu-lock-text">Xem chi tiết tọa độ, chỉ tiêu quy hoạch, lộ giới... cần đăng ký gói tra cứu</div>
+          <button class="pu-lock-btn" onclick="showModal()">Tra cứu chi tiết — 300.000₫/lần</button>
+        </div>
+      </div>
+    `).openOn(map);
+
+  // Also show info panel
+  showInfoPanel(name, zone, p, area, pop);
+}
+
+// ── INFO PANEL ────────────────────────────────────────
+function showInfoPanel(name, zone, p, area, pop) {
+  const panel = document.getElementById('info-panel');
+  document.getElementById('ip-name').textContent = name;
+  document.getElementById('ip-type').textContent = zone.label + ' · TP. Đà Nẵng';
+  document.getElementById('ip-body').innerHTML = `
+    <div class="ip-row"><div class="ip-k">Mã đơn vị</div><div class="ip-v">#${p.OBJECTID || '—'}</div></div>
+    <div class="ip-row"><div class="ip-k">Loại đất</div><div class="ip-v" style="color:${zone.fill};">${zone.label}</div></div>
+    <div class="ip-row"><div class="ip-k">Diện tích</div><div class="ip-v">${area}</div></div>
+    <div class="ip-row"><div class="ip-k">Dân số</div><div class="ip-v">${pop}</div></div>
+    <div class="ip-locked-row">
+      <div style="font-size:18px;margin-bottom:6px;">🔒</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5;">Tọa độ thửa đất, quy hoạch chi tiết, lộ giới, hành lang bảo vệ...</div>
+      <button class="pu-lock-btn" style="width:100%;" onclick="showModal()">Xem chi tiết có phí</button>
+    </div>
+  `;
+  panel.classList.add('show');
+}
+function closeInfoPanel() {
+  document.getElementById('info-panel').classList.remove('show');
+  if (activeLayer) { geoLayer.resetStyle(activeLayer); activeLayer=null; }
+  map.closePopup();
+}
+
+// ── SEARCH ─────────────────────────────────────────────
+let searchIndex = [];
+function buildSearch() {
+  searchIndex = allFeatures.map(f => ({
+    name: (f.properties.tenDoiTuon || '').trim(),
+    feature: f,
+    type: getZoneStyle(f.properties).label
+  })).filter(it => it.name);
+}
+
+const inp  = document.getElementById('search-inp');
+const clr  = document.getElementById('search-clear');
+const dd   = document.getElementById('search-dd');
+let ddItems=[], kbIdx=-1;
+
+inp.addEventListener('input', e => onSearch(e.target.value));
+inp.addEventListener('focus', e => onSearch(e.target.value));
+inp.addEventListener('keydown', e => {
+  if (!ddItems.length) return;
+  if (e.key==='ArrowDown'){e.preventDefault();kbIdx=Math.min(kbIdx+1,ddItems.length-1);hlDD();}
+  else if(e.key==='ArrowUp'){e.preventDefault();kbIdx=Math.max(kbIdx-1,0);hlDD();}
+  else if(e.key==='Enter'){e.preventDefault();if(kbIdx>=0)pickItem(kbIdx);}
+  else if(e.key==='Escape'){dd.style.display='none';}
+});
+clr.addEventListener('click',()=>{ inp.value=''; clr.style.display='none'; dd.style.display='none'; });
+document.addEventListener('click',e=>{ if(!e.target.closest('.tb-search')&&!e.target.closest('#search-dd')) dd.style.display='none'; });
+
+function hlDD(){
+  dd.querySelectorAll('.dd-item').forEach((el,i)=>el.classList.toggle('kbf',i===kbIdx));
+}
+
+function onSearch(q) {
+  q = (q||'').trim();
+  clr.style.display = q ? 'block' : 'none';
+  if (!searchIndex.length) { dd.style.display='none'; return; }
+
+  let list;
+  if (!q) {
+    list = searchIndex.slice(0,12);
+  } else {
+    const lq = q.toLowerCase();
+    list = searchIndex.filter(it=>it.name.toLowerCase().includes(lq)).slice(0,15);
+  }
+
+  if (!list.length) {
+    dd.innerHTML = `<div style="padding:14px 16px;text-align:center;font-size:13px;color:var(--muted);">Không tìm thấy kết quả</div>`;
+    dd.style.display='block'; ddItems=[]; return;
+  }
+
+  const hl=(t,q)=>{ if(!q) return t; const i=t.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return t; return t.slice(0,i)+'<mark>'+t.slice(i,i+q.length)+'</mark>'+t.slice(i+q.length); };
+  const icons = ['🏘️','🏢','🌳','🛣️','🏫','🏥','🏪','🌾','🏙️'];
+
+  dd.innerHTML = list.map((it,i)=>{
+    const ico = icons[(parseInt(it.feature.properties.OBJECTID)||0) % icons.length];
+    return `<div class="dd-item" data-i="${i}">
+      <div class="dd-item-ico" style="background:${getZoneStyle(it.feature.properties).fill}22;">${ico}</div>
+      <div>
+        <div class="dd-item-name">${hl(it.name,q)}</div>
+        <div class="dd-item-sub">${it.type} · TP. Đà Nẵng</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  dd.style.display='block'; ddItems=list; kbIdx=-1;
+  dd.querySelectorAll('.dd-item').forEach((el,i)=>{
+    el.addEventListener('click',()=>pickItem(i));
+    el.addEventListener('mouseenter',()=>{kbIdx=i;hlDD();});
+  });
+}
+
+function pickItem(i) {
+  const it = ddItems[i]; if(!it) return;
+  inp.value = it.name;
+  clr.style.display='block';
+  dd.style.display='none';
+  inp.blur();
+  // Find and click the feature
+  geoLayer.eachLayer(layer => {
+    if (layer.feature && layer.feature.properties.tenDoiTuon === it.name) {
+      onZoneClick(it.feature, layer);
+      map.fitBounds(layer.getBounds(), {padding:[40,40]});
+    }
+  });
+}
+
+// ── TABS ────────────────────────────────────────────────
+function switchTab(t) {
+  ['map','search','legend','pkg'].forEach(id => {
+    document.getElementById('tab-'+id)?.classList.toggle('on', id===t);
+  });
+  document.getElementById('pkg-panel').classList.toggle('show', t==='pkg');
+  if (t==='search') { inp.focus(); onSearch(''); }
+  if (t==='legend') { document.getElementById('legend-section').scrollIntoView({behavior:'smooth'}); }
+}
+
+// ── TOOLS ───────────────────────────────────────────────
+function resetView() { map.setView(CENTER, ZOOM); }
+function locateMe() {
+  map.locate({setView:true, maxZoom:15});
+  map.once('locationfound', e => {
+    L.circleMarker(e.latlng,{radius:8,fillColor:'#3b82f6',color:'#fff',weight:2,fillOpacity:1}).addTo(map);
+  });
+  map.once('locationerror', () => alert('Không xác định được vị trí!'));
+}
+function toggleFS() {
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+document.addEventListener('fullscreenchange', () => {
+  document.getElementById('fs-ico').className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+});
+
+// ── MODAL ────────────────────────────────────────────────
+let selectedPlan = 'single';
+function selectPlan(p) {
+  selectedPlan=p;
+  document.getElementById('plan-single').classList.toggle('sel',p==='single');
+  document.getElementById('plan-month').classList.toggle('sel',p==='month');
+}
+function showModal() { document.getElementById('modal-overlay').classList.add('show'); }
+function hideModal(e) {
+  if (!e||e.target===document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+}
+function contactPay() {
+  const zaloUrl='https://zalo.me/0332945089';
+  window.open(zaloUrl,'_blank');
+  hideModal();
+}
+function contactZalo() { window.open('https://zalo.me/0332945089','_blank'); hideModal(); }
+
+// ── BOOT ────────────────────────────────────────────────
+function setMsg(t) { document.getElementById('ld-msg').textContent=t; }
+
+async function boot() {
+  try {
+    initMap();
+    await loadGeoJSON();
+    // Hide loader
+    const ld = document.getElementById('loader');
+    ld.style.opacity='0'; ld.style.pointerEvents='none';
+    setTimeout(()=>ld.style.display='none', 400);
+  } catch(err) {
+    console.error(err);
+    setMsg('❌ Lỗi: '+err.message);
+    document.getElementById('ld-msg').style.color='#ef4444';
+  }
+}
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
