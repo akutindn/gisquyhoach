@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://gisquyhoach.vn/sitemap.xml
+
+# Disallow admin/private paths
+Disallow: /scratch/
+Disallow: /*.py$
+Disallow: /*.md$

@@ -330,6 +330,26 @@ img{max-width:100%;}
 .sv-num{color:#c084fc;}
 
 
+
+/* ── Portfolio ── */
+.pf-tab{padding:8px 18px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.pf-tab:hover{border-color:var(--primary);color:var(--pl);}
+.pf-tab-active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.pf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.pf-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .3s;display:flex;flex-direction:column;}
+.pf-card:hover{transform:translateY(-5px);border-color:rgba(14,165,233,.3);box-shadow:0 20px 48px rgba(0,0,0,.3);}
+.pf-card.hidden{display:none;}
+.pf-thumb{height:140px;position:relative;border-bottom:1px solid var(--border);}
+.pf-badge{position:absolute;top:12px;right:12px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;color:#fff;}
+.pf-body{padding:20px;display:flex;flex-direction:column;flex:1;}
+.pf-tag{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.pf-name{font-size:15px;font-weight:800;line-height:1.4;margin-bottom:10px;}
+.pf-desc{font-size:13px;color:var(--muted);line-height:1.7;flex:1;margin-bottom:14px;}
+.pf-meta{display:flex;flex-wrap:wrap;gap:6px;}
+.pf-chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.15);color:var(--pl);}
+@media(max-width:900px){.pf-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.pf-grid{grid-template-columns:1fr;}}
+
 /* ── TT16 Section ── */
 @media(max-width:900px){.tt16-wrap{grid-template-columns:1fr;}.err-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:600px){.err-grid{grid-template-columns:1fr;}}
@@ -785,6 +805,7 @@ body { background: var(--bg); color: var(--text); }
         </div>
       </div>
 
+      <a href="#portfolio" class="nav-link">Dự án</a>
       <a href="#webgis" class="nav-link">Bản đồ</a>
       <a href="#process" class="nav-link">Quy trình</a>
       <a href="#pricing" class="nav-link">Bảng giá</a>
@@ -914,6 +935,143 @@ body { background: var(--bg); color: var(--text); }
 
 <!-- ══ FEATURES ═════════════════════════════════════════════ -->
 <!-- ══ HỒ SƠ GIS THÔNG TƯ 16 ══════════════════════════════════════ -->
+<!-- ══ PORTFOLIO / DỰ ÁN ĐÃ LÀM ══════════════════════════════════ -->
+<section class="section sec-dark" id="portfolio" style="padding:100px 40px;">
+  <div class="container">
+    <div class="sec-tag">Thực tế đã làm</div>
+    <h2 class="sec-title">Dự án <span style="color:var(--pl)">tiêu biểu</span></h2>
+    <p class="sec-desc">Hơn 50 dự án GIS hoàn thành trên 30 tỉnh thành — từ chuyển đổi hồ sơ TT16 đến triển khai WebGIS tích hợp.</p>
+
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:8px;margin-top:40px;margin-bottom:32px;flex-wrap:wrap;">
+      <button onclick="pfFilter('all')" id="pf-all" class="pf-tab pf-tab-active">Tất cả</button>
+      <button onclick="pfFilter('gis')"    id="pf-gis"    class="pf-tab">🗂️ Hồ sơ GIS TT16</button>
+      <button onclick="pfFilter('webgis')" id="pf-webgis" class="pf-tab">🌐 WebGIS</button>
+      <button onclick="pfFilter('web')"    id="pf-web"    class="pf-tab">💻 Website</button>
+      <button onclick="pfFilter('mkt')"    id="pf-mkt"    class="pf-tab">📢 Marketing</button>
+    </div>
+
+    <!-- Project grid -->
+    <div class="pf-grid" id="pf-grid">
+
+      <!-- Dự án 1 -->
+      <div class="pf-card" data-type="gis">
+        <div class="pf-thumb" style="background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(99,102,241,.1));">
+          <div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">🗂️</div>
+          <div class="pf-badge" style="background:rgba(14,165,233,.9);">GIS TT16</div>
+        </div>
+        <div class="pf-body">
+          <div class="pf-tag">Hồ sơ GIS • Đà Nẵng</div>
+          <h3 class="pf-name">Đồ án QH phân khu tỷ lệ 1/2000<br/>Quận Ngũ Hành Sơn</h3>
+          <p class="pf-desc">Chuyển đổi 24 lớp CAD sang GeoPackage VN2000, quét &amp; sửa 312 lỗi topology, đóng gói HoSoGIS đạt chuẩn TT16.</p>
+          <div class="pf-meta">
+            <span class="pf-chip">24 lớp dữ liệu</span>
+            <span class="pf-chip">312 lỗi topology</span>
+            <span class="pf-chip">2 ngày hoàn thành</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dự án 2 -->
+      <div class="pf-card" data-type="gis">
+        <div class="pf-thumb" style="background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.08));">
+          <div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">📋</div>
+          <div class="pf-badge" style="background:rgba(16,185,129,.9);">GIS TT16</div>
+        </div>
+        <div class="pf-body">
+          <div class="pf-tag">Hồ sơ GIS • Quảng Nam</div>
+          <h3 class="pf-name">Quy hoạch nông thôn mới<br/>Huyện Duy Xuyên 2025</h3>
+          <p class="pf-desc">Số hóa bản đồ hiện trạng sử dụng đất, chuẩn hóa 18 lớp theo Phụ lục TT16, xuất GeoPackage nộp UBND tỉnh.</p>
+          <div class="pf-meta">
+            <span class="pf-chip">18 lớp dữ liệu</span>
+            <span class="pf-chip">Chuẩn VN2000</span>
+            <span class="pf-chip">3 ngày hoàn thành</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dự án 3 -->
+      <div class="pf-card" data-type="webgis">
+        <div class="pf-thumb" style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));">
+          <div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">🗺️</div>
+          <div class="pf-badge" style="background:rgba(99,102,241,.9);">WebGIS</div>
+        </div>
+        <div class="pf-body">
+          <div class="pf-tag">WebGIS Portal • Đà Nẵng</div>
+          <h3 class="pf-name">Cổng tra cứu quy hoạch<br/>TP. Đà Nẵng trực tuyến</h3>
+          <p class="pf-desc">Xây dựng WebGIS tích hợp Leaflet.js, overlay 9 loại vùng quy hoạch, tìm kiếm realtime, hệ thống tra cứu có phí.</p>
+          <div class="pf-meta">
+            <span class="pf-chip">9 loại vùng QH</span>
+            <span class="pf-chip">Leaflet.js</span>
+            <span class="pf-chip">Tra cứu có phí</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dự án 4 -->
+      <div class="pf-card" data-type="gis">
+        <div class="pf-thumb" style="background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(239,68,68,.08));">
+          <div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">🏙️</div>
+          <div class="pf-badge" style="background:rgba(245,158,11,.9);color:#0a0a0a;">GIS TT16</div>
+        </div>
+        <div class="pf-body">
+          <div class="pf-tag">Hồ sơ GIS • Huế</div>
+          <h3 class="pf-name">Đồ án QH chi tiết 1/500<br/>Khu đô thị mới Tây Nam Huế</h3>
+          <p class="pf-desc">Chuyển đổi toàn bộ hồ sơ CAD gồm 31 lớp, tự động phát hiện lỗi với QGIS plugin tùy chỉnh, thẩm định thành công lần đầu.</p>
+          <div class="pf-meta">
+            <span class="pf-chip">31 lớp dữ liệu</span>
+            <span class="pf-chip">QH 1/500</span>
+            <span class="pf-chip">Thẩm định lần 1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dự án 5 -->
+      <div class="pf-card" data-type="web">
+        <div class="pf-thumb" style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(14,165,233,.08));">
+          <div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">💻</div>
+          <div class="pf-badge" style="background:rgba(34,197,94,.9);">Website</div>
+        </div>
+        <div class="pf-body">
+          <div class="pf-tag">Landing Page • Công ty BĐS</div>
+          <h3 class="pf-name">Website tích hợp bản đồ<br/>dự án bất động sản Hội An</h3>
+          <p class="pf-desc">Landing page hiện đại tích hợp WebGIS hiển thị vị trí dự án, tiện ích xung quanh, form đặt lịch tham quan tự động.</p>
+          <div class="pf-meta">
+            <span class="pf-chip">WebGIS tích hợp</span>
+            <span class="pf-chip">Form tự động</span>
+            <span class="pf-chip">SEO chuẩn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dự án 6 -->
+      <div class="pf-card" data-type="mkt">
+        <div class="pf-thumb" style="background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(249,115,22,.08));">
+          <div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">📢</div>
+          <div class="pf-badge" style="background:rgba(239,68,68,.9);">Marketing</div>
+        </div>
+        <div class="pf-body">
+          <div class="pf-tag">Chăm sóc Page • Đà Nẵng</div>
+          <h3 class="pf-name">Fanpage môi giới BĐS<br/>tăng từ 0 lên 8.500 followers</h3>
+          <p class="pf-desc">Chăm sóc page 6 tháng: 15 bài/tháng chuyên ngành, chạy Ads 3 chiến dịch, engagement rate đạt 7.2%, 45 leads/tháng.</p>
+          <div class="pf-meta">
+            <span class="pf-chip">8.500 followers</span>
+            <span class="pf-chip">7.2% engagement</span>
+            <span class="pf-chip">45 leads/tháng</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align:center;margin-top:48px;">
+      <p style="color:var(--muted);font-size:14px;margin-bottom:20px;">Và còn nhiều dự án khác trên toàn quốc — <strong style="color:var(--text);">liên hệ để xem portfolio đầy đủ</strong></p>
+      <a href="#contact" class="btn btn-primary" style="padding:13px 32px;font-size:14px;">📋 Xem thêm &amp; tư vấn miễn phí</a>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="tt16" style="padding:100px 40px;">
   <div class="container">
     <div class="sec-tag">Dịch vụ chuyên sâu</div>
@@ -2081,7 +2239,7 @@ body { background: var(--bg); color: var(--text); }
     <div class="contact-card">
       <h2>Bắt đầu ngay hôm nay 🚀</h2>
       <p class="sub">Liên hệ để được tư vấn miễn phí · Làm trước · Thanh toán sau khi nghiệm thu</p>
-      <form class="contact-form" onsubmit="handleContact(event)" novalidate>
+      <form class="contact-form" id="contact-form" action="https://formspree.io/f/xjkvpbgw" method="POST" novalidate>
         <div class="form-group">
           <label for="ctName">Họ và tên *</label>
           <input type="text" id="ctName" name="name" autocomplete="name" placeholder="Nguyễn Văn A" required aria-required="true"/>
@@ -2097,25 +2255,45 @@ body { background: var(--bg); color: var(--text); }
         <div class="form-group">
           <label for="ctType">Loại dự án</label>
           <select id="ctType" name="project_type">
-            <option value="">-- Chọn loại quy hoạch --</option>
-            <option value="qh-su-dung-dat">Quy hoạch sử dụng đất</option>
-            <option value="qh-do-thi">Quy hoạch đô thị</option>
-            <option value="qh-xay-dung-nong-thon">Quy hoạch xây dựng nông thôn</option>
-            <option value="qh-giao-thong">Quy hoạch giao thông</option>
-            <option value="khac">Loại khác</option>
+            <option value="">-- Chọn dịch vụ cần tư vấn --</option>
+            <optgroup label="🗂️ Hồ sơ GIS TT16">
+              <option value="tt16-cad-gis">Chuyển đổi CAD → GIS (TT16)</option>
+              <option value="tt16-kiem-tra">Kiểm tra / sửa lỗi hồ sơ GIS</option>
+              <option value="tt16-dong-goi">Đóng gói GeoPackage &amp; bàn giao</option>
+            </optgroup>
+            <optgroup label="🌐 Thiết kế Website">
+              <option value="web-landing">Landing page doanh nghiệp</option>
+              <option value="web-gis">Cổng WebGIS tra cứu</option>
+              <option value="web-enterprise">Website doanh nghiệp toàn diện</option>
+            </optgroup>
+            <optgroup label="📢 Marketing & Page Fan">
+              <option value="mkt-basic">Gói 999k — Chăm sóc Page cơ bản</option>
+              <option value="mkt-pro">Gói 1.499k — Marketing tổng thể</option>
+              <option value="mkt-ads">Gói 2.900k — Toàn diện + Google Maps</option>
+            </optgroup>
+            <optgroup label="🗺️ Tra cứu Quy hoạch">
+              <option value="tracuu-once">Tra cứu đơn lẻ 199k</option>
+              <option value="tracuu-vip">Gói VIP tháng / năm</option>
+            </optgroup>
+            <option value="khac">Khác — Tư vấn thêm</option>
           </select>
         </div>
         <div class="form-group full">
           <label>Mô tả yêu cầu</label>
           <textarea id="ctMsg" rows="4" placeholder="Mô tả hồ sơ cần xử lý, diện tích, số lớp... (không bắt buộc)"></textarea>
         </div>
+        <!-- Formspree config fields -->
+        <input type="hidden" name="_subject" value="🗺️ Khách hàng mới từ GISQuyHoach.vn"/>
+        <input type="hidden" name="_replyto" value="auto"/>
+        <input type="hidden" name="_next" value="https://gisquyhoach.vn/?sent=1"/>
+        <input type="text"   name="_gotcha" style="display:none" tabindex="-1" autocomplete="off"/>
         <!-- ══ HONEYPOT: bot sẽ tự động fill vào đây, real user không thấy ══ -->
         <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
           <label for="ctWebsite">Website (leave blank)</label>
           <input type="text" id="ctWebsite" name="website" tabindex="-1" autocomplete="off"/>
         </div>
         <div class="form-submit">
-          <button type="submit" class="btn btn-green btn-xl">📞 Gửi yêu cầu tư vấn miễn phí</button>
+          <button type="submit" id="contact-btn" class="btn btn-green btn-xl" style="min-width:280px;">📞 Gửi yêu cầu tư vấn miễn phí</button>
           <p style="margin-top:12px;font-size:13px;color:var(--muted)">Chúng tôi sẽ phản hồi trong vòng 30 phút trong giờ hành chính</p>
 
         <div class="or-row"><span>— hoặc tư vấn ngay qua —</span></div>
@@ -2858,6 +3036,99 @@ document.getElementById('dn-modal').addEventListener('click',function(e){ if(e.t
 
 // Invalidate map size khi mở overlay (Leaflet cần)
 document.getElementById('dn-overlay').addEventListener('transitionend',function(){ if(dnMap) dnMap.invalidateSize(); });
+</script>
+
+
+<script>
+// ── CONTACT FORM với Formspree ────────────────────────────────
+(function(){
+  var form = document.getElementById('contact-form');
+  if(!form) return;
+
+  // Hiển thị toast
+  function toast(msg, type){
+    var t = document.createElement('div');
+    t.innerHTML = msg;
+    t.style.cssText = [
+      'position:fixed','bottom:28px','left:50%','transform:translateX(-50%) translateY(20px)',
+      'background:'+(type==='ok'?'linear-gradient(135deg,#10b981,#059669)':'linear-gradient(135deg,#ef4444,#dc2626)'),
+      'color:#fff','padding:14px 28px','border-radius:12px','font-size:14px','font-weight:700',
+      'box-shadow:0 8px 32px rgba(0,0,0,.35)','z-index:9999','opacity:0',
+      'transition:all .3s','white-space:nowrap','font-family:inherit'
+    ].join(';');
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; }, 10);
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },400); }, 4000);
+  }
+
+  // Validate
+  function validate(){
+    var name  = document.getElementById('ctName').value.trim();
+    var phone = document.getElementById('ctPhone').value.trim();
+    if(!name){ toast('⚠️ Vui lòng nhập họ tên của bạn','err'); document.getElementById('ctName').focus(); return false; }
+    if(!phone||phone.replace(/\D/g,'').length < 9){ toast('⚠️ Số điện thoại chưa đúng định dạng','err'); document.getElementById('ctPhone').focus(); return false; }
+    return true;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!validate()) return;
+
+    var btn = document.getElementById('contact-btn');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Đang gửi...';
+    btn.style.opacity = '.7';
+
+    fetch(form.action, {
+      method:'POST',
+      body: new FormData(form),
+      headers:{ Accept:'application/json' }
+    }).then(function(r){
+      if(r.ok){
+        toast('✅ Gửi thành công! Chúng tôi sẽ liên hệ trong 30 phút.','ok');
+        form.reset();
+        // Mở Zalo sau 2s
+        setTimeout(function(){
+          if(confirm('Bạn có muốn nhắn Zalo ngay để được tư vấn nhanh hơn không?')){
+            window.open('https://zalo.me/0332945089','_blank');
+          }
+        }, 2000);
+      } else {
+        toast('❌ Gửi thất bại. Vui lòng nhắn Zalo trực tiếp: 0332 945 089','err');
+      }
+    }).catch(function(){
+      toast('❌ Mất kết nối. Vui lòng nhắn Zalo: 0332 945 089','err');
+    }).finally(function(){
+      btn.disabled = false;
+      btn.innerHTML = '📞 Gửi yêu cầu tư vấn miễn phí';
+      btn.style.opacity = '1';
+    });
+  });
+
+  // URL param ?sent=1 → hiện toast nếu redirect về
+  if(window.location.search.includes('sent=1')){
+    setTimeout(function(){ toast('✅ Đã gửi thành công! Chúng tôi sẽ liên hệ sớm.','ok'); },500);
+    history.replaceState(null,'',window.location.pathname);
+  }
+})();
+</script>
+
+
+<script>
+function pfFilter(type){
+  // Update tabs
+  ['all','gis','webgis','web','mkt'].forEach(function(t){
+    var el=document.getElementById('pf-'+t);
+    if(!el) return;
+    el.classList.toggle('pf-tab-active', t===type);
+  });
+  // Show/hide cards
+  document.querySelectorAll('.pf-card').forEach(function(card){
+    var show = type==='all' || card.dataset.type===type;
+    card.classList.toggle('hidden', !show);
+    if(show){ card.style.animation='pfIn .3s ease'; }
+  });
+}
 </script>
 
 </body>
