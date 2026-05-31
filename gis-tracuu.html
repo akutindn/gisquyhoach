@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Tra cứu Quy hoạch trực tuyến — Đà Nẵng | GIS Quy Hoạch</title>
+<meta name="description" content="Tra cứu quy hoạch sử dụng đất, ranh giới thửa đất, lộ giới, hành lang bảo vệ tại Đà Nẵng trực tiếp trên bản đồ số. Gói VIP không giới hạn từ 990.000₫/tháng."/>
+<meta name="keywords" content="tra cứu quy hoạch Đà Nẵng, bản đồ quy hoạch trực tuyến, quy hoạch sử dụng đất Đà Nẵng, tra cứu thửa đất Đà Nẵng, GIS quy hoạch"/>
+<meta property="og:title" content="Tra cứu Quy hoạch Đà Nẵng — Bản đồ trực tuyến"/>
+<meta property="og:description" content="Tra cứu quy hoạch sử dụng đất tại Đà Nẵng trực tiếp trên bản đồ số. 199.000₫/lần hoặc gói VIP không giới hạn."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
+  --border:#30363d;--border2:#21262d;
+  --text:#e6edf3;--muted:#8b949e;--dim:#484f58;
+  --primary:#2563eb;--accent:#10b981;--warn:#f59e0b;
+  --pl:#38bdf8;--danger:#ef4444;
+}
+html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--text);}
+
+/* ── TOPBAR ── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:48px;z-index:1000;
+  background:rgba(13,17,23,.97);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0;
+}
+.tb-logo{display:flex;align-items:center;gap:10px;padding:0 16px;border-right:1px solid var(--border);height:100%;min-width:200px;flex-shrink:0;text-decoration:none;}
+.tb-logo-icon{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#0ea5e9,#6366f1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;}
+.tb-logo-text{font-size:13px;font-weight:800;color:var(--text);}
+.tb-logo-text span{background:linear-gradient(135deg,#0ea5e9,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tb-logo-sub{font-size:10px;color:var(--muted);}
+
+/* Tabs */
+.tb-tabs{display:flex;height:100%;border-right:1px solid var(--border);}
+.tb-tab{display:flex;align-items:center;gap:5px;padding:0 14px;font-size:12px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap;user-select:none;}
+.tb-tab:hover{color:var(--text);background:rgba(255,255,255,.02);}
+.tb-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+
+/* Search */
+.tb-search{flex:1;padding:0 12px;max-width:420px;}
+.tb-search-wrap{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0 12px;height:32px;transition:border-color .15s;}
+.tb-search-wrap:focus-within{border-color:var(--primary);}
+.tb-search-inp{flex:1;background:none;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);}
+.tb-search-inp::placeholder{color:var(--muted);}
+
+/* Auth */
+.tb-auth{display:flex;align-items:center;gap:8px;padding:0 14px;margin-left:auto;flex-shrink:0;}
+.btn-vip{padding:5px 14px;border-radius:7px;font-size:12px;font-weight:700;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(37,99,235,.3);}
+.btn-login{padding:5px 14px;border-radius:7px;font-size:12px;font-weight:700;background:var(--surface2);color:var(--text);border:1px solid var(--border);cursor:pointer;font-family:inherit;}
+.btn-login:hover{border-color:var(--primary);color:var(--primary);}
+
+/* ── LAYOUT ── */
+#layout{position:fixed;top:48px;left:0;right:0;bottom:0;display:flex;}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:270px;flex-shrink:0;
+  background:rgba(13,17,23,.98);border-right:1px solid var(--border);
+  overflow-y:auto;display:flex;flex-direction:column;
+  transition:width .25s;
+}
+#sidebar.collapsed{width:0;overflow:hidden;}
+
+/* Sidebar toggle btn */
+#sb-toggle{
+  position:absolute;top:50%;transform:translateY(-50%);
+  left:270px;z-index:900;width:18px;height:48px;
+  background:var(--surface2);border:1px solid var(--border);border-left:none;
+  border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:10px;color:var(--muted);transition:left .25s;
+}
+#sb-toggle:hover{color:var(--text);background:var(--border);}
+
+.sb-section{padding:16px;border-bottom:1px solid var(--border);}
+.sb-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+
+/* Package cards in sidebar */
+.pkg-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.pkg-row:hover{border-color:rgba(37,99,235,.4);background:rgba(37,99,235,.04);}
+.pkg-row.best{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.04);}
+.pkg-row-name{font-size:13px;font-weight:800;color:var(--text);}
+.pkg-row-price{font-size:11px;color:var(--muted);margin-top:2px;}
+.pkg-row-price s{font-size:10px;color:var(--dim);}
+.pkg-row-price strong{color:var(--primary);}
+.pkg-row-badge{font-size:9px;font-weight:900;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;}
+.pkg-row-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:800;background:var(--primary);color:#fff;border:none;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.pkg-row.best .pkg-row-btn{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0a0a0a;}
+.pkg-sale{position:absolute;top:0;right:0;background:#ef4444;color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:0 10px 0 6px;}
+
+/* VIP CTA box */
+.vip-box{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(99,102,241,.06));border:1px solid rgba(37,99,235,.2);border-radius:10px;padding:14px;}
+.vip-box-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:6px;}
+.vip-box-desc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+.vip-box ul{font-size:11px;color:var(--muted);line-height:1.8;padding-left:2px;list-style:none;}
+.vip-box ul li::before{content:"✦ ";}
+
+/* Legend */
+.legend-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-bottom:6px;}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+
+/* ── MAP ── */
+#map-wrap{flex:1;position:relative;}
+#map{width:100%;height:100%;}
+
+/* Search dropdown */
+#search-dd{
+  position:absolute;top:48px;left:0;
+  width:100%;max-height:280px;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;
+  z-index:1100;display:none;box-shadow:0 12px 40px rgba(0,0,0,.5);
+}
+.dd-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border2);transition:background .1s;}
+.dd-item:hover{background:rgba(255,255,255,.04);}
+.dd-item:last-child{border-bottom:none;}
+.dd-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.dd-name{font-size:13px;font-weight:600;color:var(--text);}
+.dd-sub{font-size:11px;color:var(--muted);}
+
+/* Map tools */
+#map-tools{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:5px;}
+.tool-btn{width:34px;height:34px;border-radius:8px;background:rgba(13,17,23,.92);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--muted);transition:all .15s;}
+.tool-btn:hover,.tool-btn.active{background:var(--surface2);color:var(--primary);border-color:var(--primary);}
+
+/* Basemap toggle */
+#basemap-btns{position:absolute;bottom:36px;left:12px;z-index:900;display:flex;gap:4px;}
+.bm-btn{padding:5px 10px;border-radius:6px;background:rgba(13,17,23,.92);border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.bm-btn.active{border-color:var(--primary);color:var(--primary);}
+
+/* Coords bar */
+#coords{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:900;background:rgba(13,17,23,.88);border:1px solid var(--border);border-radius:99px;padding:4px 14px;font-size:11px;color:var(--muted);pointer-events:none;white-space:nowrap;}
+
+/* Reset view btn */
+#reset-view{position:absolute;bottom:36px;right:14px;z-index:900;}
+
+/* ── INFO PANEL ── */
+#info-panel{
+  position:absolute;top:0;right:0;width:260px;height:100%;
+  background:rgba(13,17,23,.97);border-left:1px solid var(--border);
+  display:none;flex-direction:column;z-index:950;overflow:hidden;
+}
+.ip-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.ip-name{font-size:14px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.ip-type{font-size:11px;color:var(--muted);}
+.ip-close{color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px;}
+.ip-body{flex:1;overflow-y:auto;padding:14px 16px;}
+.ip-row{padding:9px 0;border-bottom:1px solid var(--border2);}
+.ip-row-label{font-size:10px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;}
+.ip-row-val{font-size:13px;font-weight:700;color:var(--text);}
+.ip-lock{background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:10px;padding:14px;text-align:center;margin-top:14px;}
+.ip-lock-ico{font-size:28px;margin-bottom:8px;}
+.ip-lock-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.ip-lock-btn{display:block;width:100%;padding:10px;border-radius:8px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(14,165,233,.25);}
+
+/* ── TAB PANELS ── */
+.tab-panel{position:absolute;inset:0;background:rgba(13,17,23,.98);z-index:960;display:none;flex-direction:column;overflow:hidden;}
+.tab-panel.open{display:flex;}
+.tp-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.tp-title{font-size:16px;font-weight:800;}
+.tp-back{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit;padding:0;margin-left:auto;}
+.tp-body{flex:1;overflow-y:auto;padding:20px;}
+
+/* Gói cước panel */
+.pkg-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px;display:flex;flex-direction:column;}
+.pkg-card.hot{border-color:rgba(245,158,11,.4);background:linear-gradient(160deg,rgba(245,158,11,.05),var(--surface));position:relative;overflow:hidden;}
+.pkg-card.hot::before{content:'⭐ Được chọn nhiều nhất';position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#0a0a0a;font-size:10px;font-weight:900;text-align:center;padding:4px;letter-spacing:.04em;}
+.pkg-card.hot .pkg-card-inner{margin-top:26px;}
+.pkg-name{font-size:17px;font-weight:900;margin-bottom:4px;}
+.pkg-price{font-size:28px;font-weight:900;color:var(--primary);margin-bottom:3px;}
+.pkg-price.gold{color:#f59e0b;}
+.pkg-price.purple{color:#818cf8;}
+.pkg-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.pkg-features{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;flex:1;}
+.pkg-feature{font-size:12px;color:var(--muted);}
+.pkg-cta{display:block;text-align:center;padding:11px;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;}
+.pkg-cta.primary{background:var(--primary);color:#fff;border:none;box-shadow:0 6px 18px rgba(37,99,235,.3);}
+.pkg-cta.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0a0a0a;border:none;box-shadow:0 6px 18px rgba(245,158,11,.3);}
+.pkg-cta.outline{background:transparent;color:var(--muted);border:1.5px solid var(--border);}
+.pkg-cta:hover{opacity:.9;transform:translateY(-1px);}
+
+/* Tìm kiếm panel */
+.search-result{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);cursor:pointer;}
+.search-result:hover .sr-name{color:var(--pl);}
+.sr-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sr-name{font-size:13px;font-weight:700;transition:color .15s;}
+.sr-type{font-size:11px;color:var(--muted);}
+
+/* Chú giải panel */
+.legend-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2);font-size:13px;}
+.legend-swatch{width:32px;height:20px;border-radius:4px;flex-shrink:0;border:1px solid rgba(255,255,255,.1);}
+
+/* ── MODAL ── */
+#modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+#modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;max-width:460px;width:90%;overflow:hidden;position:relative;animation:mIn .28s ease;}
+@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:none;}}
+.modal-top{padding:28px;background:linear-gradient(135deg,rgba(37,99,235,.1),rgba(99,102,241,.07));border-bottom:1px solid var(--border);text-align:center;}
+.modal-ico{font-size:40px;margin-bottom:10px;}
+.modal-title{font-size:19px;font-weight:900;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.modal-body{padding:22px;}
+.modal-plans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.plan-card{border:1.5px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:border-color .15s;}
+.plan-card.sel{border-color:var(--primary);background:rgba(37,99,235,.06);}
+.plan-card.gold{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.04);}
+.plan-badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:6px;}
+.plan-name{font-size:13px;font-weight:800;margin-bottom:2px;}
+.plan-price{font-size:20px;font-weight:900;color:var(--primary);}
+.plan-price.gold{color:#f59e0b;}
+.plan-period{font-size:10px;color:var(--muted);}
+.modal-benefits{background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.15);border-radius:8px;padding:12px;margin-bottom:14px;}
+.modal-benefit{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.modal-close{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+
+/* Login modal */
+.form-input{width:100%;padding:10px 14px;border-radius:8px;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);font-family:inherit;font-size:14px;outline:none;margin-bottom:10px;transition:border-color .15s;}
+.form-input:focus{border-color:var(--primary);}
+.form-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.form-tab{flex:1;text-align:center;padding:10px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.form-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* Leaflet override */
+.leaflet-control-zoom{border:1px solid var(--border)!important;background:var(--surface2)!important;border-radius:8px!important;overflow:hidden;}
+.leaflet-control-zoom a{background:var(--surface2)!important;color:var(--muted)!important;border-bottom:1px solid var(--border)!important;}
+.leaflet-control-zoom a:hover{background:var(--border)!important;color:var(--text)!important;}
+.leaflet-control-scale-line{background:rgba(13,17,23,.8)!important;border-color:var(--muted)!important;color:var(--muted)!important;font-size:10px!important;}
+.leaflet-popup-content-wrapper{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.5)!important;}
+.leaflet-popup-tip{background:var(--surface)!important;}
+.leaflet-popup-content{color:var(--text)!important;font-family:inherit!important;font-size:13px!important;margin:10px 14px!important;}
+.leaflet-popup-close-button{color:var(--muted)!important;}
+
+@media(max-width:768px){
+  #sidebar{display:none;}
+  #sb-toggle{left:0;}
+  .tb-search{max-width:200px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══════════════════════════════════════════════════════ -->
+<div id="topbar">
+  <a class="tb-logo" href="/">
+    <div class="tb-logo-icon">QH</div>
+    <div>
+      <div class="tb-logo-text">GIS<span>Quy Hoạch</span></div>
+      <div class="tb-logo-sub">Bản đồ quy hoạch Đà Nẵng</div>
+    </div>
+  </a>
+
+  <div class="tb-tabs">
+    <div class="tb-tab active" id="tab-map" onclick="switchTab('map')">🗺️ Bản đồ</div>
+    <div class="tb-tab" id="tab-search" onclick="switchTab('search')">🔍 Tìm kiếm</div>
+    <div class="tb-tab" id="tab-legend" onclick="switchTab('legend')">🎨 Chú giải</div>
+    <div class="tb-tab" id="tab-data" onclick="switchTab('data')">📋 Dữ liệu</div>
+    <div class="tb-tab" id="tab-pkg" onclick="switchTab('pkg')">⭐ Gói cước</div>
+  </div>
+
+  <div class="tb-search" style="position:relative;">
+    <div class="tb-search-wrap">
+      <span style="color:var(--muted);font-size:12px;">📍</span>
+      <input class="tb-search-inp" id="main-search" type="text" placeholder="Nhập tọa độ hoặc địa chỉ/xã, phường..." autocomplete="off"
+        oninput="onSearch(this.value)" onfocus="onSearch(this.value)"/>
+      <span id="search-clr" onclick="clearSearch()" style="color:var(--muted);cursor:pointer;font-size:12px;display:none;">✕</span>
+    </div>
+    <div id="search-dd"></div>
+  </div>
+
+  <div class="tb-auth">
+    <button class="btn-vip" onclick="openModal('paywall')">✦ Đăng ký VIP</button>
+    <button class="btn-login" onclick="openModal('login')">🔑 Đăng nhập</button>
+  </div>
+</div>
+
+<!-- ══ MAIN LAYOUT ══════════════════════════════════════════════════ -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+
+    <!-- Gói cước sidebar -->
+    <div class="sb-section">
+      <div class="sb-label">Gói tra cứu</div>
+
+      <div class="pkg-row" onclick="openModal('paywall')">
+        <div>
+          <div class="pkg-row-name">1 tháng</div>
+          <div class="pkg-row-price"><strong>990.000₫</strong></div>
+        </div>
+        <button class="pkg-row-btn">Đăng ký</button>
+      </div>
+
+      <div class="pkg-row" onclick="openModal('paywall')" style="position:relative;">
+        <div class="pkg-sale">-10%</div>
+        <div>
+          <div class="pkg-row-name">3 tháng</div>
+          <div class="pkg-row-price"><s>2.970.000₫</s> <strong>2.650.000₫</strong></div>
+        </div>
+        <button class="pkg-row-btn">Đăng ký</button>
+      </div>
+
+      <div class="pkg-row best" onclick="openModal('paywall')" style="position:relative;">
+        <div class="pkg-sale" style="background:#f59e0b;">-20%</div>
+        <div>
+          <div class="pkg-row-name" style="color:#fbbf24;">⭐ 6 tháng</div>
+          <div class="pkg-row-price"><s>5.940.000₫</s> <strong style="color:#f59e0b;">4.750.000₫</strong></div>
+        </div>
+        <button class="pkg-row-btn">Đăng ký</button>
+      </div>
+
+      <div class="pkg-row" onclick="openModal('paywall')" style="position:relative;">
+        <div class="pkg-sale" style="background:#818cf8;">-35%</div>
+        <div>
+          <div class="pkg-row-name">12 tháng</div>
+          <div class="pkg-row-price"><s>11.880.000₫</s> <strong>7.700.000₫</strong></div>
+        </div>
+        <button class="pkg-row-btn">Đăng ký</button>
+      </div>
+
+      <div class="pkg-row" onclick="openModal('paywall')" style="margin-top:4px;background:rgba(99,102,241,.04);border-color:rgba(99,102,241,.2);">
+        <div>
+          <div class="pkg-row-name" style="font-size:12px;">Tra cứu 1 lần</div>
+          <div class="pkg-row-price"><strong style="font-size:15px;color:#818cf8;">199.000₫</strong></div>
+        </div>
+        <button class="pkg-row-btn" style="background:#818cf8;">Mua ngay</button>
+      </div>
+    </div>
+
+    <!-- VIP benefits -->
+    <div class="sb-section">
+      <div class="vip-box">
+        <div class="vip-box-title">★ Nâng cấp VIP để mở toàn bộ dữ liệu quy hoạch cùng <span style="color:var(--pl);">GISQuyHoach.vn</span></div>
+        <div class="vip-box-desc">Quyền lợi dành cho khách VIP:</div>
+        <ul>
+          <li>Tra cứu hàng loạt đồ án quy hoạch chi tiết 1/500</li>
+          <li>Xem trực tiếp vị trí thửa đất, lô đất, sổ đỏ trên bản đồ</li>
+          <li>Đo vẽ diện tích – kích thước – ranh giới chính xác đến từng mét</li>
+          <li>Tìm kiếm nhanh theo tọa độ, lô thửa, địa chỉ</li>
+          <li>Hỗ trợ chuyên viên GIS tư vấn 24/7</li>
+        </ul>
+        <button onclick="openModal('paywall')" style="display:block;width:100%;margin-top:12px;padding:9px;border-radius:8px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(14,165,233,.25);">Nâng cấp VIP ngay</button>
+      </div>
+    </div>
+
+    <!-- Legend mini -->
+    <div class="sb-section" style="flex:1;">
+      <div class="sb-label">Chú giải (mini)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>Đất ở đô thị (ODT)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div>Đất TM – Dịch vụ</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6;"></div>Đất công cộng (DCC)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>Đất cây xanh (CX)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#06b6d4;"></div>Đất hỗn hợp (HH)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div>Đất giao thông (GT)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>Đất giáo dục (GD)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#84cc16;"></div>Đất nông nghiệp</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f43f5e;"></div>Đất y tế</div>
+    </div>
+
+    <!-- Hotline -->
+    <div style="padding:12px 16px;font-size:11px;color:var(--dim);border-top:1px solid var(--border);">
+      Hotline: <strong style="color:var(--muted);">0332 945 089</strong> &nbsp;|&nbsp;
+      <a href="https://zalo.me/0332945089" target="_blank" style="color:var(--pl);">Zalo tư vấn</a>
+    </div>
+  </div>
+
+  <!-- Sidebar toggle -->
+  <div id="sb-toggle" onclick="toggleSidebar()" title="Ẩn/hiện bảng">‹</div>
+
+  <!-- MAP -->
+  <div id="map-wrap">
+    <div id="map"></div>
+
+    <!-- Map tools -->
+    <div id="map-tools">
+      <div class="tool-btn active" id="tool-view" onclick="setTool('view')" title="Xem bản đồ">🖱️</div>
+      <div class="tool-btn" id="tool-measure" onclick="setTool('measure')" title="Đo diện tích">📐</div>
+      <div class="tool-btn" id="tool-locate" onclick="locateMe()" title="Vị trí của tôi">📍</div>
+      <div class="tool-btn" onclick="resetView()" title="Về trung tâm Đà Nẵng">🏠</div>
+    </div>
+
+    <!-- Basemap -->
+    <div id="basemap-btns">
+      <div class="bm-btn active" id="bm-dark" onclick="setBasemap('dark')">Bản đồ</div>
+      <div class="bm-btn" id="bm-street" onclick="setBasemap('street')">Đường phố</div>
+      <div class="bm-btn" id="bm-sat" onclick="setBasemap('sat')">Vệ tinh</div>
+    </div>
+
+    <!-- Coords -->
+    <div id="coords"><span id="c-lat">16.05440</span>° B &nbsp; <span id="c-lng">108.20220</span>° Đ</div>
+
+    <!-- Info panel -->
+    <div id="info-panel">
+      <div class="ip-header">
+        <div>
+          <div class="ip-name" id="ip-name">—</div>
+          <div class="ip-type" id="ip-type"></div>
+        </div>
+        <div class="ip-close" onclick="closeInfo()">✕</div>
+      </div>
+      <div class="ip-body" id="ip-body"></div>
+    </div>
+
+    <!-- Tab panels (overlay on map) -->
+    <!-- Search Panel -->
+    <div class="tab-panel" id="panel-search">
+      <div class="tp-header">
+        <span style="font-size:18px;">🔍</span>
+        <span class="tp-title">Tìm kiếm</span>
+        <button class="tp-back" onclick="switchTab('map')">✕ Đóng</button>
+      </div>
+      <div class="tp-body">
+        <input class="form-input" id="panel-search-inp" type="text" placeholder="Nhập tên phường, xã, tọa độ..." oninput="panelSearch(this.value)"/>
+        <div id="panel-search-results"></div>
+      </div>
+    </div>
+
+    <!-- Legend Panel -->
+    <div class="tab-panel" id="panel-legend">
+      <div class="tp-header">
+        <span style="font-size:18px;">🎨</span>
+        <span class="tp-title">Chú giải</span>
+        <button class="tp-back" onclick="switchTab('map')">✕ Đóng</button>
+      </div>
+      <div class="tp-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Màu sắc các vùng quy hoạch sử dụng đất theo bản đồ quy hoạch chung Đà Nẵng đến năm 2030.</p>
+        <div id="legend-list"></div>
+      </div>
+    </div>
+
+    <!-- Data Panel -->
+    <div class="tab-panel" id="panel-data">
+      <div class="tp-header">
+        <span style="font-size:18px;">📋</span>
+        <span class="tp-title">Dữ liệu quy hoạch</span>
+        <button class="tp-back" onclick="switchTab('map')">✕ Đóng</button>
+      </div>
+      <div class="tp-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:24px;font-weight:900;color:var(--pl);" id="stat-zones">—</div>
+            <div style="font-size:11px;color:var(--muted);">Vùng quy hoạch</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:24px;font-weight:900;color:var(--accent);">9</div>
+            <div style="font-size:11px;color:var(--muted);">Loại đất</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:24px;font-weight:900;color:var(--warn);">1/500</div>
+            <div style="font-size:11px;color:var(--muted);">Tỷ lệ bản đồ</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:24px;font-weight:900;color:#818cf8;">2030</div>
+            <div style="font-size:11px;color:var(--muted);">Quy hoạch đến năm</div>
+          </div>
+        </div>
+        <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:800;color:#fbbf24;margin-bottom:6px;">🔒 Dữ liệu đầy đủ dành cho VIP</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;">Đăng ký VIP để xem danh sách đầy đủ thửa đất, tọa độ ranh giới, thuộc tính quy hoạch chi tiết đến từng lô.</div>
+          <button onclick="openModal('paywall')" style="margin-top:10px;padding:8px 16px;border-radius:7px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0a0a0a;border:none;cursor:pointer;font-family:inherit;">Nâng cấp VIP</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+          <strong style="color:var(--text);">Nguồn dữ liệu:</strong><br/>
+          • Bản đồ quy hoạch chung TP. Đà Nẵng đến năm 2030<br/>
+          • Hệ tọa độ: VN2000 · Múi chiếu 3° · KV Đà Nẵng<br/>
+          • Cập nhật: 2025 · Chuẩn Thông tư 16/2025/TT-BXD
+        </div>
+      </div>
+    </div>
+
+    <!-- Package Panel -->
+    <div class="tab-panel" id="panel-pkg">
+      <div class="tp-header">
+        <span style="font-size:18px;">⭐</span>
+        <span class="tp-title">Gói tra cứu</span>
+        <button class="tp-back" onclick="switchTab('map')">✕ Đóng</button>
+      </div>
+      <div class="tp-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Chọn gói phù hợp để tra cứu không giới hạn dữ liệu quy hoạch chi tiết tại Đà Nẵng.</p>
+
+        <div class="pkg-card">
+          <div class="pkg-name">Tra cứu 1 lần</div>
+          <div class="pkg-price purple">199.000₫</div>
+          <div class="pkg-sub">/ 1 thửa đất · kết quả trong 30 phút</div>
+          <div class="pkg-features">
+            <div class="pkg-feature">✅ Xem thông tin chi tiết 1 thửa đất</div>
+            <div class="pkg-feature">✅ Loại đất, diện tích, quy hoạch</div>
+            <div class="pkg-feature">✅ Hỗ trợ tư vấn 1 lần qua Zalo</div>
+          </div>
+          <button class="pkg-cta outline" onclick="openModal('paywall')">Mua ngay</button>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-name">Gói 1 tháng</div>
+          <div class="pkg-price">990.000₫</div>
+          <div class="pkg-sub">/ tháng · tra cứu không giới hạn</div>
+          <div class="pkg-features">
+            <div class="pkg-feature">✅ Tra cứu không giới hạn toàn ĐN</div>
+            <div class="pkg-feature">✅ Xem tất cả lớp quy hoạch</div>
+            <div class="pkg-feature">✅ Hỗ trợ 24/7 ưu tiên</div>
+          </div>
+          <button class="pkg-cta primary" onclick="openModal('paywall')">Đăng ký ngay</button>
+        </div>
+
+        <div class="pkg-card hot">
+          <div class="pkg-card-inner">
+            <div class="pkg-name">Gói 6 tháng</div>
+            <div class="pkg-price gold">4.750.000₫ <span style="font-size:12px;color:var(--dim);font-weight:400;text-decoration:line-through;">5.940.000₫</span></div>
+            <div class="pkg-sub">Tiết kiệm 20% · ~791k/tháng</div>
+            <div class="pkg-features">
+              <div class="pkg-feature">✅ Tất cả tính năng gói Tháng</div>
+              <div class="pkg-feature">✅ Xuất báo cáo PDF</div>
+              <div class="pkg-feature">✅ Ưu tiên cập nhật dữ liệu mới</div>
+              <div class="pkg-feature">✅ Đào tạo sử dụng 1 buổi online</div>
+            </div>
+            <button class="pkg-cta gold" onclick="openModal('paywall')">Dùng thử 7 ngày miễn phí</button>
+          </div>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-name">Gói 12 tháng</div>
+          <div class="pkg-price purple">7.700.000₫ <span style="font-size:12px;color:var(--dim);font-weight:400;text-decoration:line-through;">11.880.000₫</span></div>
+          <div class="pkg-sub">Tiết kiệm 35% · doanh nghiệp</div>
+          <div class="pkg-features">
+            <div class="pkg-feature">✅ Tất cả tính năng gói 6 tháng</div>
+            <div class="pkg-feature">✅ Đa tài khoản (tối đa 5 user)</div>
+            <div class="pkg-feature">✅ API tích hợp hệ thống nội bộ</div>
+            <div class="pkg-feature">✅ SLA 99.9% uptime</div>
+          </div>
+          <button class="pkg-cta outline" onclick="contactZalo()">Liên hệ tư vấn</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAYWALL MODAL ════════════════════════════════════════════════ -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <!-- Paywall -->
+  <div class="modal-box" id="modal-paywall" style="display:none;">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-top">
+      <div class="modal-ico">🔐</div>
+      <div class="modal-title">Tra cứu quy hoạch Đà Nẵng</div>
+      <div class="modal-desc">Đăng ký để xem chi tiết loại đất, tọa độ thửa, lộ giới và toàn bộ thông tin pháp lý.</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-plans">
+        <div class="plan-card sel" id="plan-single" onclick="selectPlan('single')">
+          <div class="plan-badge" style="background:rgba(99,102,241,.12);color:#818cf8;">Đơn lẻ</div>
+          <div class="plan-name">1 lần</div>
+          <div class="plan-price purple">199.000₫</div>
+          <div class="plan-period">/ 1 thửa đất</div>
+        </div>
+        <div class="plan-card gold" id="plan-month" onclick="selectPlan('month')">
+          <div class="plan-badge" style="background:rgba(245,158,11,.15);color:#fbbf24;">⭐ VIP</div>
+          <div class="plan-name">1 tháng</div>
+          <div class="plan-price gold">990.000₫</div>
+          <div class="plan-period">/ tháng · không giới hạn</div>
+        </div>
+      </div>
+      <div class="modal-benefits">
+        <div class="modal-benefit">✅ Xem loại đất, chỉ tiêu quy hoạch chi tiết</div>
+        <div class="modal-benefit">✅ Kiểm tra lộ giới, hành lang bảo vệ</div>
+        <div class="modal-benefit">✅ Tọa độ ranh giới thửa đất chính xác</div>
+        <div class="modal-benefit">✅ Tư vấn chuyên viên GIS qua Zalo</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="contactZalo()" style="padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(14,165,233,.25);">💳 Đăng ký &amp; Thanh toán ngay</button>
+        <button onclick="contactZalo()" style="padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(0,104,255,.08);color:#4dabf7;border:1.5px solid rgba(0,104,255,.18);cursor:pointer;font-family:inherit;">💬 Chat Zalo tư vấn miễn phí</button>
+      </div>
+      <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px;">🔒 Bảo mật · Hoàn tiền nếu không hài lòng</p>
+    </div>
+  </div>
+
+  <!-- Login modal -->
+  <div class="modal-box" id="modal-login" style="display:none;">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-top">
+      <div class="modal-ico">🔑</div>
+      <div class="modal-title">Tài khoản GIS Quy Hoạch</div>
+      <div class="modal-desc">Đăng nhập để tra cứu quy hoạch và quản lý gói VIP của bạn.</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-tabs">
+        <div class="form-tab active" id="ftab-login" onclick="switchFormTab('login')">Đăng nhập</div>
+        <div class="form-tab" id="ftab-reg" onclick="switchFormTab('reg')">Đăng ký</div>
+      </div>
+      <div id="form-login">
+        <input class="form-input" type="text" placeholder="Số điện thoại hoặc Email"/>
+        <input class="form-input" type="password" placeholder="Mật khẩu"/>
+        <button style="display:block;width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;">Đăng nhập</button>
+        <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;cursor:pointer;">Quên mật khẩu?</p>
+      </div>
+      <div id="form-reg" style="display:none;">
+        <input class="form-input" type="text" placeholder="Họ và tên"/>
+        <input class="form-input" type="tel" placeholder="Số điện thoại"/>
+        <input class="form-input" type="email" placeholder="Email"/>
+        <input class="form-input" type="password" placeholder="Mật khẩu"/>
+        <button onclick="contactZalo()" style="display:block;width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border:none;cursor:pointer;font-family:inherit;">Đăng ký &amp; Nhận OTP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ CONSTANTS ═══════════════════════════════════════════════════════
+var DN_CENTER = [16.054, 108.202];
+var DN_ZOOM   = 12;
+var GEOJSON_URL = 'https://cdn.jsdelivr.net/gh/akutindn/gisquyhoach@main/map/danang_simplified.geojson';
+
+var ZONE_TYPES = [
+  {key:'odt',  fill:'#ef4444', border:'#dc2626', label:'Đất ở đô thị (ODT)'},
+  {key:'tm',   fill:'#f97316', border:'#ea580c', label:'Đất TM – Dịch vụ'},
+  {key:'dcc',  fill:'#8b5cf6', border:'#7c3aed', label:'Đất công cộng (DCC)'},
+  {key:'cx',   fill:'#22c55e', border:'#16a34a', label:'Đất cây xanh (CX)'},
+  {key:'hh',   fill:'#06b6d4', border:'#0891b2', label:'Đất hỗn hợp (HH)'},
+  {key:'gt',   fill:'#64748b', border:'#475569', label:'Đất giao thông (GT)'},
+  {key:'gd',   fill:'#fbbf24', border:'#f59e0b', label:'Đất giáo dục (GD)'},
+  {key:'nn',   fill:'#84cc16', border:'#65a30d', label:'Đất nông nghiệp'},
+  {key:'yt',   fill:'#f43f5e', border:'#e11d48', label:'Đất y tế'},
+];
+
+function getZoneColor(props) {
+  return ZONE_TYPES[(parseInt(props.OBJECTID) || 0) % ZONE_TYPES.length];
+}
+
+// ══ MAP INIT ═════════════════════════════════════════════════════════
+var map = L.map('map', {center: DN_CENTER, zoom: DN_ZOOM, zoomControl: false, attributionControl: false});
+L.control.zoom({position: 'topright'}).addTo(map);
+L.control.scale({position: 'bottomright', metric: true, imperial: false}).addTo(map);
+
+var baseLayers = {};
+function setBasemap(bm) {
+  Object.values(baseLayers).forEach(function(l){ if(map.hasLayer(l)) map.removeLayer(l); });
+  if (!baseLayers.dark)   baseLayers.dark   = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd'});
+  if (!baseLayers.street) baseLayers.street = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd'});
+  if (!baseLayers.sat)    baseLayers.sat    = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19});
+  baseLayers[bm].addTo(map);
+  ['dark','street','sat'].forEach(function(b){
+    var el = document.getElementById('bm-'+b);
+    if(el){ el.classList.toggle('active', b===bm); }
+  });
+}
+setBasemap('dark');
+
+// Coords display
+map.on('mousemove', function(e){
+  document.getElementById('c-lat').textContent = e.latlng.lat.toFixed(5);
+  document.getElementById('c-lng').textContent = e.latlng.lng.toFixed(5);
+});
+
+// ── Load GeoJSON ──
+var geojsonLayer = null, allFeatures = [], searchIndex = [], activeLayer = null;
+
+function loadData() {
+  fetch(GEOJSON_URL).then(function(r){ return r.json(); }).then(function(gj){
+    allFeatures = gj.features;
+    document.getElementById('stat-zones').textContent = allFeatures.length;
+    geojsonLayer = L.geoJSON(gj, {
+      style: function(f){ var c=getZoneColor(f.properties); return {fillColor:c.fill,fillOpacity:0.55,color:c.border,weight:1.2,opacity:0.9}; },
+      onEachFeature: function(f, layer){
+        layer.on({
+          mouseover: function(e){ if(activeLayer!==e.target){ e.target.setStyle({weight:2.5,fillOpacity:0.75}); e.target.bringToFront(); } },
+          mouseout:  function(e){ if(activeLayer!==e.target) geojsonLayer.resetStyle(e.target); },
+          click:     function(e){ onFeatureClick(f, e.target, e); }
+        });
+      }
+    }).addTo(map);
+    map.fitBounds(geojsonLayer.getBounds(), {padding:[20,20]});
+    buildSearch();
+    buildLegend();
+  }).catch(function(e){ console.warn('GeoJSON load error:', e); });
+}
+loadData();
+
+// ── Feature click ──
+function onFeatureClick(f, layer, e) {
+  if(activeLayer) geojsonLayer.resetStyle(activeLayer);
+  activeLayer = layer;
+  var c = getZoneColor(f.properties);
+  layer.setStyle({weight:3, fillOpacity:0.8, color:'#fff'}); layer.bringToFront();
+  var p = f.properties;
+  var name = (p.tenDoiTuon || p.TenDoiTuon || 'Vùng quy hoạch').toString().trim();
+  var area = p.dienTichQH ? Number(p.dienTichQH).toLocaleString('vi-VN',{maximumFractionDigits:1})+' ha'
+           : p.Shape_Area  ? (p.Shape_Area/10000).toFixed(2)+' ha' : '—';
+  document.getElementById('ip-name').textContent = name;
+  document.getElementById('ip-type').textContent = c.label + ' · TP. Đà Nẵng';
+  document.getElementById('ip-body').innerHTML =
+    ipRow('Loại đất','<span style="color:'+c.fill+';font-weight:800;">'+c.label+'</span>')+
+    ipRow('Diện tích', area)+
+    ipRow('Dân số', p.danSoHienT ? Number(p.danSoHienT).toLocaleString('vi-VN')+' người' : '—')+
+    ipRow('Mã vùng', '#'+(p.OBJECTID||'—'))+
+    '<div class="ip-lock">'+
+      '<div class="ip-lock-ico">🔒</div>'+
+      '<div class="ip-lock-desc">Tọa độ ranh giới, quy hoạch chi tiết, lộ giới, hành lang bảo vệ và thông tin pháp lý đầy đủ dành cho thành viên VIP.</div>'+
+      '<button class="ip-lock-btn" onclick="openModal(\'paywall\')">Xem chi tiết — 199.000₫</button>'+
+    '</div>';
+  document.getElementById('info-panel').style.display = 'flex';
+}
+function ipRow(label, val) {
+  return '<div class="ip-row"><div class="ip-row-label">'+label+'</div><div class="ip-row-val">'+val+'</div></div>';
+}
+function closeInfo() {
+  document.getElementById('info-panel').style.display = 'none';
+  if(activeLayer){ geojsonLayer.resetStyle(activeLayer); activeLayer=null; }
+}
+
+// ── Search ──
+function buildSearch() {
+  searchIndex = allFeatures.map(function(f){
+    return { name:(f.properties.tenDoiTuon||f.properties.TenDoiTuon||'').toString().trim(), feature:f };
+  }).filter(function(it){ return it.name; });
+}
+
+var ddEl = document.getElementById('search-dd');
+var ddItems = [];
+function onSearch(q) {
+  q = (q||'').trim();
+  document.getElementById('search-clr').style.display = q ? 'block':'none';
+  if(!searchIndex.length){ ddEl.style.display='none'; return; }
+  var list = q ? searchIndex.filter(function(it){ return it.name.toLowerCase().includes(q.toLowerCase()); }).slice(0,12)
+               : searchIndex.slice(0,10);
+  if(!list.length){ ddEl.innerHTML='<div class="dd-item"><span style="color:var(--muted);font-size:13px;">Không tìm thấy kết quả</span></div>'; ddEl.style.display='block'; ddItems=[]; return; }
+  var hl = function(t,q){ if(!q)return t; var i=t.toLowerCase().indexOf(q.toLowerCase()); if(i<0)return t; return t.slice(0,i)+'<mark style="background:rgba(14,165,233,.2);color:#38bdf8;border-radius:2px;padding:0 1px;font-weight:700;">'+t.slice(i,i+q.length)+'</mark>'+t.slice(i+q.length); };
+  var icons = ['🏘️','🏢','🌳','🛣️','🏫','🏥','🏪','🌾','🏙️'];
+  ddEl.innerHTML = list.map(function(it,i){
+    var c=getZoneColor(it.feature.properties);
+    return '<div class="dd-item" data-i="'+i+'" style=""><div class="dd-icon" style="background:'+c.fill+'22;">'+icons[i%icons.length]+'</div><div><div class="dd-name">'+hl(it.name,q)+'</div><div class="dd-sub">'+c.label+' · TP. Đà Nẵng</div></div></div>';
+  }).join('');
+  ddEl.style.display = 'block'; ddItems = list;
+  ddEl.querySelectorAll('.dd-item').forEach(function(el,i){
+    el.addEventListener('click',function(){ pickSearchItem(i); });
+  });
+}
+function pickSearchItem(i){
+  var it=ddItems[i]; if(!it) return;
+  document.getElementById('main-search').value = it.name;
+  document.getElementById('search-clr').style.display='block';
+  ddEl.style.display='none';
+  if(geojsonLayer) geojsonLayer.eachLayer(function(layer){
+    if(layer.feature && (layer.feature.properties.tenDoiTuon||'').toString().trim()===it.name){
+      onFeatureClick(it.feature, layer, {});
+      map.fitBounds(layer.getBounds(),{padding:[40,40]});
+    }
+  });
+}
+function clearSearch(){ document.getElementById('main-search').value=''; document.getElementById('search-clr').style.display='none'; ddEl.style.display='none'; }
+
+// Panel search
+function panelSearch(q) {
+  if(!searchIndex.length) return;
+  var list = q ? searchIndex.filter(function(it){ return it.name.toLowerCase().includes(q.toLowerCase()); }).slice(0,20) : searchIndex.slice(0,20);
+  var icons=['🏘️','🏢','🌳','🛣️','🏫','🏥','🏪','🌾','🏙️'];
+  document.getElementById('panel-search-results').innerHTML = list.map(function(it,i){
+    var c=getZoneColor(it.feature.properties);
+    return '<div class="search-result" onclick="gotoFeature('+i+','+JSON.stringify(list.map(function(x){return x.name;}))+'['+i+'])"><div class="sr-ico" style="background:'+c.fill+'22;">'+icons[i%icons.length]+'</div><div><div class="sr-name">'+it.name+'</div><div class="sr-type">'+c.label+'</div></div></div>';
+  }).join('');
+}
+function gotoFeature(i, name) {
+  switchTab('map');
+  if(geojsonLayer && name) geojsonLayer.eachLayer(function(layer){
+    if(layer.feature && (layer.feature.properties.tenDoiTuon||'').toString().trim()===name){
+      onFeatureClick(layer.feature, layer, {});
+      map.fitBounds(layer.getBounds(),{padding:[40,40]});
+    }
+  });
+}
+
+// ── Legend ──
+function buildLegend(){
+  document.getElementById('legend-list').innerHTML = ZONE_TYPES.map(function(z){
+    return '<div class="legend-row"><div class="legend-swatch" style="background:'+z.fill+';"></div><span>'+z.label+'</span></div>';
+  }).join('');
+}
+
+// ── Tools ──
+function setTool(t){
+  document.querySelectorAll('.tool-btn[id^="tool-"]').forEach(function(el){ el.classList.remove('active'); });
+  var el=document.getElementById('tool-'+t); if(el) el.classList.add('active');
+}
+function resetView(){ map.setView(DN_CENTER, DN_ZOOM); }
+function locateMe(){ map.locate({setView:true, maxZoom:16}); }
+map.on('locationfound', function(e){ L.marker(e.latlng).addTo(map).bindPopup('📍 Vị trí của bạn').openPopup(); });
+
+// ── Sidebar ──
+var sbOpen = true;
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar'), tg=document.getElementById('sb-toggle');
+  sbOpen = !sbOpen;
+  sb.style.width = sbOpen ? '270px' : '0';
+  sb.style.overflow = sbOpen ? 'auto' : 'hidden';
+  tg.style.left = sbOpen ? '270px' : '0';
+  tg.textContent = sbOpen ? '‹' : '›';
+  setTimeout(function(){ map.invalidateSize(); }, 260);
+}
+
+// ── Tabs ──
+var currentTab = 'map';
+function switchTab(t) {
+  currentTab = t;
+  ['map','search','legend','data','pkg'].forEach(function(id){
+    var tab=document.getElementById('tab-'+id); if(tab) tab.classList.toggle('active', id===t);
+    var panel=document.getElementById('panel-'+id); if(panel) panel.classList.toggle('open', id!=='map' && id===t);
+  });
+  if(t==='search') setTimeout(function(){ var el=document.getElementById('panel-search-inp'); if(el) el.focus(); panelSearch(''); },100);
+  if(t==='map') setTimeout(function(){ map.invalidateSize(); },100);
+}
+
+// ── Modals ──
+function openModal(type) {
+  document.getElementById('modal-overlay').classList.add('open');
+  ['paywall','login'].forEach(function(t){ document.getElementById('modal-'+t).style.display = t===type ? 'block':'none'; });
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function selectPlan(p){
+  document.getElementById('plan-single').classList.toggle('sel', p==='single');
+  document.getElementById('plan-month').classList.toggle('sel', p==='month');
+}
+function switchFormTab(t){
+  ['login','reg'].forEach(function(id){
+    document.getElementById('ftab-'+id).classList.toggle('active',id===t);
+    document.getElementById('form-'+id).style.display=id===t?'block':'none';
+  });
+}
+function contactZalo(){ window.open('https://zalo.me/0332945089','_blank'); closeModal(); }
+
+// ESC key
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal(); closeInfo(); } });
+// Close dd on click outside
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.tb-search')) ddEl.style.display='none';
+});
+</script>
+</body>
+</html>
