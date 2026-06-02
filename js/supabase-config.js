@@ -1,7 +1,7 @@
 // Cấu hình kết nối Supabase
 // HƯỚNG DẪN: Thay thế 2 biến dưới đây bằng thông tin thực tế từ tài khoản Supabase của bạn.
-const SUPABASE_URL = 'VUI_LONG_NHAP_SUPABASE_URL_VAO_DAY';
-const SUPABASE_ANON_KEY = 'VUI_LONG_NHAP_SUPABASE_ANON_KEY_VAO_DAY';
+const SUPABASE_URL = 'https://sscoxcaexukcklamdzyu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_5PymJjG2K_jNJm0uOFnhTQ_sQNI2_Db';
 
 // Khởi tạo client Supabase
 let supabase = null;
