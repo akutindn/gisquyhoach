@@ -99,11 +99,8 @@
             </div>
             
             <div class="video-container" id="videoContainer">
-                <!-- Video Player (Hidden by default) -->
-                <video id="courseVideo" controls style="width: 100%; height: 100%; display: none;" poster="gisvn_fb_banner_FINAL.png">
-                    <source src="" type="video/mp4">
-                    Trình duyệt của bạn không hỗ trợ video.
-                </video>
+                <!-- Google Drive Embed (Hidden by default) -->
+                <iframe id="courseVideo" src="" style="width: 100%; height: 100%; display: none; border: none;" allow="autoplay" allowfullscreen></iframe>
 
                 <!-- Auth Overlay (Shown if not logged in) -->
                 <div class="auth-overlay" id="authOverlay">
@@ -184,16 +181,17 @@
             document.getElementById('userEmailText').innerText = user.email;
             document.getElementById('userInitial').innerText = user.email.charAt(0).toUpperCase();
 
-            // Thực tế ở đây sẽ gọi Supabase Storage để lấy link Video thật (Signed URL)
-            // Tạm thời set src ảo để hiện Player
-            document.getElementById('courseVideo').src = "#";
+            // Gắn link Google Drive (đã ẩn nút tải) khi user đã đăng nhập
+            const driveFileId = '1vygWI48dinyxs8w4fSOcYMiZz1MhcSIu';
+            document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${driveFileId}/preview`;
         }
 
         function updateUIForLoggedOutUser() {
             document.getElementById('authOverlay').style.display = 'flex';
             document.getElementById('courseVideo').style.display = 'none';
             document.getElementById('userProfile').style.display = 'none';
-            document.getElementById('courseVideo').pause();
+            // Ngắt nguồn video iframe để video không phát ngầm
+            document.getElementById('courseVideo').src = "";
         }
 
         // ĐĂNG NHẬP
