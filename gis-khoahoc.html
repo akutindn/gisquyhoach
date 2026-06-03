@@ -102,31 +102,6 @@
                 <!-- Google Drive Embed (Hidden by default) -->
                 <iframe id="courseVideo" src="" style="width: 100%; height: 100%; display: none; border: none;" allow="autoplay" allowfullscreen></iframe>
 
-                <!-- Paywall Overlay (NEW - Hidden by default) -->
-                <div class="auth-overlay" id="paywallOverlay" style="display: none; background: rgba(15, 23, 42, 0.98);">
-                    <div class="auth-form" style="max-width: 500px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
-                        <div style="width: 56px; height: 56px; background: #fef2f2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px;">🔒</div>
-                        <h2 style="margin:0 0 12px; font-size: 1.5rem;">Khóa học yêu cầu kích hoạt</h2>
-                        <p style="color: #475569; font-size: 15px; margin-bottom: 24px; line-height: 1.6;">
-                            Tài khoản <strong><span id="paywallEmail"></span></strong> chưa được cấp quyền truy cập khóa học này. Vui lòng hoàn tất thanh toán để mở khóa.
-                        </p>
-                        
-                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 24px;">
-                            <h3 style="margin-top:0; font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Thông tin chuyển khoản</h3>
-                            <div style="margin-top: 12px; font-size: 16px;">
-                                <div style="margin-bottom: 8px;">Ngân hàng: <strong>[Tên Ngân Hàng]</strong></div>
-                                <div style="margin-bottom: 8px;">Số tài khoản: <strong style="color: #0284c7; font-size: 18px;">[Số TK của bạn]</strong></div>
-                                <div style="margin-bottom: 8px;">Chủ tài khoản: <strong>[TÊN CHỦ TK]</strong></div>
-                                <div style="margin-bottom: 8px;">Số tiền: <strong style="color: #16a34a;">X.000.000 VNĐ</strong></div>
-                                <div>Nội dung: <strong>Kich hoat email [Email đăng nhập của bạn]</strong></div>
-                            </div>
-                        </div>
-                        
-                        <p style="font-size: 14px; color: #64748b;">Sau khi chuyển khoản, quản trị viên sẽ kích hoạt tài khoản của bạn trong vòng 5-10 phút.</p>
-                        <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="window.location.reload()">Tôi đã thanh toán (Tải lại trang)</button>
-                    </div>
-                </div>
-
                 <!-- Auth Overlay (Shown if not logged in) -->
                 <div class="auth-overlay" id="authOverlay">
                     <div class="auth-form" id="authFormContainer">
@@ -135,7 +110,7 @@
                         <div id="loginSection">
                             <div style="width: 48px; height: 48px; background: #e0f2fe; color: #0284c7; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">🔐</div>
                             <h2 style="margin:0 0 8px; font-size: 1.25rem;">Đăng nhập Học viện</h2>
-                            <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5;">Vui lòng đăng nhập để xem video bài giảng và tải tài liệu thực hành.</p>
+                            <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5;">Vui lòng dùng tài khoản do Admin cung cấp để vào lớp học.</p>
                             
                             <form onsubmit="handleLogin(event)">
                                 <input type="email" id="loginEmail" placeholder="Email của bạn" required>
@@ -143,25 +118,9 @@
                                 <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%; margin-top: 8px;">Đăng nhập ngay</button>
                             </form>
                             
-                            <div class="auth-toggle">
-                                Chưa có tài khoản? <a onclick="toggleAuthMode('register')">Đăng ký mới</a>
-                            </div>
-                        </div>
-
-                        <!-- Form Đăng Ký -->
-                        <div id="registerSection" style="display: none;">
-                            <div style="width: 48px; height: 48px; background: #dcfce7; color: #16a34a; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">✨</div>
-                            <h2 style="margin:0 0 8px; font-size: 1.25rem;">Đăng ký Tài khoản</h2>
-                            <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5;">Tạo tài khoản miễn phí để trải nghiệm nền tảng học GIS hiện đại.</p>
-                            
-                            <form onsubmit="handleRegister(event)">
-                                <input type="email" id="regEmail" placeholder="Email của bạn" required>
-                                <input type="password" id="regPassword" placeholder="Mật khẩu (tối thiểu 6 ký tự)" required minlength="6">
-                                <button type="submit" class="btn" id="regBtn" style="width: 100%; margin-top: 8px; background: #16a34a; color: white; border: none;">Tạo tài khoản</button>
-                            </form>
-                            
-                            <div class="auth-toggle">
-                                Đã có tài khoản? <a onclick="toggleAuthMode('login')">Đăng nhập</a>
+                            <div class="auth-toggle" style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-top: 20px;">
+                                <div style="font-weight: 600; color: #334155; margin-bottom: 4px;">Bạn chưa có tài khoản?</div>
+                                Vui lòng liên hệ Admin qua Zalo <a href="https://zalo.me/0332945089" target="_blank" style="color: #0ea5e9;">0332945089</a> để đăng ký mua khóa học và nhận tài khoản.
                             </div>
                         </div>
 
@@ -171,13 +130,13 @@
             
             <!-- Materials -->
             <div style="margin-top: 24px; background: white; padding: 24px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);">
-                <h3 style="margin-top:0; color: #0f172a; margin-bottom: 16px;">Tài liệu đính kèm</h3>
+                <h3 style="margin-top:0; color: #0f172a; margin-bottom: 16px;">Tài liệu khóa học (Google Drive)</h3>
                 <div style="display: flex; gap: 12px;">
-                    <a href="#" onclick="alert('Bạn cần đăng nhập để tải tài liệu!')" class="btn" style="background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; padding: 12px 16px; font-weight: 500;">
-                        <span style="margin-right: 8px;">📦</span> thuc-hanh-bai1.rar
+                    <a href="https://drive.google.com/drive/folders/1wz5gXgQ9c7V..." target="_blank" class="btn" style="background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; padding: 12px 16px; font-weight: 500;">
+                        <span style="margin-right: 8px;">💿</span> Tải Phần mềm
                     </a>
-                    <a href="#" onclick="alert('Bạn cần đăng nhập để tải tài liệu!')" class="btn" style="background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; padding: 12px 16px; font-weight: 500;">
-                        <span style="margin-right: 8px;">📄</span> slide-bai-giang.pdf
+                    <a href="https://drive.google.com/drive/folders/1wz5gXgQ9c7V..." target="_blank" class="btn" style="background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; padding: 12px 16px; font-weight: 500;">
+                        <span style="margin-right: 8px;">📁</span> Tải Tài liệu thực hành
                     </a>
                 </div>
             </div>
@@ -188,35 +147,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     
-    <!-- Logic Đăng nhập / Đăng ký -->
+    <!-- Logic Đăng nhập -->
     <script>
-        // Chuyển đổi giữa Đăng nhập và Đăng ký
-        function toggleAuthMode(mode) {
-            document.getElementById('loginSection').style.display = mode === 'login' ? 'block' : 'none';
-            document.getElementById('registerSection').style.display = mode === 'register' ? 'block' : 'none';
-        }
-
-        // KIỂM TRA QUYỀN (ACCESS CONTROL)
-        async function checkCourseEnrollment(userId) {
-            try {
-                // Truy vấn bảng enrollments xem user này có quyền không
-                const { data, error } = await supabase
-                    .from('enrollments')
-                    .select('id')
-                    .eq('user_id', userId);
-                    
-                if (error) {
-                    console.warn("⚠️ Bảng enrollments chưa được tạo, hoặc lỗi mạng:", error.message);
-                    return false; // Mặc định khóa nếu lỗi
-                }
-                
-                return data && data.length > 0;
-            } catch (err) {
-                console.error(err);
-                return false;
-            }
-        }
-
         // Xử lý Giao diện khi đã đăng nhập
         async function updateUIForLoggedInUser(user) {
             document.getElementById('authOverlay').style.display = 'none';
@@ -226,29 +158,14 @@
             document.getElementById('userEmailText').innerText = user.email;
             document.getElementById('userInitial').innerText = user.email.charAt(0).toUpperCase();
 
-            // Kiểm tra phân quyền từ Backend
-            const isEnrolled = await checkCourseEnrollment(user.id);
-
-            if (isEnrolled) {
-                // CÓ QUYỀN: Mở khóa Video
-                document.getElementById('paywallOverlay').style.display = 'none';
-                document.getElementById('courseVideo').style.display = 'block';
-                
-                const driveFileId = '1vygWI48dinyxs8w4fSOcYMiZz1MhcSIu';
-                document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${driveFileId}/preview`;
-            } else {
-                // KHÔNG CÓ QUYỀN: Hiện Paywall bắt thanh toán
-                document.getElementById('courseVideo').style.display = 'none';
-                document.getElementById('courseVideo').src = "";
-                
-                document.getElementById('paywallEmail').innerText = user.email;
-                document.getElementById('paywallOverlay').style.display = 'flex';
-            }
+            // Mở khóa Video Google Drive (Vì mô hình Admin tạo tài khoản, ai có tài khoản là có quyền)
+            document.getElementById('courseVideo').style.display = 'block';
+            const driveFileId = '1vygWI48dinyxs8w4fSOcYMiZz1MhcSIu';
+            document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${driveFileId}/preview`;
         }
 
         function updateUIForLoggedOutUser() {
             document.getElementById('authOverlay').style.display = 'flex';
-            document.getElementById('paywallOverlay').style.display = 'none';
             document.getElementById('courseVideo').style.display = 'none';
             document.getElementById('userProfile').style.display = 'none';
             document.getElementById('courseVideo').src = "";
@@ -275,36 +192,6 @@
                 alert("Lỗi đăng nhập: " + (error.message.includes('Credentials') ? 'Sai email hoặc mật khẩu' : error.message));
             } finally {
                 btn.innerText = 'Đăng nhập ngay';
-                btn.disabled = false;
-            }
-        }
-
-        // ĐĂNG KÝ
-        async function handleRegister(e) {
-            e.preventDefault();
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const btn = document.getElementById('regBtn');
-            
-            btn.innerText = 'Đang xử lý...';
-            btn.disabled = true;
-
-            try {
-                const { data, error } = await supabase.auth.signUp({ email, password });
-                
-                if (error) throw error;
-                
-                // Supabase gửi email xác nhận hoặc login luôn tùy cấu hình
-                alert("Đăng ký thành công! Bạn đã có thể học bài đầu tiên.");
-                if(data.user) {
-                    updateUIForLoggedInUser(data.user);
-                } else {
-                    toggleAuthMode('login');
-                }
-            } catch (error) {
-                alert("Lỗi đăng ký: " + error.message);
-            } finally {
-                btn.innerText = 'Tạo tài khoản';
                 btn.disabled = false;
             }
         }
