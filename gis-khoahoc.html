@@ -63,39 +63,26 @@
     <div class="lms-container">
         <!-- Sidebar -->
         <aside class="course-sidebar">
-            <h3 style="margin-top:0; font-size:1.1rem; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                <span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 6px; font-size: 12px;">GIS CƠ BẢN</span>
+            <h3 style="margin-top:0; font-size:1.1rem; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;" id="courseSidebarTitle">
+                <span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 6px; font-size: 12px;">ARCGIS</span>
                 Khóa học TT16
             </h3>
-            <ul class="course-list">
-                <li class="course-item active">
-                    <div class="course-item-icon">1</div>
-                    <div>Bài 1: Tổng quan và Cài đặt</div>
-                </li>
-                <li class="course-item">
-                    <div class="course-item-icon" style="background:transparent; opacity:0.5">🔒</div>
-                    <div style="color: #64748b;">Bài 2: Chuyển đổi CAD sang GIS</div>
-                </li>
-                <li class="course-item">
-                    <div class="course-item-icon" style="background:transparent; opacity:0.5">🔒</div>
-                    <div style="color: #64748b;">Bài 3: Nhập thuộc tính không gian</div>
-                </li>
-                <li class="course-item">
-                    <div class="course-item-icon" style="background:transparent; opacity:0.5">🔒</div>
-                    <div style="color: #64748b;">Bài 4: Quét lỗi Topology</div>
-                </li>
-                <li class="course-item">
-                    <div class="course-item-icon" style="background:transparent; opacity:0.5">🔒</div>
-                    <div style="color: #64748b;">Bài 5: Đóng gói hồ sơ nộp cổng</div>
-                </li>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; background: #f1f5f9; padding: 4px; border-radius: 8px;">
+                <button id="tabArcgis" onclick="switchCourse('arcgis')" style="flex: 1; padding: 8px; border: none; border-radius: 6px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; color: #0f172a; cursor: pointer; transition: all 0.2s;">ArcGIS</button>
+                <button id="tabQgis" onclick="switchCourse('qgis')" style="flex: 1; padding: 8px; border: none; border-radius: 6px; background: transparent; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s;">QGIS</button>
+            </div>
+
+            <ul class="course-list" id="courseList">
+                <!-- Danh sách bài học sẽ được load bằng Javascript -->
             </ul>
         </aside>
 
         <!-- Main Content -->
         <main>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1 style="font-size: 1.5rem; margin: 0; color: #0f172a;">Bài 1: Tổng quan và Cài đặt phần mềm</h1>
-                <span style="background: #fef3c7; color: #b45309; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px;">15 Phút</span>
+                <h1 style="font-size: 1.5rem; margin: 0; color: #0f172a;" id="lessonTitle">Bài 1: Tổng quan và Cài đặt phần mềm</h1>
+                <span id="lessonDuration" style="background: #fef3c7; color: #b45309; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px;">15 Phút</span>
             </div>
             
             <div class="video-container" id="videoContainer">
@@ -147,10 +134,114 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     
-    <!-- Logic Đăng nhập -->
+    <!-- Logic Đăng nhập và Chuyển bài -->
     <script>
+        // DATA KHÓA HỌC
+        const coursesData = {
+            'arcgis': {
+                name: 'ARCGIS',
+                fullName: 'Khóa học TT16 (ArcGIS)',
+                lessons: [
+                    { id: 1, title: 'Bài 1: Tổng quan và Cài đặt phần mềm', duration: '15 Phút', driveId: '1vanOVqxwtdpi0sMLKCI1pnYsDXlDjvA7' },
+                    { id: 2, title: 'Bài 2: Chuyển đổi CAD sang GIS', duration: '20 Phút', driveId: '1qL-U2NPIz2oTFHk_tDqwg75JaAckd1Ol' },
+                    { id: 3, title: 'Bài 3: Nhập thuộc tính không gian', duration: '25 Phút', driveId: '1en1L6rnQ3bYxDOHQbutilxtI9ni2TCQL' },
+                    { id: 4, title: 'Bài 4: Quét lỗi Topology', duration: '18 Phút', driveId: '1n6mDJy8May7OxoRXbzZ3JIMQQx6QK2lH' },
+                    { id: 5, title: 'Bài 5: Đóng gói hồ sơ nộp cổng', duration: '22 Phút', driveId: '1ncpgUE4nPhYWF9KXodeQKR8RBIeRfkCD' }
+                ]
+            },
+            'qgis': {
+                name: 'QGIS',
+                fullName: 'Khóa học TT16 (QGIS)',
+                lessons: [
+                    { id: 1, title: 'Bài 1: Tổng quan QGIS', duration: '20 Phút', driveId: '1uQI0XAekvrjePSdu3KMRLLpam4RD419Y' },
+                    { id: 2, title: 'Bài 2: Hệ tọa độ & Công cụ biên tập', duration: '25 Phút', driveId: '1FvDmqKdYuwLBIDkcelC1LRS0wq4ctf6f' },
+                    { id: 3, title: 'Bài 3: Xử lý dữ liệu CAD', duration: '22 Phút', driveId: '1fGpqXckR5e7wIJd3px7HD0mM6f0cGuNc' },
+                    { id: 4, title: 'Bài 4: Bản đồ chuyên đề & Bố cục in', duration: '20 Phút', driveId: '1Vdxu1QJjxhDaPT3R5EsmjNn8h8zC8_BL' }
+                ]
+            }
+        };
+        
+        let currentCourseId = 'arcgis';
+        let currentLessonIndex = 0;
+        let isLoggedIn = false;
+
+        // Render Danh sách bài học
+        function renderCourseList() {
+            const listContainer = document.getElementById('courseList');
+            listContainer.innerHTML = '';
+            const lessons = coursesData[currentCourseId].lessons;
+            lessons.forEach((lesson, index) => {
+                const isActive = index === currentLessonIndex;
+                const li = document.createElement('li');
+                li.className = `course-item ${isActive ? 'active' : ''}`;
+                
+                // Nếu chưa đăng nhập thì hiện ổ khóa từ bài 2 trở đi (hoặc ẩn hết tùy chiến lược)
+                // Theo mô hình Admin cấp tk, chưa đăng nhập thì ko click được
+                
+                li.onclick = () => {
+                    if (!isLoggedIn) {
+                        alert("Vui lòng đăng nhập để xem bài học này!");
+                        return;
+                    }
+                    loadLesson(index);
+                };
+
+                let iconHtml = isActive ? 
+                    `<div class="course-item-icon">${lesson.id}</div>` : 
+                    `<div class="course-item-icon" style="background:transparent; opacity:0.8">${lesson.id}</div>`;
+
+                li.innerHTML = `
+                    ${iconHtml}
+                    <div style="${!isActive ? 'color: #64748b;' : ''}">${lesson.title}</div>
+                `;
+                
+                listContainer.appendChild(li);
+            });
+        }
+
+        // Tải Video bài học tương ứng
+        function loadLesson(index) {
+            currentLessonIndex = index;
+            const lesson = coursesData[currentCourseId].lessons[index];
+            
+            // Cập nhật Tiêu đề & Thời lượng
+            document.getElementById('lessonTitle').innerText = lesson.title;
+            document.getElementById('lessonDuration').innerText = lesson.duration;
+            
+            // Cập nhật Iframe Video
+            if (isLoggedIn) {
+                document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${lesson.driveId}/preview`;
+            }
+            
+            // Render lại Sidebar để đổi màu active
+            renderCourseList();
+        }
+
+        // Chuyển đổi khóa học (Tab)
+        function switchCourse(courseId) {
+            currentCourseId = courseId;
+            currentLessonIndex = 0;
+            
+            // Cập nhật Style Tabs
+            const activeStyle = "flex: 1; padding: 8px; border: none; border-radius: 6px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; color: #0f172a; cursor: pointer; transition: all 0.2s;";
+            const inactiveStyle = "flex: 1; padding: 8px; border: none; border-radius: 6px; background: transparent; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s;";
+            
+            document.getElementById('tabArcgis').style.cssText = courseId === 'arcgis' ? activeStyle : inactiveStyle;
+            document.getElementById('tabQgis').style.cssText = courseId === 'qgis' ? activeStyle : inactiveStyle;
+            
+            // Cập nhật Tiêu đề Sidebar
+            document.getElementById('courseSidebarTitle').innerHTML = `
+                <span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 6px; font-size: 12px;">${coursesData[courseId].name}</span>
+                ${coursesData[courseId].fullName.split('(')[0].trim()}
+            `;
+
+            // Load bài học đầu tiên của khóa mới
+            loadLesson(0);
+        }
+
         // Xử lý Giao diện khi đã đăng nhập
         async function updateUIForLoggedInUser(user) {
+            isLoggedIn = true;
             document.getElementById('authOverlay').style.display = 'none';
             
             // Hiện Profile trên Nav
@@ -158,13 +249,13 @@
             document.getElementById('userEmailText').innerText = user.email;
             document.getElementById('userInitial').innerText = user.email.charAt(0).toUpperCase();
 
-            // Mở khóa Video Google Drive (Vì mô hình Admin tạo tài khoản, ai có tài khoản là có quyền)
+            // Mở khóa Video Google Drive và load bài đầu tiên (hoặc bài đang chọn)
             document.getElementById('courseVideo').style.display = 'block';
-            const driveFileId = '1vygWI48dinyxs8w4fSOcYMiZz1MhcSIu';
-            document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${driveFileId}/preview`;
+            loadLesson(currentLessonIndex);
         }
 
         function updateUIForLoggedOutUser() {
+            isLoggedIn = false;
             document.getElementById('authOverlay').style.display = 'flex';
             document.getElementById('courseVideo').style.display = 'none';
             document.getElementById('userProfile').style.display = 'none';
@@ -204,7 +295,8 @@
 
         // KIỂM TRA TRẠNG THÁI KHI LOAD TRANG
         window.addEventListener('DOMContentLoaded', async () => {
-            // Lấy từ file cấu hình
+            renderCourseList(); // Render sidebar ngay lập tức
+            
             if (!supabase) return;
             
             const user = await checkLogin();
