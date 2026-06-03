@@ -102,6 +102,31 @@
                 <!-- Google Drive Embed (Hidden by default) -->
                 <iframe id="courseVideo" src="" style="width: 100%; height: 100%; display: none; border: none;" allow="autoplay" allowfullscreen></iframe>
 
+                <!-- Paywall Overlay (NEW - Hidden by default) -->
+                <div class="auth-overlay" id="paywallOverlay" style="display: none; background: rgba(15, 23, 42, 0.98);">
+                    <div class="auth-form" style="max-width: 500px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+                        <div style="width: 56px; height: 56px; background: #fef2f2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px;">🔒</div>
+                        <h2 style="margin:0 0 12px; font-size: 1.5rem;">Khóa học yêu cầu kích hoạt</h2>
+                        <p style="color: #475569; font-size: 15px; margin-bottom: 24px; line-height: 1.6;">
+                            Tài khoản <strong><span id="paywallEmail"></span></strong> chưa được cấp quyền truy cập khóa học này. Vui lòng hoàn tất thanh toán để mở khóa.
+                        </p>
+                        
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 24px;">
+                            <h3 style="margin-top:0; font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Thông tin chuyển khoản</h3>
+                            <div style="margin-top: 12px; font-size: 16px;">
+                                <div style="margin-bottom: 8px;">Ngân hàng: <strong>[Tên Ngân Hàng]</strong></div>
+                                <div style="margin-bottom: 8px;">Số tài khoản: <strong style="color: #0284c7; font-size: 18px;">[Số TK của bạn]</strong></div>
+                                <div style="margin-bottom: 8px;">Chủ tài khoản: <strong>[TÊN CHỦ TK]</strong></div>
+                                <div style="margin-bottom: 8px;">Số tiền: <strong style="color: #16a34a;">X.000.000 VNĐ</strong></div>
+                                <div>Nội dung: <strong>Kich hoat email [Email đăng nhập của bạn]</strong></div>
+                            </div>
+                        </div>
+                        
+                        <p style="font-size: 14px; color: #64748b;">Sau khi chuyển khoản, quản trị viên sẽ kích hoạt tài khoản của bạn trong vòng 5-10 phút.</p>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="window.location.reload()">Tôi đã thanh toán (Tải lại trang)</button>
+                    </div>
+                </div>
+
                 <!-- Auth Overlay (Shown if not logged in) -->
                 <div class="auth-overlay" id="authOverlay">
                     <div class="auth-form" id="authFormContainer">
@@ -171,26 +196,61 @@
             document.getElementById('registerSection').style.display = mode === 'register' ? 'block' : 'none';
         }
 
+        // KIỂM TRA QUYỀN (ACCESS CONTROL)
+        async function checkCourseEnrollment(userId) {
+            try {
+                // Truy vấn bảng enrollments xem user này có quyền không
+                const { data, error } = await supabase
+                    .from('enrollments')
+                    .select('id')
+                    .eq('user_id', userId);
+                    
+                if (error) {
+                    console.warn("⚠️ Bảng enrollments chưa được tạo, hoặc lỗi mạng:", error.message);
+                    return false; // Mặc định khóa nếu lỗi
+                }
+                
+                return data && data.length > 0;
+            } catch (err) {
+                console.error(err);
+                return false;
+            }
+        }
+
         // Xử lý Giao diện khi đã đăng nhập
-        function updateUIForLoggedInUser(user) {
+        async function updateUIForLoggedInUser(user) {
             document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('courseVideo').style.display = 'block';
             
             // Hiện Profile trên Nav
             document.getElementById('userProfile').style.display = 'flex';
             document.getElementById('userEmailText').innerText = user.email;
             document.getElementById('userInitial').innerText = user.email.charAt(0).toUpperCase();
 
-            // Gắn link Google Drive (đã ẩn nút tải) khi user đã đăng nhập
-            const driveFileId = '1vygWI48dinyxs8w4fSOcYMiZz1MhcSIu';
-            document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${driveFileId}/preview`;
+            // Kiểm tra phân quyền từ Backend
+            const isEnrolled = await checkCourseEnrollment(user.id);
+
+            if (isEnrolled) {
+                // CÓ QUYỀN: Mở khóa Video
+                document.getElementById('paywallOverlay').style.display = 'none';
+                document.getElementById('courseVideo').style.display = 'block';
+                
+                const driveFileId = '1vygWI48dinyxs8w4fSOcYMiZz1MhcSIu';
+                document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${driveFileId}/preview`;
+            } else {
+                // KHÔNG CÓ QUYỀN: Hiện Paywall bắt thanh toán
+                document.getElementById('courseVideo').style.display = 'none';
+                document.getElementById('courseVideo').src = "";
+                
+                document.getElementById('paywallEmail').innerText = user.email;
+                document.getElementById('paywallOverlay').style.display = 'flex';
+            }
         }
 
         function updateUIForLoggedOutUser() {
             document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('paywallOverlay').style.display = 'none';
             document.getElementById('courseVideo').style.display = 'none';
             document.getElementById('userProfile').style.display = 'none';
-            // Ngắt nguồn video iframe để video không phát ngầm
             document.getElementById('courseVideo').src = "";
         }
 
