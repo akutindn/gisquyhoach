@@ -4,17 +4,17 @@ const SUPABASE_URL = 'https://sscoxcaexukcklamdzyu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_5PymJjG2K_jNJm0uOFnhTQ_sQNI2_Db';
 
 // Khởi tạo client Supabase
-let supabase = null;
+let supabaseClient = null;
 
 if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'VUI_LONG_NHAP_SUPABASE_URL_VAO_DAY') {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 } else {
     console.warn("⚠️ Chưa cấu hình Supabase API Key hoặc thư viện chưa được nạp!");
 }
 
 // Các hàm tiện ích
 async function checkLogin() {
-    if (!supabase) return null;
-    const { data: { user } } = await supabase.auth.getUser();
+    if (!supabaseClient) return null;
+    const { data: { user } } = await supabaseClient.auth.getUser();
     return user;
 }
