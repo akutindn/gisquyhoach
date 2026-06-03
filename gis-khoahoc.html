@@ -273,7 +273,7 @@
             btn.disabled = true;
 
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
                 
                 if (error) throw error;
                 
@@ -289,7 +289,7 @@
 
         // ĐĂNG XUẤT
         async function handleLogout() {
-            await supabaseClient.auth.signOut();
+            await window.supabaseClient.auth.signOut();
             updateUIForLoggedOutUser();
         }
 
@@ -297,7 +297,7 @@
         window.addEventListener('DOMContentLoaded', async () => {
             renderCourseList(); // Render sidebar ngay lập tức
             
-            if (!supabaseClient) return;
+            if (!window.supabaseClient) return;
             
             const user = await checkLogin();
             if (user) {
