@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Quản trị WebGIS — GIS Quy Hoạch</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --bg:#050b18;--bg2:#080f1e;--surface:rgba(255,255,255,.04);--glass:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.09);--text:#f0f4ff;--muted:#8892a4;
+  --primary:#0ea5e9;--accent:#10b981;--danger:#ef4444;--warn:#f59e0b;--purple:#6366f1;
+  --grad:linear-gradient(135deg,#0ea5e9,#6366f1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+input,textarea{font-family:inherit;}
+#login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:100;}
+.login-card{background:rgba(8,15,30,.9);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:100%;max-width:420px;backdrop-filter:blur(20px);box-shadow:0 32px 80px rgba(0,0,0,.6);}
+.logo-row{display:flex;align-items:center;gap:12px;margin-bottom:32px;justify-content:center;}
+.logo-icon{width:48px;height:48px;background:var(--grad);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.logo-txt{font-size:20px;font-weight:900;}.logo-txt span{color:var(--primary);}
+.t-title{text-align:center;font-size:24px;font-weight:900;margin-bottom:8px;}
+.t-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:32px;}
+.fld{margin-bottom:16px;}
+.fld label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+.fld input,.fld textarea{width:100%;padding:11px 14px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;resize:vertical;}
+.fld input:focus,.fld textarea:focus{border-color:var(--primary);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:10px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;}
+.btn-p{background:var(--grad);color:#fff;box-shadow:0 8px 24px rgba(14,165,233,.3);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(14,165,233,.4);}
+.btn-p:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-o{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn-o:hover{background:var(--glass);}
+.btn-d{background:rgba(239,68,68,.12);border:1.5px solid rgba(239,68,68,.3);color:#ef4444;}
+.btn-d:hover{background:rgba(239,68,68,.2);}
+.btn-g{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-full{width:100%;}
+.err-msg{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#ef4444;margin-bottom:16px;display:none;}
+#dashboard{display:none;height:100vh;}
+.layout{display:grid;grid-template-columns:300px 1fr;height:100%;}
+.sb{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sb-hd{padding:20px;border-bottom:1px solid var(--border);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.sb-logo-ic{width:36px;height:36px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sb-logo-tx{font-size:16px;font-weight:900;}.sb-logo-tx span{color:var(--primary);}
+.sb-list{flex:1;overflow-y:auto;padding:12px;}
+.sb-list::-webkit-scrollbar{width:4px;}
+.sb-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.pc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.pc:hover{border-color:rgba(14,165,233,.3);background:rgba(14,165,233,.05);}
+.pc.act{border-color:var(--primary);background:rgba(14,165,233,.08);}
+.pc-nm{font-size:14px;font-weight:800;margin-bottom:4px;}
+.pc-cl{font-size:12px;color:var(--muted);}
+.pc-mt{display:flex;gap:6px;margin-top:8px;}
+.badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;}
+.bdg-g{background:rgba(16,185,129,.15);color:#10b981;}
+.bdg-gr{background:rgba(255,255,255,.08);color:var(--muted);}
+.sb-ft{padding:16px;border-top:1px solid var(--border);}
+.main{overflow-y:auto;background:var(--bg);}
+.main::-webkit-scrollbar{width:6px;}
+.main::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.mi{padding:32px;max-width:860px;margin:0 auto;}
+.pg-tt{font-size:24px;font-weight:900;margin-bottom:8px;}
+.pg-sb{font-size:14px;color:var(--muted);margin-bottom:32px;}
+.card{background:rgba(8,15,30,.7);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;}
+.card-tt{font-size:16px;font-weight:800;margin-bottom:20px;}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.code-wrap{display:flex;gap:8px;}.code-wrap input{flex:1;}
+.link-bx{background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.link-url{flex:1;font-size:13px;color:var(--primary);font-weight:600;word-break:break-all;}
+.uz{border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.uz:hover,.uz.drag{border-color:var(--primary);background:rgba(14,165,233,.05);}
+.uz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.fi{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.fc{width:14px;height:14px;border-radius:4px;flex-shrink:0;cursor:pointer;border:2px solid rgba(255,255,255,.15);}
+.fn{flex:1;}.fn input{background:transparent;border:none;color:var(--text);font-family:inherit;font-size:14px;font-weight:600;width:100%;outline:none;padding:2px 4px;border-radius:4px;}
+.fn input:focus{background:rgba(255,255,255,.05);}
+.pb{height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-top:8px;}
+.pf{height:100%;background:var(--grad);border-radius:4px;transition:width .3s;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.toast.ok{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
+.toast.er{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;}
+.toast.sh{opacity:1;transform:translateX(-50%) translateY(0);}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;}
+.cb{background:#080f1e;border:1px solid var(--border);border-radius:16px;padding:32px;max-width:360px;width:90%;text-align:center;}
+.cb-bt{display:flex;gap:12px;margin-top:24px;}.cb-bt .btn{flex:1;}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo-row">
+      <div class="logo-icon">🗺️</div>
+      <div class="logo-txt">GIS<span>Quy Hoạch</span></div>
+    </div>
+    <div class="t-title">Quản trị WebGIS</div>
+    <div class="t-sub">Đăng nhập để quản lý dự án GIS cho khách hàng</div>
+    <div class="err-msg" id="lerr"></div>
+    <div class="fld"><label>Email</label><input type="email" id="lemail" placeholder="admin@gisquyhoach.vn"/></div>
+    <div class="fld"><label>Mật khẩu</label><input type="password" id="lpass" placeholder="••••••••"/></div>
+    <button class="btn btn-p btn-full" id="lbtn" onclick="doLogin()">🔐 Đăng nhập</button>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="layout">
+    <aside class="sb">
+      <div class="sb-hd">
+        <div class="sb-logo"><div class="sb-logo-ic">🗺️</div><div class="sb-logo-tx">GIS<span>Quy Hoạch</span></div></div>
+        <button class="btn btn-p btn-full btn-sm" onclick="showCreate()" style="font-size:13px;padding:10px;">➕ Tạo dự án mới</button>
+      </div>
+      <div class="sb-list" id="plist"></div>
+      <div class="sb-ft">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Admin: <span id="adm-email" style="color:var(--text);font-weight:700;"></span></div>
+        <button class="btn btn-o btn-full btn-sm" onclick="doLogout()">🚪 Đăng xuất</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="mi">
+
+        <div id="v-welcome">
+          <div class="empty" style="padding:80px 20px;">
+            <div style="font-size:48px;margin-bottom:16px;">🗺️</div>
+            <div style="font-size:18px;font-weight:800;margin-bottom:8px;">Chào mừng đến WebGIS Admin</div>
+            <div style="font-size:14px;">Chọn dự án bên trái hoặc tạo dự án mới</div>
+          </div>
+        </div>
+
+        <div id="v-create" style="display:none;">
+          <div class="pg-tt">➕ Tạo dự án mới</div>
+          <div class="pg-sb">Nhập thông tin dự án GIS cho khách hàng</div>
+          <div class="card">
+            <div class="card-tt">📋 Thông tin dự án</div>
+            <div class="fld-row">
+              <div class="fld"><label>Tên dự án *</label><input type="text" id="fn" placeholder="VD: QH phân khu 1/2000 Ngũ Hành Sơn"/></div>
+              <div class="fld"><label>Tên khách hàng *</label><input type="text" id="fc" placeholder="VD: Sở Xây dựng TP Đà Nẵng"/></div>
+            </div>
+            <div class="fld"><label>Mô tả</label><textarea id="fd" rows="2" placeholder="Mô tả ngắn về dự án..."></textarea></div>
+            <div class="fld">
+              <label>Mã truy cập cho khách *</label>
+              <div class="code-wrap">
+                <input type="text" id="fcode" placeholder="VD: GIS2025" style="text-transform:uppercase;letter-spacing:2px;font-weight:800;"/>
+                <button class="btn btn-o btn-sm" onclick="genCode('fcode')">🎲 Tự tạo</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;">
+              <button class="btn btn-p" onclick="saveProj()">💾 Lưu dự án</button>
+              <button class="btn btn-o" onclick="showWelcome()">Hủy</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="v-detail" style="display:none;">
+          <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;">
+            <div style="flex:1;"><div class="pg-tt" id="d-nm"></div><div class="pg-sb" id="d-cl"></div></div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-o btn-sm" onclick="showEdit()">✏️ Sửa</button>
+              <button class="btn btn-d btn-sm" onclick="showConfirm()">🗑️ Xóa</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-tt">🔗 Link chia sẻ cho khách</div>
+            <div class="link-bx"><div class="link-url" id="d-lnk"></div><button class="btn btn-p btn-sm" onclick="cpLink()">📋 Copy</button></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;">
+              <span>🔑</span>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;">Mã truy cập: <span id="d-code" style="color:var(--warn);letter-spacing:2px;"></span></div><div style="font-size:12px;color:var(--muted);">Gửi mã này kèm link cho khách</div></div>
+              <button class="btn btn-o btn-sm" onclick="cpCode()">Copy mã</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-tt">📂 Upload file GIS (GeoJSON)</div>
+            <div class="uz" id="uz">
+              <input type="file" id="finput" accept=".geojson,.json" multiple onchange="handleFiles(this.files)"/>
+              <div style="font-size:40px;margin-bottom:12px;">📁</div>
+              <div style="font-weight:700;margin-bottom:4px;">Kéo thả file GeoJSON vào đây</div>
+              <div style="font-size:13px;color:var(--muted);">hoặc click để chọn · Hỗ trợ nhiều file cùng lúc</div>
+            </div>
+            <div class="pb" id="uprog" style="display:none;"><div class="pf" id="ufill" style="width:0%"></div></div>
+            <div id="flist" style="margin-top:16px;"></div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:40px;">
+            <button class="btn btn-g" onclick="openViewer()">🗺️ Xem như khách</button>
+            <button class="btn btn-o" onclick="cpLink()">📋 Copy link</button>
+          </div>
+        </div>
+
+        <div id="v-edit" style="display:none;">
+          <div class="pg-tt">✏️ Sửa dự án</div>
+          <div class="pg-sb">Chỉnh sửa thông tin dự án</div>
+          <div class="card">
+            <div class="card-tt">📋 Thông tin dự án</div>
+            <div class="fld-row">
+              <div class="fld"><label>Tên dự án *</label><input type="text" id="en"/></div>
+              <div class="fld"><label>Tên khách hàng *</label><input type="text" id="ec"/></div>
+            </div>
+            <div class="fld"><label>Mô tả</label><textarea id="ed" rows="2"></textarea></div>
+            <div class="fld">
+              <label>Mã truy cập</label>
+              <div class="code-wrap">
+                <input type="text" id="ecode" style="text-transform:uppercase;letter-spacing:2px;font-weight:800;"/>
+                <button class="btn btn-o btn-sm" onclick="genCode('ecode')">🎲 Tự tạo</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;">
+              <button class="btn btn-p" onclick="updateProj()">💾 Lưu thay đổi</button>
+              <button class="btn btn-o" onclick="showDetail()">Hủy</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="cb">
+    <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:8px;">Xóa dự án?</div>
+    <div style="font-size:14px;color:var(--muted);">Toàn bộ file GIS sẽ bị xóa và không thể khôi phục!</div>
+    <div class="cb-bt">
+      <button class="btn btn-o" onclick="closeOv()">Hủy</button>
+      <button class="btn btn-d" onclick="delProj()">🗑️ Xóa</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SBURL = 'https://sscoxcaexukcklamdzyu.supabase.co';
+const SBKEY = 'sb_publishable_5PymJjG2K_jNJm0uOFnhTQ_sQNI2_Db';
+const sb = supabase.createClient(SBURL, SBKEY);
+const COLS=['#0ea5e9','#10b981','#f59e0b','#ef4444','#6366f1','#ec4899','#14b8a6','#f97316'];
+let projs=[], cur=null, curFiles=[], ci=0;
+
+(async()=>{
+  const {data:{user}} = await sb.auth.getUser();
+  if(user) showDash(user); else showLogin();
+})();
+
+function showLogin(){ document.getElementById('login-screen').style.display='flex'; }
+function showDash(u){ document.getElementById('login-screen').style.display='none'; document.getElementById('dashboard').style.display='block'; document.getElementById('adm-email').textContent=u.email; loadProjs(); }
+
+async function doLogin(){
+  const email=document.getElementById('lemail').value.trim();
+  const pass=document.getElementById('lpass').value;
+  const btn=document.getElementById('lbtn'); const err=document.getElementById('lerr');
+  err.style.display='none';
+  if(!email||!pass){err.textContent='Nhập đầy đủ email và mật khẩu';err.style.display='block';return;}
+  btn.disabled=true; btn.textContent='⏳ Đang đăng nhập...';
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.disabled=false; btn.textContent='🔐 Đăng nhập';
+  if(error){err.textContent=error.message==='Invalid login credentials'?'Email hoặc mật khẩu không đúng':error.message;err.style.display='block';}
+  else showDash(data.user);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('lpass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+});
+async function doLogout(){ await sb.auth.signOut(); document.getElementById('dashboard').style.display='none'; showLogin(); }
+
+async function loadProjs(){
+  const {data}=await sb.from('projects').select('*, project_files(count)').eq('status','active').order('created_at',{ascending:false});
+  projs=data||[]; renderSB();
+}
+
+function renderSB(){
+  const el=document.getElementById('plist');
+  if(!projs.length){el.innerHTML='<div class="empty" style="padding:40px 20px;"><div style="font-size:32px;margin-bottom:8px;">📂</div><div style="font-size:13px;">Chưa có dự án nào</div></div>';return;}
+  el.innerHTML=projs.map(p=>`<div class="pc${cur?.id===p.id?' act':''}" onclick="selProj('${p.id}')"><div class="pc-nm">${x(p.name)}</div><div class="pc-cl">👤 ${x(p.client_name)}</div><div class="pc-mt"><span class="badge bdg-g">● Hoạt động</span><span class="badge bdg-gr">📁 ${p.project_files?.[0]?.count||0} lớp</span></div></div>`).join('');
+}
+
+async function selProj(id){
+  cur=projs.find(p=>p.id===id)||null;
+  renderSB();
+  if(!cur) return;
+  await loadFiles();
+  showDetail();
+}
+
+function showDetail(){
+  hideAll(); document.getElementById('v-detail').style.display='block';
+  document.getElementById('d-nm').textContent=cur.name;
+  document.getElementById('d-cl').textContent='👤 '+cur.client_name+(cur.description?' · '+cur.description:'');
+  document.getElementById('d-lnk').textContent=location.origin+'/gis-webgis.html?project='+cur.id;
+  document.getElementById('d-code').textContent=cur.access_code;
+}
+
+async function loadFiles(){
+  const {data}=await sb.from('project_files').select('*').eq('project_id',cur.id).order('sort_order');
+  curFiles=data||[]; renderFiles();
+}
+
+function renderFiles(){
+  const el=document.getElementById('flist');
+  if(!curFiles.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Chưa có file GIS. Upload GeoJSON bên trên!</div>';return;}
+  el.innerHTML=curFiles.map(f=>`<div class="fi"><input type="color" class="fc" value="${f.layer_color}" onchange="updColor('${f.id}',this.value)"/><div class="fn"><input type="text" value="${x(f.display_name)}" onblur="updName('${f.id}',this.value)"/></div><span style="font-size:11px;color:var(--muted);">${f.layer_type}</span><button class="btn btn-d btn-sm" onclick="delFile('${f.id}','${f.storage_path}')">🗑️</button></div>`).join('');
+}
+
+function showCreate(){
+  cur=null; renderSB(); hideAll(); document.getElementById('v-create').style.display='block';
+  document.getElementById('fn').value=''; document.getElementById('fc').value=''; document.getElementById('fd').value=''; genCode('fcode');
+}
+
+function genCode(id){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s='GIS'; for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)]; document.getElementById(id).value=s; }
+
+async function saveProj(){
+  const n=document.getElementById('fn').value.trim(); const c=document.getElementById('fc').value.trim();
+  const d=document.getElementById('fd').value.trim(); const k=document.getElementById('fcode').value.trim().toUpperCase();
+  if(!n||!c||!k){toast('Nhập đầy đủ thông tin!','er');return;}
+  const {data,error}=await sb.from('projects').insert({name:n,client_name:c,description:d,access_code:k}).select().single();
+  if(error){toast('Lỗi: '+error.message,'er');return;}
+  toast('✅ Tạo dự án thành công!','ok');
+  await loadProjs(); await selProj(data.id);
+}
+
+// Upload
+const uz=document.getElementById('uz');
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag');});
+uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('drag');handleFiles(e.dataTransfer.files);});
+
+async function handleFiles(files){
+  if(!cur){toast('Chọn dự án trước!','er');return;}
+  const arr=Array.from(files).filter(f=>f.name.endsWith('.geojson')||f.name.endsWith('.json'));
+  if(!arr.length){toast('Chỉ hỗ trợ .geojson hoặc .json','er');return;}
+  const pb=document.getElementById('uprog'); const pf=document.getElementById('ufill'); pb.style.display='block';
+  for(let i=0;i<arr.length;i++){
+    pf.style.width=Math.round((i/arr.length)*100)+'%';
+    const f=arr[i]; const path=`${cur.id}/${Date.now()}_${f.name}`;
+    const {error:ue}=await sb.storage.from('gis-files').upload(path,f,{contentType:'application/json'});
+    if(ue){toast('Lỗi upload: '+ue.message,'er');continue;}
+    const col=COLS[ci%COLS.length]; ci++;
+    const dn=f.name.replace(/\.(geojson|json)$/i,'').replace(/_/g,' ');
+    await sb.from('project_files').insert({project_id:cur.id,display_name:dn,storage_path:path,layer_color:col,sort_order:curFiles.length+i});
+    toast('✅ Đã upload: '+f.name,'ok');
+  }
+  pf.style.width='100%'; setTimeout(()=>{pb.style.display='none';pf.style.width='0%';},1000);
+  await loadFiles(); await loadProjs(); renderSB();
+}
+
+async function updColor(id,col){ await sb.from('project_files').update({layer_color:col}).eq('id',id); curFiles=curFiles.map(f=>f.id===id?{...f,layer_color:col}:f); }
+async function updName(id,nm){ if(!nm.trim()) return; await sb.from('project_files').update({display_name:nm.trim()}).eq('id',id); }
+async function delFile(id,sp){ if(!confirm('Xóa file này?')) return; await sb.storage.from('gis-files').remove([sp]); await sb.from('project_files').delete().eq('id',id); toast('🗑️ Đã xóa','ok'); await loadFiles(); }
+
+function showEdit(){
+  hideAll(); document.getElementById('v-edit').style.display='block';
+  document.getElementById('en').value=cur.name; document.getElementById('ec').value=cur.client_name;
+  document.getElementById('ed').value=cur.description||''; document.getElementById('ecode').value=cur.access_code;
+}
+
+async function updateProj(){
+  const n=document.getElementById('en').value.trim(); const c=document.getElementById('ec').value.trim();
+  const d=document.getElementById('ed').value.trim(); const k=document.getElementById('ecode').value.trim().toUpperCase();
+  if(!n||!c||!k){toast('Điền đầy đủ!','er');return;}
+  const {error}=await sb.from('projects').update({name:n,client_name:c,description:d,access_code:k}).eq('id',cur.id);
+  if(error){toast('Lỗi: '+error.message,'er');return;}
+  Object.assign(cur,{name:n,client_name:c,description:d,access_code:k});
+  toast('✅ Đã cập nhật!','ok'); await loadProjs(); showDetail();
+}
+
+function showConfirm(){ document.getElementById('ov').style.display='flex'; }
+function closeOv(){ document.getElementById('ov').style.display='none'; }
+async function delProj(){
+  closeOv();
+  if(curFiles.length) await sb.storage.from('gis-files').remove(curFiles.map(f=>f.storage_path));
+  await sb.from('projects').update({status:'archived'}).eq('id',cur.id);
+  toast('🗑️ Đã xóa dự án','ok'); cur=null; await loadProjs(); showWelcome();
+}
+
+function cpLink(){ navigator.clipboard.writeText(location.origin+'/gis-webgis.html?project='+cur.id).then(()=>toast('✅ Đã copy link!','ok')); }
+function cpCode(){ navigator.clipboard.writeText(cur.access_code).then(()=>toast('✅ Đã copy mã!','ok')); }
+function openViewer(){ window.open('/gis-webgis.html?project='+cur.id,'_blank'); }
+
+function showWelcome(){ hideAll(); document.getElementById('v-welcome').style.display='block'; }
+function hideAll(){ ['v-welcome','v-create','v-detail','v-edit'].forEach(id=>document.getElementById(id).style.display='none'); }
+function x(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' sh';
+  clearTimeout(window._tt); window._tt=setTimeout(()=>t.className='toast',3500);
+}
+</script>
+</body>
+</html>

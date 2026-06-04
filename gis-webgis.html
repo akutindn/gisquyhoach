@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Xem hồ sơ GIS dự án — GIS Quy Hoạch</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --bg:#0d1117;--surface:rgba(13,17,23,.85);--glass:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.1);--text:#f0f4ff;--muted:#8892a4;
+  --primary:#0ea5e9;--accent:#10b981;--grad:linear-gradient(135deg,#0ea5e9,#6366f1);
+  --sb-w:320px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.spin{width:48px;height:48px;border:3px solid rgba(14,165,233,.2);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-txt{font-size:16px;font-weight:700;color:var(--muted);}
+.load-sub{font-size:13px;color:var(--muted);opacity:.6;}
+
+/* ── ACCESS GATE ── */
+#gate{position:fixed;inset:0;background:rgba(5,11,24,.97);z-index:900;display:none;align-items:center;justify-content:center;}
+.gate-card{background:rgba(8,15,30,.95);border:1px solid var(--border);border-radius:24px;padding:48px 40px;width:100%;max-width:440px;text-align:center;backdrop-filter:blur(20px);box-shadow:0 32px 80px rgba(0,0,0,.7);}
+.gate-icon{width:72px;height:72px;background:var(--grad);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;}
+.gate-title{font-size:26px;font-weight:900;margin-bottom:8px;}
+.gate-sub{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6;}
+.code-inp{width:100%;padding:18px 20px;background:rgba(255,255,255,.06);border:2px solid var(--border);border-radius:14px;color:var(--text);font-size:22px;font-family:'Be Vietnam Pro',monospace;font-weight:800;letter-spacing:6px;text-align:center;outline:none;transition:border-color .2s;text-transform:uppercase;margin-bottom:16px;}
+.code-inp:focus{border-color:var(--primary);}
+.code-inp.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+.gate-err{font-size:13px;color:#ef4444;margin-bottom:14px;min-height:20px;font-weight:700;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:12px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;border:none;transition:all .2s;}
+.btn-p{background:var(--grad);color:#fff;box-shadow:0 8px 24px rgba(14,165,233,.35);width:100%;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(14,165,233,.5);}
+.btn-p:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.gate-logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;}
+.gate-logo-txt{font-size:18px;font-weight:900;}.gate-logo-txt span{color:var(--primary);}
+
+/* ── APP ── */
+#app{display:none;height:100%;position:relative;}
+#map{position:absolute;inset:0;}
+
+/* Sidebar */
+.sb{position:absolute;top:0;left:0;bottom:0;width:var(--sb-w);background:var(--surface);backdrop-filter:blur(20px);border-right:1px solid var(--border);z-index:500;display:flex;flex-direction:column;overflow:hidden;transition:transform .3s;}
+.sb.hidden{transform:translateX(calc(-1 * var(--sb-w)));}
+.sb-hd{padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sb-logo-ic{width:36px;height:36px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sb-logo-tx{font-size:15px;font-weight:900;}.sb-logo-tx span{color:var(--primary);}
+.proj-info{background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.15);border-radius:12px;padding:14px;}
+.proj-name{font-size:15px;font-weight:900;line-height:1.4;margin-bottom:4px;}
+.proj-client{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.proj-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.layer-sec{flex:1;overflow-y:auto;padding:16px 20px;}
+.layer-sec::-webkit-scrollbar{width:4px;}
+.layer-sec::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.sec-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+.layer-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--glass);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;}
+.layer-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.layer-name{flex:1;font-size:13px;font-weight:700;}
+.toggle{width:38px;height:22px;background:rgba(255,255,255,.12);border-radius:20px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none;}
+.toggle.on{background:var(--primary);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s;}
+.toggle.on::after{left:19px;}
+.sb-ft{padding:16px 20px;border-top:1px solid var(--border);}
+.zalo-btn{display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#0068ff,#0052cc);border-radius:12px;text-decoration:none;color:#fff;font-weight:700;font-size:13px;transition:transform .2s;}
+.zalo-btn:hover{transform:translateY(-1px);}
+.powered{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;}
+
+/* Top bar */
+.topbar{position:absolute;top:12px;right:12px;z-index:500;display:flex;gap:8px;flex-direction:column;align-items:flex-end;}
+.tb-btn{padding:8px 14px;background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;color:var(--text);transition:all .2s;display:flex;align-items:center;gap:6px;}
+.tb-btn:hover{background:rgba(14,165,233,.15);border-color:rgba(14,165,233,.3);}
+.proj-banner{padding:8px 16px;background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;max-width:280px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;}
+
+/* Toggle sidebar button */
+.sb-toggle{position:absolute;top:12px;left:12px;z-index:600;width:40px;height:40px;background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:18px;display:none;align-items:center;justify-content:center;color:var(--text);}
+
+/* Popup */
+.lf-popup .leaflet-popup-content-wrapper{background:rgba(8,15,30,.95);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);backdrop-filter:blur(12px);padding:0;}
+.lf-popup .leaflet-popup-content{margin:0;padding:16px;font-family:'Be Vietnam Pro',sans-serif;}
+.lf-popup .leaflet-popup-tip{background:rgba(8,15,30,.95);}
+.lf-popup .leaflet-popup-close-button{color:var(--muted) !important;font-size:18px;padding:8px 10px;}
+.pop-hd{font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.pop-row{display:flex;gap:8px;margin-bottom:6px;align-items:baseline;}
+.pop-lbl{font-size:11px;color:var(--muted);font-weight:700;min-width:80px;}
+.pop-val{font-size:13px;font-weight:700;}
+.pop-more{margin-top:8px;font-size:11px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;}
+.pop-pre{font-size:10px;margin-top:6px;overflow:auto;max-height:100px;background:rgba(255,255,255,.04);border-radius:6px;padding:6px;line-height:1.5;}
+
+/* Error screen */
+#err-screen{position:fixed;inset:0;background:var(--bg);z-index:800;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;}
+.err-card{max-width:380px;}
+.err-icon{font-size:64px;margin-bottom:20px;}
+.err-title{font-size:22px;font-weight:900;margin-bottom:8px;}
+.err-sub{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* Mobile */
+@media(max-width:768px){
+  :root{--sb-w:280px;}
+  .sb{transform:translateX(calc(-1 * var(--sb-w)));}.sb.open{transform:translateX(0);}
+  .sb-toggle{display:flex;}
+  .topbar{top:60px;}
+}
+
+/* Print */
+@media print{
+  .sb,.topbar,.sb-toggle{display:none !important;}
+  #map{position:fixed;inset:0;}
+  .leaflet-control{display:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="spin"></div>
+  <div class="load-txt">Đang tải hồ sơ GIS...</div>
+  <div class="load-sub">Vui lòng chờ trong giây lát</div>
+</div>
+
+<!-- ERROR -->
+<div id="err-screen">
+  <div class="err-card">
+    <div class="err-icon">⚠️</div>
+    <div class="err-title" id="err-title">Link không hợp lệ</div>
+    <div class="err-sub" id="err-sub">Vui lòng kiểm tra lại link hoặc liên hệ GIS Quy Hoạch để được hỗ trợ.</div>
+    <a href="https://zalo.me/0332945089" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:12px 24px;background:var(--grad);color:#fff;border-radius:12px;font-weight:700;text-decoration:none;">📞 Liên hệ hỗ trợ</a>
+  </div>
+</div>
+
+<!-- ACCESS GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">
+      <div style="width:32px;height:32px;background:var(--grad);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;">🗺️</div>
+      <div class="gate-logo-txt">GIS<span>Quy Hoạch</span></div>
+    </div>
+    <div class="gate-icon">🔐</div>
+    <div class="gate-title">Xem hồ sơ GIS dự án</div>
+    <div class="gate-sub">Nhập mã truy cập được cung cấp bởi<br/><strong>GIS Quy Hoạch</strong> để xem bản đồ</div>
+    <div class="gate-err" id="gate-err"></div>
+    <input class="code-inp" type="text" id="code-inp" placeholder="XXXXXXXX" maxlength="10" autocomplete="off" spellcheck="false"/>
+    <button class="btn btn-p" id="gate-btn" onclick="checkCode()">🗺️ Xem bản đồ</button>
+    <div style="margin-top:20px;font-size:12px;color:var(--muted);">Chưa có mã? <a href="https://zalo.me/0332945089" target="_blank" style="color:var(--primary);font-weight:700;">Liên hệ ngay →</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="map"></div>
+
+  <!-- Sidebar toggle (mobile) -->
+  <button class="sb-toggle" id="sb-toggle" onclick="toggleSB()">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="sb" id="sidebar">
+    <div class="sb-hd">
+      <div class="sb-logo">
+        <div class="sb-logo-ic">🗺️</div>
+        <div class="sb-logo-tx">GIS<span>Quy Hoạch</span></div>
+      </div>
+      <div class="proj-info">
+        <div class="proj-name" id="s-name"></div>
+        <div class="proj-client" id="s-client"></div>
+        <div class="proj-desc" id="s-desc"></div>
+      </div>
+    </div>
+    <div class="layer-sec">
+      <div class="sec-title">🗂️ Lớp bản đồ</div>
+      <div id="layer-list"></div>
+    </div>
+    <div class="sb-ft">
+      <a href="https://zalo.me/0332945089" target="_blank" class="zalo-btn">
+        <span style="font-size:18px;">💬</span>
+        <div><div style="font-size:12px;opacity:.8;">Cần hỗ trợ?</div><div>Liên hệ Zalo ngay</div></div>
+      </a>
+      <div class="powered">Powered by GIS Quy Hoạch · gisquyhoach.vn</div>
+    </div>
+  </aside>
+
+  <!-- Top controls -->
+  <div class="topbar">
+    <div class="proj-banner" id="top-name"></div>
+    <button class="tb-btn" onclick="toggleBasemap()" id="bm-btn">🛰️ Vệ tinh</button>
+    <button class="tb-btn" onclick="fitAll()">⊡ Toàn bộ</button>
+    <button class="tb-btn" onclick="window.print()">🖨️ In bản đồ</button>
+  </div>
+</div>
+
+<script>
+const SBURL = 'https://sscoxcaexukcklamdzyu.supabase.co';
+const SBKEY = 'sb_publishable_5PymJjG2K_jNJm0uOFnhTQ_sQNI2_Db';
+const STURL = SBURL + '/storage/v1/object/public/gis-files/';
+const sb = supabase.createClient(SBURL, SBKEY);
+
+let proj = null, files = [], leafLayers = {}, map = null, sbOpen = false;
+let useSatellite = false, allBounds = null;
+
+const params = new URLSearchParams(location.search);
+const projId = params.get('project');
+
+// Basemaps
+const DARK = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap, © CARTO',maxZoom:19});
+const SAT  = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri',maxZoom:19});
+
+(async()=>{
+  if(!projId){ showErr('Link không hợp lệ','Vui lòng kiểm tra lại link được cung cấp.'); return; }
+  // Load project info (need code to verify)
+  const {data,error} = await sb.from('projects').select('*').eq('id',projId).eq('status','active').single();
+  if(error||!data){ showErr('Dự án không tồn tại','Dự án không tìm thấy hoặc đã bị xóa.'); return; }
+  proj = data;
+  hideLoading();
+  showGate();
+})();
+
+function hideLoading(){ document.getElementById('loading').style.display='none'; }
+function showGate(){ document.getElementById('gate').style.display='flex'; setTimeout(()=>document.getElementById('code-inp').focus(),300); }
+function showErr(title,sub){ hideLoading(); document.getElementById('err-screen').style.display='flex'; document.getElementById('err-title').textContent=title; document.getElementById('err-sub').textContent=sub; }
+
+// ── CHECK CODE ──
+document.getElementById('code-inp').addEventListener('keydown',e=>{ if(e.key==='Enter') checkCode(); });
+
+function checkCode(){
+  const inp  = document.getElementById('code-inp');
+  const errEl= document.getElementById('gate-err');
+  const btn  = document.getElementById('gate-btn');
+  const entered = inp.value.trim().toUpperCase();
+  if(!entered){ errEl.textContent='Vui lòng nhập mã truy cập'; return; }
+  if(entered !== proj.access_code.toUpperCase()){
+    errEl.textContent='Mã truy cập không đúng. Vui lòng kiểm tra lại!';
+    inp.classList.add('shake');
+    setTimeout(()=>inp.classList.remove('shake'),500);
+    return;
+  }
+  errEl.textContent='';
+  btn.disabled=true; btn.textContent='⏳ Đang tải bản đồ...';
+  document.getElementById('gate').style.display='none';
+  loadMap();
+}
+
+// ── LOAD MAP ──
+async function loadMap(){
+  document.getElementById('loading').style.display='flex';
+  document.querySelector('.load-txt').textContent='Đang tải dữ liệu GIS...';
+
+  // Init map
+  map = L.map('map',{zoomControl:false,attributionControl:true}).setView([16.0,108.0],7);
+  DARK.addTo(map);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
+
+  // Sidebar info
+  document.getElementById('s-name').textContent = proj.name;
+  document.getElementById('s-client').textContent = '👤 '+proj.client_name;
+  document.getElementById('s-desc').textContent = proj.description||'';
+  document.getElementById('top-name').textContent = proj.name;
+
+  // Load files
+  const {data} = await sb.from('project_files').select('*').eq('project_id',proj.id).order('sort_order');
+  files = data || [];
+
+  const bounds = [];
+  for(const f of files){
+    try{
+      const url = STURL + f.storage_path;
+      const res = await fetch(url);
+      if(!res.ok) continue;
+      const gj = await res.json();
+      const layer = L.geoJSON(gj,{
+        style:()=>({color:f.layer_color,weight:1.5,opacity:.9,fillColor:f.layer_color,fillOpacity:.22}),
+        pointToLayer:(feat,latlng)=>L.circleMarker(latlng,{radius:6,fillColor:f.layer_color,color:'#fff',weight:1.5,opacity:1,fillOpacity:.85}),
+        onEachFeature:(feat,lyr)=>{
+          const p = feat.properties||{};
+          const loai = p.loai_dat||p.LOAI_DAT||p.tenDoiTuon||p.TEN_DOI_TUONG||p.MA_SDU||p.TEN_VUNG||'';
+          const ky   = p.ky_hieu||p.KY_HIEU||p.ma_loai||p.MA_LOAI||p.MASDDAT||p.KHHC||'';
+          const dt   = p.dien_tich||p.DIEN_TICH||p.Shape_Area||p.area||p.DIENTICH||'';
+          let dtStr='';
+          if(dt){ const m2=parseFloat(dt); if(!isNaN(m2)) dtStr=m2>=10000?`${(m2/10000).toFixed(2)} ha`:`${m2.toFixed(0)} m²`; }
+          let extra='';
+          const shown=['loai_dat','LOAI_DAT','ky_hieu','KY_HIEU','dien_tich','DIEN_TICH','Shape_Area'];
+          const rest=Object.entries(p).filter(([k])=>!shown.includes(k)&&p[k]!==null&&p[k]!=='');
+          if(rest.length) extra=`<div class="pop-more" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">▾ Xem thêm ${rest.length} thuộc tính</div><pre class="pop-pre" style="display:none;">${rest.map(([k,v])=>`${k}: ${v}`).join('\n')}</pre>`;
+          const html=`<div class="pop-hd">${x(f.display_name)}</div>${loai?`<div class="pop-row"><span class="pop-lbl">Loại đất</span><span class="pop-val">${x(loai)}</span></div>`:''}${ky?`<div class="pop-row"><span class="pop-lbl">Ký hiệu</span><span class="pop-val" style="color:var(--primary);">${x(ky)}</span></div>`:''}${dtStr?`<div class="pop-row"><span class="pop-lbl">Diện tích</span><span class="pop-val">${dtStr}</span></div>`:''}${extra}`;
+          lyr.bindPopup(`<div style="min-width:200px;">${html}</div>`,{maxWidth:300,className:'lf-popup'});
+          lyr.on('mouseover',function(){ this.setStyle({fillOpacity:.5,weight:2.5}); });
+          lyr.on('mouseout', function(){ this.setStyle({fillOpacity:.22,weight:1.5}); });
+        }
+      });
+      layer.addTo(map);
+      leafLayers[f.id] = layer;
+      try{ const b=layer.getBounds(); if(b.isValid()) bounds.push(b); }catch(e){}
+    }catch(e){ console.warn('Lỗi load layer:',f.display_name,e); }
+  }
+
+  // Fit bounds
+  if(bounds.length){
+    const combined = bounds.reduce((acc,b)=>acc.extend(b), bounds[0]);
+    allBounds = combined;
+    map.fitBounds(combined, {padding:[40,40]});
+  }
+
+  renderLayers();
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+}
+
+function renderLayers(){
+  const el = document.getElementById('layer-list');
+  if(!files.length){ el.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Chưa có lớp dữ liệu</div>'; return; }
+  el.innerHTML = files.map(f=>`
+    <div class="layer-item">
+      <div class="layer-dot" style="background:${f.layer_color};"></div>
+      <div class="layer-name">${x(f.display_name)}</div>
+      <button class="toggle on" id="tog-${f.id}" onclick="toggleLayer('${f.id}')"></button>
+    </div>
+  `).join('');
+}
+
+function toggleLayer(id){
+  const btn = document.getElementById('tog-'+id);
+  const lyr = leafLayers[id];
+  if(!lyr) return;
+  if(btn.classList.contains('on')){ map.removeLayer(lyr); btn.classList.remove('on'); }
+  else { map.addLayer(lyr); btn.classList.add('on'); }
+}
+
+function toggleBasemap(){
+  const btn = document.getElementById('bm-btn');
+  if(useSatellite){ map.removeLayer(SAT); DARK.addTo(map); btn.textContent='🛰️ Vệ tinh'; }
+  else { map.removeLayer(DARK); SAT.addTo(map); btn.textContent='🌍 Bản đồ tối'; }
+  useSatellite=!useSatellite;
+}
+
+function fitAll(){ if(allBounds) map.fitBounds(allBounds,{padding:[40,40]}); }
+
+function toggleSB(){
+  const sb=document.getElementById('sidebar');
+  sbOpen=!sbOpen;
+  sb.classList.toggle('open',sbOpen);
+  document.getElementById('sb-toggle').textContent=sbOpen?'✕':'☰';
+}
+
+function x(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
