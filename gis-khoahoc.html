@@ -136,40 +136,38 @@
     
     <!-- Logic Đăng nhập và Chuyển bài -->
     <script>
-        // DATA KHÓA HỌC
-        const coursesData = {
-            'arcgis': {
-                name: 'ARCGIS',
-                fullName: 'Khóa học TT16 (ArcGIS)',
-                lessons: [
-                    { id: 1, title: 'Bài 1: Chuyển đổi bản đồ địa hình, quy hoạch sang định dạng GIS', duration: '15 Phút', driveId: '1vanOVqxwtdpi0sMLKCI1pnYsDXlDjvA7' },
-                    { id: 2, title: 'Bài 2: Biên tập dữ liệu không gian cho từng lớp', duration: '20 Phút', driveId: '1qL-U2NPIz2oTFHk_tDqwg75JaAckd1Ol' },
-                    { id: 3, title: 'Bài 3: Biên tập dữ liệu thuộc tính cho từng lớp', duration: '25 Phút', driveId: '1en1L6rnQ3bYxDOHQbutilxtI9ni2TCQL' },
-                    { id: 4, title: 'Bài 4: Thiết kế kí hiệu cho từng lớp', duration: '18 Phút', driveId: '1n6mDJy8May7OxoRXbzZ3JIMQQx6QK2lH' },
-                    { id: 5, title: 'Bài 5: Đóng gói cơ sở dữ liệu số địa lý', duration: '22 Phút', driveId: '1ncpgUE4nPhYWF9KXodeQKR8RBIeRfkCD' }
-                ]
-            },
-            'qgis': {
-                name: 'QGIS',
-                fullName: 'Khóa học TT16 (QGIS)',
-                lessons: [
-                    { id: 1, title: 'Bài 1: Tổng quan QGIS', duration: '20 Phút', driveId: '1uQI0XAekvrjePSdu3KMRLLpam4RD419Y' },
-                    { id: 2, title: 'Bài 2: Hệ tọa độ & Công cụ biên tập', duration: '25 Phút', driveId: '1FvDmqKdYuwLBIDkcelC1LRS0wq4ctf6f' },
-                    { id: 3, title: 'Bài 3: Xử lý dữ liệu CAD', duration: '22 Phút', driveId: '1fGpqXckR5e7wIJd3px7HD0mM6f0cGuNc' },
-                    { id: 4, title: 'Bài 4: Bản đồ chuyên đề & Bố cục in', duration: '20 Phút', driveId: '1Vdxu1QJjxhDaPT3R5EsmjNn8h8zC8_BL' }
-                ]
-            }
+        // DATA KHÓA HỌC (Chỉ lưu metadata công khai, KHÔNG có driveId)
+        const coursesMetadata = {
+            'arcgis': { name: 'ARCGIS', fullName: 'Khóa học TT16 (ArcGIS)' },
+            'qgis':   { name: 'QGIS',   fullName: 'Khóa học TT16 (QGIS)' }
         };
+
+        // Dữ liệu bài học được fetch từ Supabase sau khi đăng nhập
+        let coursesData = {};
         
         let currentCourseId = 'arcgis';
         let currentLessonIndex = 0;
         let isLoggedIn = false;
 
-        // Render Danh sách bài học
+        // Render Danh sách bài học (từ dữ liệu đã fetch)
         function renderCourseList() {
             const listContainer = document.getElementById('courseList');
             listContainer.innerHTML = '';
-            const lessons = coursesData[currentCourseId].lessons;
+            const course = coursesData[currentCourseId];
+            if (!course || !course.lessons) {
+                // Chưa có dữ liệu (chưa đăng nhập), chỉ hiện placeholder
+                const meta = coursesMetadata[currentCourseId];
+                ['Bài 1', 'Bài 2', 'Bài 3', 'Bài 4', 'Bài 5'].forEach((_, index) => {
+                    if (currentCourseId === 'qgis' && index === 4) return; // QGIS chỉ 4 bài
+                    const li = document.createElement('li');
+                    li.className = 'course-item';
+                    li.onclick = () => alert('Vui lòng đăng nhập để xem bài học này!');
+                    li.innerHTML = `<div class="course-item-icon" style="background:transparent; opacity:0.5">🔒</div><div style="color:#94a3b8">———</div>`;
+                    listContainer.appendChild(li);
+                });
+                return;
+            }
+            const lessons = course.lessons;
             lessons.forEach((lesson, index) => {
                 const isActive = index === currentLessonIndex;
                 const li = document.createElement('li');
@@ -202,18 +200,20 @@
         // Tải Video bài học tương ứng
         function loadLesson(index) {
             currentLessonIndex = index;
-            const lesson = coursesData[currentCourseId].lessons[index];
+            const course = coursesData[currentCourseId];
+            if (!course || !course.lessons) return;
+            const lesson = course.lessons[index];
+            if (!lesson) return;
             
             // Cập nhật Tiêu đề & Thời lượng
             document.getElementById('lessonTitle').innerText = lesson.title;
             document.getElementById('lessonDuration').innerText = lesson.duration;
             
-            // Cập nhật Iframe Video
-            if (isLoggedIn) {
-                document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${lesson.driveId}/preview`;
+            // Cập nhật Iframe (driveId đến từ Supabase DB, không có trong HTML)
+            if (isLoggedIn && lesson.drive_id) {
+                document.getElementById('courseVideo').src = `https://drive.google.com/file/d/${lesson.drive_id}/preview`;
             }
             
-            // Render lại Sidebar để đổi màu active
             renderCourseList();
         }
 
@@ -222,36 +222,64 @@
             currentCourseId = courseId;
             currentLessonIndex = 0;
             
-            // Cập nhật Style Tabs
             const activeStyle = "flex: 1; padding: 8px; border: none; border-radius: 6px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; color: #0f172a; cursor: pointer; transition: all 0.2s;";
             const inactiveStyle = "flex: 1; padding: 8px; border: none; border-radius: 6px; background: transparent; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s;";
-            
             document.getElementById('tabArcgis').style.cssText = courseId === 'arcgis' ? activeStyle : inactiveStyle;
             document.getElementById('tabQgis').style.cssText = courseId === 'qgis' ? activeStyle : inactiveStyle;
             
-            // Cập nhật Tiêu đề Sidebar
+            const meta = coursesMetadata[courseId];
             document.getElementById('courseSidebarTitle').innerHTML = `
-                <span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 6px; font-size: 12px;">${coursesData[courseId].name}</span>
-                ${coursesData[courseId].fullName.split('(')[0].trim()}
+                <span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 6px; font-size: 12px;">${meta.name}</span>
+                ${meta.fullName.split('(')[0].trim()}
             `;
 
-            // Load bài học đầu tiên của khóa mới
-            loadLesson(0);
+            // Load bài 1 nếu đã có dữ liệu, nếu chưa thì chỉ render placeholder
+            if (coursesData[courseId] && coursesData[courseId].lessons) {
+                loadLesson(0);
+            } else {
+                renderCourseList();
+            }
         }
 
         // Xử lý Giao diện khi đã đăng nhập
         async function updateUIForLoggedInUser(user) {
             isLoggedIn = true;
             document.getElementById('authOverlay').style.display = 'none';
-            
-            // Hiện Profile trên Nav
             document.getElementById('userProfile').style.display = 'flex';
             document.getElementById('userEmailText').innerText = user.email;
             document.getElementById('userInitial').innerText = user.email.charAt(0).toUpperCase();
-
-            // Mở khóa Video Google Drive và load bài đầu tiên (hoặc bài đang chọn)
             document.getElementById('courseVideo').style.display = 'block';
             document.getElementById('materialsSection').style.display = 'block';
+
+            // FETCH dữ liệu khóa học từ Supabase (driveId được bảo vệ bằng RLS)
+            const { data: lessons, error } = await window.supabaseClient
+                .from('lessons')
+                .select('course_id, lesson_order, title, duration, drive_id')
+                .order('lesson_order', { ascending: true });
+
+            if (error) {
+                console.error('Lỗi fetch bài học:', error.message);
+            } else {
+                // Nhóm bài học theo khóa
+                coursesData = {};
+                lessons.forEach(lesson => {
+                    if (!coursesData[lesson.course_id]) {
+                        const meta = coursesMetadata[lesson.course_id];
+                        coursesData[lesson.course_id] = { 
+                            name: meta.name, 
+                            fullName: meta.fullName,
+                            lessons: [] 
+                        };
+                    }
+                    coursesData[lesson.course_id].lessons.push({
+                        id: lesson.lesson_order,
+                        title: lesson.title,
+                        duration: lesson.duration,
+                        drive_id: lesson.drive_id   // ← chỉ có sau khi đăng nhập
+                    });
+                });
+            }
+
             loadLesson(currentLessonIndex);
         }
 
