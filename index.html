@@ -767,9 +767,12 @@ body { background: var(--bg); color: var(--text); }
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
     <!-- Logo -->
-    <a href="#home" class="logo" style="text-decoration:none;color:inherit;cursor:pointer;">
-      <div class="logo-icon">🗺</div>
-      <span>GIS<span class="accent">Quy Hoạch</span></span>
+    <a href="#home" style="text-decoration:none;cursor:pointer;display:flex;align-items:center;">
+      <img src="/logo.png" alt="GIS Quy Hoạch Logo" style="height:42px;width:auto;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+      <div class="logo" style="display:none;text-decoration:none;color:inherit;">
+        <div class="logo-icon">🗺</div>
+        <span>GIS<span class="accent">Quy Hoạch</span></span>
+      </div>
     </a>
 
     <!-- Nav links (5 mục clean) -->
