@@ -275,9 +275,14 @@ html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',system-ui,san
     <div id="search-dd"></div>
   </div>
 
-  <div class="tb-auth">
+  <div class="tb-auth" id="tb-auth-guest">
     <button class="btn-vip" onclick="openModal('paywall')">✦ Đăng ký VIP</button>
     <button class="btn-login" onclick="openModal('login')">🔑 Đăng nhập</button>
+  </div>
+  <div class="tb-auth" id="tb-auth-user" style="display:none;">
+    <div style="width:28px;height:28px;border-radius:50%;background:#e0f2fe;color:#0369a1;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;" id="map-user-avatar">U</div>
+    <span style="font-size:12px;font-weight:600;color:var(--muted);" id="map-user-email"></span>
+    <button class="btn-login" onclick="handleMapLogout()" style="color:#ef4444;">Đăng xuất</button>
   </div>
 </div>
 
@@ -378,6 +383,16 @@ html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',system-ui,san
   <!-- MAP -->
   <div id="map-wrap">
     <div id="map"></div>
+
+    <!-- Map auth wall (shown when not logged in) -->
+    <div id="map-auth-wall" style="position:absolute;inset:0;z-index:800;background:rgba(13,17,23,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;">
+      <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;padding:36px;max-width:400px;width:90%;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🗺️</div>
+        <div style="font-size:20px;font-weight:900;color:#e6edf3;margin-bottom:8px;">Bản đồ Quy hoạch GIS</div>
+        <div style="font-size:13px;color:#8b949e;line-height:1.7;margin-bottom:24px;">Đăng nhập để xem bản đồ quy hoạch Đà Nẵng. Liên hệ Admin qua Zalo <a href="https://zalo.me/0332945089" target="_blank" style="color:#38bdf8;">0332945089</a> để đăng ký tài khoản.</div>
+        <button onclick="openModal('login')" style="width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(37,99,235,0.3);">🔑 Đăng nhập ngay</button>
+      </div>
+    </div>
 
     <!-- Map tools -->
     <div id="map-tools">
@@ -595,10 +610,10 @@ html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',system-ui,san
         <div class="form-tab" id="ftab-reg" onclick="switchFormTab('reg')">Đăng ký</div>
       </div>
       <div id="form-login">
-        <input class="form-input" type="text" placeholder="Số điện thoại hoặc Email"/>
-        <input class="form-input" type="password" placeholder="Mật khẩu"/>
-        <button style="display:block;width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;">Đăng nhập</button>
-        <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;cursor:pointer;">Quên mật khẩu?</p>
+        <input class="form-input" type="email" id="map-login-email" placeholder="Email của bạn" required/>
+        <input class="form-input" type="password" id="map-login-password" placeholder="Mật khẩu" required/>
+        <button id="map-login-btn" onclick="handleMapLogin()" style="display:block;width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;border:none;cursor:pointer;font-family:inherit;">Đăng nhập</button>
+        <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;">Chưa có tài khoản? Liên hệ <a href="https://zalo.me/0332945089" target="_blank" style="color:#38bdf8;">Zalo 0332945089</a></p>
       </div>
       <div id="form-reg" style="display:none;">
         <input class="form-input" type="text" placeholder="Họ và tên"/>
@@ -611,7 +626,75 @@ html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',system-ui,san
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ══ SUPABASE AUTH ═══════════════════════════════════════════════════
+var SUPABASE_URL = 'https://sscoxcaexukcklamdzyu.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_5PymJjG2K_jNJm0uOFnhTQ_sQNI2_Db';
+var mapSupabase = null;
+
+function initSupabase() {
+  if (typeof window.supabase !== 'undefined') {
+    mapSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+}
+
+async function handleMapLogin() {
+  if (!mapSupabase) return alert('Lỗi kết nối. Vui lòng tải lại trang!');
+  var email = document.getElementById('map-login-email').value.trim();
+  var password = document.getElementById('map-login-password').value;
+  var btn = document.getElementById('map-login-btn');
+  btn.textContent = 'Đang đăng nhập...';
+  btn.disabled = true;
+  try {
+    var result = await mapSupabase.auth.signInWithPassword({ email: email, password: password });
+    if (result.error) throw result.error;
+    closeModal();
+    setMapLoggedIn(result.data.user);
+  } catch(err) {
+    alert('Lỗi: ' + (err.message || 'Sai email hoặc mật khẩu'));
+  } finally {
+    btn.textContent = 'Đăng nhập';
+    btn.disabled = false;
+  }
+}
+
+async function handleMapLogout() {
+  if (mapSupabase) await mapSupabase.auth.signOut();
+  setMapLoggedOut();
+}
+
+function setMapLoggedIn(user) {
+  // Ẩn auth wall, hiện bản đồ
+  document.getElementById('map-auth-wall').style.display = 'none';
+  document.getElementById('tb-auth-guest').style.display = 'none';
+  document.getElementById('tb-auth-user').style.display = 'flex';
+  document.getElementById('map-user-email').textContent = user.email;
+  document.getElementById('map-user-avatar').textContent = user.email.charAt(0).toUpperCase();
+  // Load GeoJSON chỉ khi đã đăng nhập
+  if (!geojsonLayer) loadData();
+}
+
+function setMapLoggedOut() {
+  document.getElementById('map-auth-wall').style.display = 'flex';
+  document.getElementById('tb-auth-guest').style.display = 'flex';
+  document.getElementById('tb-auth-user').style.display = 'none';
+  // Xóa bản đồ nếu đang hiển thị
+  if (geojsonLayer) { map.removeLayer(geojsonLayer); geojsonLayer = null; allFeatures = []; }
+}
+
+// Kiểm tra trạng thái login khi load trang
+window.addEventListener('DOMContentLoaded', async function() {
+  initSupabase();
+  if (!mapSupabase) return;
+  var result = await mapSupabase.auth.getUser();
+  if (result.data && result.data.user) {
+    setMapLoggedIn(result.data.user);
+  } else {
+    setMapLoggedOut();
+  }
+});
+
 // ══ CONSTANTS ═══════════════════════════════════════════════════════
 var DN_CENTER = [16.054, 108.202];
 var DN_ZOOM   = 12;
@@ -680,7 +763,7 @@ function loadData() {
     buildLegend();
   }).catch(function(e){ console.warn('GeoJSON load error:', e); });
 }
-loadData();
+// GeoJSON được gọi bởi setMapLoggedIn() sau khi xác thực thành công
 
 // ── Feature click ──
 function onFeatureClick(f, layer, e) {
