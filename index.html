@@ -774,7 +774,7 @@ body { background: var(--bg); color: var(--text); }
       <span>GIS<span class="accent">Quy Hoạch</span></span>
     </a>
 
-    <!-- Nav links (5 mục clean) -->
+    <!-- Nav links -->
     <div class="nav-links">
 
       <!-- Dropdown: Dịch vụ -->
@@ -782,10 +782,12 @@ body { background: var(--bg); color: var(--text); }
         <div class="nav-link nav-dropdown-trigger">
           Dịch vụ <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style="margin-left:4px;transition:transform .2s;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div class="nav-dropdown-menu">
+        <div class="nav-dropdown-menu" style="min-width:340px;">
 
-          <!-- ⭐ Dịch vụ nổi bật 1 -->
-          <a href="#tt16" class="nav-dd-item" style="background:rgba(14,165,233,.06);border-radius:10px;margin-bottom:4px;">
+          <!-- NHÓM 1: 3 Dịch vụ NỔI BẬT -->
+          <div style="font-size:10px;font-weight:800;color:var(--muted);padding:6px 12px 4px;letter-spacing:.07em;text-transform:uppercase;">⭐ Dịch vụ nổi bật</div>
+
+          <a href="#tt16" class="nav-dd-item" style="background:rgba(14,165,233,.07);border-radius:10px;margin-bottom:3px;">
             <div class="nav-dd-icon" style="background:rgba(14,165,233,.18);">📄</div>
             <div>
               <div style="display:flex;align-items:center;gap:6px;">
@@ -796,36 +798,52 @@ body { background: var(--bg); color: var(--text); }
             </div>
           </a>
 
-          <!-- ⭐ Dịch vụ nổi bật 2 -->
-          <a href="/gis-khoahoc.html" class="nav-dd-item" style="background:rgba(99,102,241,.06);border-radius:10px;margin-bottom:4px;">
+          <a href="#webgis" class="nav-dd-item" style="background:rgba(16,185,129,.07);border-radius:10px;margin-bottom:3px;">
+            <div class="nav-dd-icon" style="background:rgba(16,185,129,.18);">🗺️</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div class="nav-dd-title" style="color:#10b981;">WebGIS xem hồ sơ dự án</div>
+                <span style="font-size:9px;font-weight:900;background:#10b981;color:#fff;padding:2px 6px;border-radius:4px;">NỔI BẬT</span>
+              </div>
+              <div class="nav-dd-sub">Xem file GIS trực tuyến, báo cáo chủ đầu tư</div>
+            </div>
+          </a>
+
+          <a href="/gis-khoahoc.html" class="nav-dd-item" style="background:rgba(99,102,241,.07);border-radius:10px;margin-bottom:3px;">
             <div class="nav-dd-icon" style="background:rgba(99,102,241,.18);">🎓</div>
             <div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <div class="nav-dd-title" style="color:#6366f1;">Học viện Khóa học GIS</div>
+                <div class="nav-dd-title" style="color:#6366f1;">Học viện ArcGIS & QGIS</div>
                 <span style="font-size:9px;font-weight:900;background:#6366f1;color:#fff;padding:2px 6px;border-radius:4px;">NỔI BẬT</span>
               </div>
-              <div class="nav-dd-sub">ArcGIS & QGIS theo Thông tư 16</div>
+              <div class="nav-dd-sub">Khóa học thực chiến theo Thông tư 16</div>
             </div>
           </a>
 
           <div class="nav-dd-divider"></div>
 
-          <a href="#features" class="nav-dd-item">
-            <div class="nav-dd-icon" style="background:rgba(99,102,241,.12);">⚙️</div>
-            <div><div class="nav-dd-title">Dịch vụ GIS khác</div><div class="nav-dd-sub">Số hóa, thẩm định, WebGIS tùy chỉnh</div></div>
-          </a>
+          <!-- NHÓM 2: Dịch vụ Digital -->
+          <div style="font-size:10px;font-weight:800;color:var(--muted);padding:4px 12px;letter-spacing:.07em;text-transform:uppercase;">🌐 Dịch vụ Digital</div>
+
           <a href="#webdesign" class="nav-dd-item">
             <div class="nav-dd-icon" style="background:rgba(245,158,11,.12);">🌐</div>
             <div><div class="nav-dd-title">Thiết kế Website</div><div class="nav-dd-sub">Landing page, cổng GIS, doanh nghiệp</div></div>
           </a>
           <a href="#marketing" class="nav-dd-item">
             <div class="nav-dd-icon" style="background:rgba(239,68,68,.1);">📢</div>
-            <div><div class="nav-dd-title">Marketing & Page Fan</div><div class="nav-dd-sub">Chăm sóc fanpage, Facebook Ads</div></div>
+            <div><div class="nav-dd-title">Marketing & Fanpage</div><div class="nav-dd-sub">Chăm sóc page, Facebook Ads chuyên ngành</div></div>
           </a>
+          <a href="#software" class="nav-dd-item">
+            <div class="nav-dd-icon" style="background:rgba(168,85,247,.12);">🤖</div>
+            <div><div class="nav-dd-title">Phần mềm tự động</div><div class="nav-dd-sub">Script, tool GIS tự động hóa quy trình</div></div>
+          </a>
+
           <div class="nav-dd-divider"></div>
+
+          <!-- Tra cứu -->
           <a href="/gis-tracuu.html" class="nav-dd-item nav-dd-highlight" target="_blank">
-            <div class="nav-dd-icon" style="background:rgba(34,197,94,.12);">🗺️</div>
-            <div><div class="nav-dd-title" style="color:#22c55e;">Tra cứu Quy hoạch ↗</div><div class="nav-dd-sub">Bản đồ GIS Đà Nẵng trực tuyến</div></div>
+            <div class="nav-dd-icon" style="background:rgba(34,197,94,.12);">🔍</div>
+            <div><div class="nav-dd-title" style="color:#22c55e;">Tra cứu Quy hoạch Đà Nẵng ↗</div><div class="nav-dd-sub">Bản đồ GIS trực tuyến có phí</div></div>
           </a>
         </div>
       </div>
@@ -850,14 +868,17 @@ body { background: var(--bg); color: var(--text); }
 
 <!-- ══ MOBILE MENU ══════════════════════════════════════════ -->
 <div class="nav-mobile-menu" id="navMobileMenu">
-  <!-- 2 dịch vụ nổi bật nhất -->
+  <!-- ⭐ 3 Dịch vụ nổi bật -->
   <a href="#tt16" onclick="closeMobileMenu()" style="background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.2);border-radius:10px;color:#0ea5e9;font-weight:800;">📄 Hồ sơ GIS Thông tư 16 ⭐</a>
-  <a href="/gis-khoahoc.html" onclick="closeMobileMenu()" style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;color:#6366f1;font-weight:800;">🎓 Học viện Khóa học GIS ⭐</a>
-  <!-- Các mục khác -->
-  <a href="#features"  onclick="closeMobileMenu()">⚙️ Dịch vụ GIS khác</a>
+  <a href="#webgis" onclick="closeMobileMenu()" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;color:#10b981;font-weight:800;">🗺️ WebGIS xem hồ sơ dự án ⭐</a>
+  <a href="/gis-khoahoc.html" onclick="closeMobileMenu()" style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;color:#6366f1;font-weight:800;">🎓 Học viện ArcGIS & QGIS ⭐</a>
+  <!-- Dịch vụ Digital -->
   <a href="#webdesign" onclick="closeMobileMenu()">🌐 Thiết kế Website</a>
-  <a href="#marketing" onclick="closeMobileMenu()">📢 Marketing & Page Fan</a>
-  <a href="/gis-tracuu.html" target="_blank" onclick="closeMobileMenu()" style="color:#22c55e;font-weight:700;">🗺️ Tra cứu Quy hoạch ↗</a>
+  <a href="#marketing" onclick="closeMobileMenu()">📢 Marketing & Fanpage</a>
+  <a href="#software"  onclick="closeMobileMenu()">🤖 Phần mềm tự động</a>
+  <!-- Công cụ -->
+  <a href="/gis-tracuu.html" target="_blank" onclick="closeMobileMenu()" style="color:#22c55e;font-weight:700;">🔍 Tra cứu Quy hoạch ĐN ↗</a>
+  <!-- Chung -->
   <a href="#pricing"   onclick="closeMobileMenu()">💰 Bảng giá</a>
   <a href="#contact"   onclick="closeMobileMenu()">📬 Liên hệ</a>
   <a href="https://zalo.me/0332945089" target="_blank" rel="noopener" class="mobile-cta-btn" onclick="closeMobileMenu()">📞 Liên hệ tư vấn miễn phí</a>
