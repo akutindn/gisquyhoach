@@ -217,12 +217,17 @@ const SAT  = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/W
 
 (async()=>{
   if(!projId){ showErr('Link không hợp lệ','Vui lòng kiểm tra lại link được cung cấp.'); return; }
-  // Load project info (need code to verify)
   const {data,error} = await sb.from('projects').select('*').eq('id',projId).eq('status','active').single();
   if(error||!data){ showErr('Dự án không tồn tại','Dự án không tìm thấy hoặc đã bị xóa.'); return; }
   proj = data;
   hideLoading();
-  showGate();
+  // Kiểm tra session — nếu đã nhập đúng mã trước đó thì bỏ qua gate
+  const saved = sessionStorage.getItem('gis_verified_'+projId);
+  if(saved === proj.access_code.toUpperCase()){
+    loadMap();
+  } else {
+    showGate();
+  }
 })();
 
 function hideLoading(){ document.getElementById('loading').style.display='none'; }
@@ -245,6 +250,8 @@ function checkCode(){
     return;
   }
   errEl.textContent='';
+  // Lưu session — không cần nhập lại khi refresh
+  sessionStorage.setItem('gis_verified_'+projId, entered);
   btn.disabled=true; btn.textContent='⏳ Đang tải bản đồ...';
   document.getElementById('gate').style.display='none';
   loadMap();
@@ -312,8 +319,14 @@ async function loadMap(){
   }
 
   renderLayers();
+  // Hiển #app TRƯỜC — để Leaflet biết kích thước container
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
+  // Đợi DOM render xong rồi mới invalidate
+  setTimeout(()=>{
+    map.invalidateSize();
+    if(allBounds) map.fitBounds(allBounds,{padding:[40,40]});
+  }, 100);
 }
 
 function renderLayers(){
