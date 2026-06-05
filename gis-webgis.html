@@ -178,7 +178,7 @@ html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',sans-serif;ba
   <!-- Top controls -->
   <div class="topbar">
     <div class="proj-banner" id="top-name"></div>
-    <button class="tb-btn" onclick="toggleBasemap()" id="bm-btn">🛰️ Vệ tinh</button>
+    <button class="tb-btn" onclick="toggleBasemap()" id="bm-btn">🌍 Bản đồ tối</button>
     <button class="tb-btn" onclick="fitAll()">⊡ Toàn bộ</button>
     <button class="tb-btn" onclick="window.print()">🖨️ In bản đồ</button>
   </div>
@@ -191,7 +191,7 @@ const STURL = SBURL + '/storage/v1/object/public/gis-files/';
 const sb = supabase.createClient(SBURL, SBKEY);
 
 let proj = null, files = [], leafLayers = {}, map = null, sbOpen = false;
-let useSatellite = false, allBounds = null;
+let useSatellite = true, allBounds = null;
 
 const params = new URLSearchParams(location.search);
 const projId = params.get('project');
@@ -219,7 +219,7 @@ async function loadMap(){
 
   // Init map
   map = L.map('map',{zoomControl:false,attributionControl:true}).setView([16.0,108.0],7);
-  DARK.addTo(map);
+  SAT.addTo(map);
   L.control.zoom({position:'bottomright'}).addTo(map);
   L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
 
