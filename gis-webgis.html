@@ -247,15 +247,37 @@ async function loadMap(){
           const p = feat.properties||{};
           const loai = p.loai_dat||p.LOAI_DAT||p.tenDoiTuon||p.TEN_DOI_TUONG||p.MA_SDU||p.TEN_VUNG||'';
           const ky   = p.ky_hieu||p.KY_HIEU||p.ma_loai||p.MA_LOAI||p.MASDDAT||p.KHHC||'';
-          const dt   = p.dien_tich||p.DIEN_TICH||p.Shape_Area||p.area||p.DIENTICH||'';
+          const dt   = p.dien_tich||p.DIEN_TICH||p.Shape_Area||p.area||p.DIENTICH||p.dienTichQH||'';
           let dtStr='';
-          if(dt){ const m2=parseFloat(dt); if(!isNaN(m2)) dtStr=m2>=10000?`${(m2/10000).toFixed(2)} ha`:`${m2.toFixed(0)} m²`; }
-          let extra='';
-          const shown=['loai_dat','LOAI_DAT','ky_hieu','KY_HIEU','dien_tich','DIEN_TICH','Shape_Area'];
-          const rest=Object.entries(p).filter(([k])=>!shown.includes(k)&&p[k]!==null&&p[k]!=='');
-          if(rest.length) extra=`<div class="pop-more" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">▾ Xem thêm ${rest.length} thuộc tính</div><pre class="pop-pre" style="display:none;">${rest.map(([k,v])=>`${k}: ${v}`).join('\n')}</pre>`;
-          const html=`<div class="pop-hd">${x(f.display_name)}</div>${loai?`<div class="pop-row"><span class="pop-lbl">Loại đất</span><span class="pop-val">${x(loai)}</span></div>`:''}${ky?`<div class="pop-row"><span class="pop-lbl">Ký hiệu</span><span class="pop-val" style="color:var(--primary);">${x(ky)}</span></div>`:''}${dtStr?`<div class="pop-row"><span class="pop-lbl">Diện tích</span><span class="pop-val">${dtStr}</span></div>`:''}${extra}`;
-          lyr.bindPopup(`<div style="min-width:200px;">${html}</div>`,{maxWidth:300,className:'lf-popup'});
+          if(dt){ const m2=parseFloat(dt); if(!isNaN(m2)) dtStr=m2>=10000?`${(m2/10000).toFixed(2)} ha`:`${m2.toFixed(2)} m²`; }
+          
+          // Các trường chuẩn TT16 khác
+          const tenDoAn = p.tenDoAn || p.TEN_DO_AN || '';
+          const diaDiem = p.diaDiemQH || p.DIA_DIEM || '';
+          const tyLe = p.tyLe || p.TY_LE || '';
+          const chuDauTu = p.chuDauTu || p.CHU_DAU_TU || '';
+          const tuVan = p.donViTuVan || p.DON_VI_TU_VAN || '';
+          const cqPd = p.coQuanPheduyet || p.CO_QUAN_PD || '';
+          const qd = p.soQDQH || p.SO_QD_QH || '';
+
+          let extraHtml = '';
+          const addRow = (lbl, val) => { if(val) extraHtml += `<div class="pop-row"><span class="pop-lbl">${lbl}</span><span class="pop-val">${x(val)}</span></div>`; };
+          
+          addRow('Tên đồ án', tenDoAn);
+          addRow('Địa điểm', diaDiem);
+          addRow('Tỷ lệ', tyLe);
+          addRow('Chủ đầu tư', chuDauTu);
+          addRow('Tư vấn', tuVan);
+          addRow('Phê duyệt', cqPd);
+          addRow('Số QĐ', qd);
+
+          const shown=['loai_dat','LOAI_DAT','tenDoiTuon','TEN_DOI_TUONG','MA_SDU','TEN_VUNG','ky_hieu','KY_HIEU','ma_loai','MA_LOAI','MASDDAT','KHHC','dien_tich','DIEN_TICH','Shape_Area','area','DIENTICH','dienTichQH','tenDoAn','TEN_DO_AN','diaDiemQH','DIA_DIEM','tyLe','TY_LE','chuDauTu','CHU_DAU_TU','donViTuVan','DON_VI_TU_VAN','coQuanPheduyet','CO_QUAN_PD','soQDQH','SO_QD_QH','OBJECTID','Shape_Length'];
+          const rest=Object.entries(p).filter(([k,v])=>!shown.includes(k)&&v!==null&&v!=='');
+          let restHtml='';
+          if(rest.length) restHtml=`<div class="pop-more" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">▾ Xem thêm ${rest.length} thuộc tính khác</div><div class="pop-pre" style="display:none;">${rest.map(([k,v])=>`<b>${k}:</b> ${v}`).join('<br>')}</div>`;
+          
+          const html=`<div class="pop-hd">${x(f.display_name)}</div>${loai?`<div class="pop-row"><span class="pop-lbl">Loại/Tên</span><span class="pop-val">${x(loai)}</span></div>`:''}${ky?`<div class="pop-row"><span class="pop-lbl">Ký hiệu</span><span class="pop-val" style="color:var(--primary);">${x(ky)}</span></div>`:''}${dtStr?`<div class="pop-row"><span class="pop-lbl">Diện tích</span><span class="pop-val">${dtStr}</span></div>`:''}${extraHtml}${restHtml}`;
+          lyr.bindPopup(`<div style="min-width:220px;">${html}</div>`,{maxWidth:350,className:'lf-popup'});
           lyr.on('mouseover',function(){ this.setStyle({fillOpacity:.5,weight:2.5}); });
           lyr.on('mouseout', function(){ this.setStyle({fillOpacity:.22,weight:1.5}); });
         }
