@@ -140,22 +140,7 @@ html,body{height:100%;overflow:hidden;font-family:'Be Vietnam Pro',sans-serif;ba
   </div>
 </div>
 
-<!-- ACCESS GATE -->
-<div id="gate">
-  <div class="gate-card">
-    <div class="gate-logo">
-      <div style="width:32px;height:32px;background:var(--grad);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;">🗺️</div>
-      <div class="gate-logo-txt">GIS<span>Quy Hoạch</span></div>
-    </div>
-    <div class="gate-icon">🔐</div>
-    <div class="gate-title">Xem hồ sơ GIS dự án</div>
-    <div class="gate-sub">Nhập mã truy cập được cung cấp bởi<br/><strong>GIS Quy Hoạch</strong> để xem bản đồ</div>
-    <div class="gate-err" id="gate-err"></div>
-    <input class="code-inp" type="text" id="code-inp" placeholder="XXXXXXXX" maxlength="10" autocomplete="off" spellcheck="false"/>
-    <button class="btn btn-p" id="gate-btn" onclick="checkCode()">🗺️ Xem bản đồ</button>
-    <div style="margin-top:20px;font-size:12px;color:var(--muted);">Chưa có mã? <a href="https://zalo.me/0332945089" target="_blank" style="color:var(--primary);font-weight:700;">Liên hệ ngay →</a></div>
-  </div>
-</div>
+
 
 <!-- APP -->
 <div id="app">
@@ -221,41 +206,11 @@ const SAT  = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/W
   if(error||!data){ showErr('Dự án không tồn tại','Dự án không tìm thấy hoặc đã bị xóa.'); return; }
   proj = data;
   hideLoading();
-  // Kiểm tra session — nếu đã nhập đúng mã trước đó thì bỏ qua gate
-  const saved = sessionStorage.getItem('gis_verified_'+projId);
-  if(saved === proj.access_code.toUpperCase()){
-    loadMap();
-  } else {
-    showGate();
-  }
+  loadMap();
 })();
 
 function hideLoading(){ document.getElementById('loading').style.display='none'; }
-function showGate(){ document.getElementById('gate').style.display='flex'; setTimeout(()=>document.getElementById('code-inp').focus(),300); }
 function showErr(title,sub){ hideLoading(); document.getElementById('err-screen').style.display='flex'; document.getElementById('err-title').textContent=title; document.getElementById('err-sub').textContent=sub; }
-
-// ── CHECK CODE ──
-document.getElementById('code-inp').addEventListener('keydown',e=>{ if(e.key==='Enter') checkCode(); });
-
-function checkCode(){
-  const inp  = document.getElementById('code-inp');
-  const errEl= document.getElementById('gate-err');
-  const btn  = document.getElementById('gate-btn');
-  const entered = inp.value.trim().toUpperCase();
-  if(!entered){ errEl.textContent='Vui lòng nhập mã truy cập'; return; }
-  if(entered !== proj.access_code.toUpperCase()){
-    errEl.textContent='Mã truy cập không đúng. Vui lòng kiểm tra lại!';
-    inp.classList.add('shake');
-    setTimeout(()=>inp.classList.remove('shake'),500);
-    return;
-  }
-  errEl.textContent='';
-  // Lưu session — không cần nhập lại khi refresh
-  sessionStorage.setItem('gis_verified_'+projId, entered);
-  btn.disabled=true; btn.textContent='⏳ Đang tải bản đồ...';
-  document.getElementById('gate').style.display='none';
-  loadMap();
-}
 
 // ── LOAD MAP ──
 async function loadMap(){
