@@ -40,6 +40,8 @@
 
         @media (max-width: 768px) {
             .lms-container { grid-template-columns: 1fr; margin-top: 80px; }
+            .video-container { aspect-ratio: auto; min-height: 480px; }
+            .video-container.playing { aspect-ratio: 16/9; min-height: 0; }
         }
     </style>
 </head>
@@ -249,6 +251,7 @@
             document.getElementById('userEmailText').innerText = user.email;
             document.getElementById('userInitial').innerText = user.email.charAt(0).toUpperCase();
             document.getElementById('courseVideo').style.display = 'block';
+            document.getElementById('videoContainer').classList.add('playing');
             document.getElementById('materialsSection').style.display = 'block';
 
             // FETCH dữ liệu khóa học từ Supabase (driveId được bảo vệ bằng RLS)
@@ -286,6 +289,7 @@
         function updateUIForLoggedOutUser() {
             isLoggedIn = false;
             document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('videoContainer').classList.remove('playing');
             document.getElementById('courseVideo').style.display = 'none';
             document.getElementById('materialsSection').style.display = 'none';
             document.getElementById('userProfile').style.display = 'none';
