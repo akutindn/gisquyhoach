@@ -341,5 +341,34 @@
             }
         });
     </script>
+    <!-- Script chống copy, F12 và Chuột phải cơ bản -->
+    <script>
+        // Chống chuột phải
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // Chống các phím tắt bật DevTools
+        document.addEventListener('keydown', function(e) {
+            // F12
+            if(e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+            }
+            // Ctrl+Shift+I (Mở Element)
+            if(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+                e.preventDefault();
+            }
+            // Ctrl+Shift+J (Mở Console)
+            if(e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
+                e.preventDefault();
+            }
+            // Ctrl+Shift+C (Inspect Element)
+            if(e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+            }
+            // Ctrl+U (View Source)
+            if(e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>
